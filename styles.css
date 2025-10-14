@@ -27,6 +27,23 @@ body { font-family: 'Inter', sans-serif; background: #f9fafb; margin: 0; padding
   width: 100%;
 }
 
+/* New: Theme Switcher Styles */
+.theme-selector {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+.theme-option {
+  padding: 5px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.theme-option:hover {
+  background-color: #e6f4ff;
+}
+
+/* Media Queries */
 @media (max-width: 640px) {
   .sidebar { width: 60px; }
   .sidebar span { display: none; }
@@ -74,7 +91,7 @@ body.dark .bg-gray-100 { background: #4b5563; }
 body.dark .bg-gray-200 { background: #6b7280; }
 body.dark input, body.dark select { background: #4b5563; color: #f9fafb; border-color: #6b7280; }
 
- /* Added: Typing indicator animation */
+/* Added: Typing indicator animation */
 #typing-indicator {
   animation: pulse 1.5s infinite;
 }
@@ -111,4 +128,12 @@ body.dark input, body.dark select { background: #4b5563; color: #f9fafb; border-
 
 #suggestions button:hover {
   background: #bfdbfe;
+}
+
+/* Added: Logo styling */
+#logo {
+  max-width: 150px;
+  height: auto;
+  margin: 10px auto;
+  display: block;
 }
