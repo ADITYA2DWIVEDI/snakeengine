@@ -2,123 +2,264 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>snakeengine.ai</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>SnakeEngine.ai - Professional AI Platform</title>
+  
+  <!-- PWA Meta Tags -->
+  <meta name="description" content="Advanced AI chat, 8 Ball Pool analytics, and productivity tools with 100+ features">
+  <meta name="theme-color" content="#10B981">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="SnakeEngine.ai">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  
+  <!-- Preload Critical Resources -->
+  <link rel="preload" href="/fonts/inter.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  
+  <!-- Core CSS -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    /* Extra styling for menu animation */
-    .menu-open #sidebar {
-      transform: translateX(0);
+  <script>
+    tailwind.config = {
+      theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] } } }
     }
-    .menu-open #main-content {
-      filter: blur(2px);
+  </script>
+  <link rel="stylesheet" href="styles.css">
+  
+  <!-- Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(reg => console.log('SW registered'))
+          .catch(err => console.log('SW registration failed'));
+      });
     }
-    .active-menu {
-      background-color: #e0f2fe;
-      color: #0284c7;
-    }
-  </style>
+  </script>
 </head>
-<body class="text-gray-800 antialiased flex flex-col md:flex-row min-h-screen bg-gray-50">
-
-  <!-- 🟦 Mobile Menu Button -->
-  <button id="menu-toggle"
-    class="md:hidden fixed top-4 left-4 z-50 bg-blue-500 text-white p-3 rounded-full shadow-lg"
-    aria-label="Toggle menu">
-    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"
-      viewBox="0 0 24 24">
-      <line x1="3" y1="12" x2="21" y2="12" />
-      <line x1="3" y1="6" x2="21" y2="6" />
-      <line x1="3" y1="18" x2="21" y2="18" />
-    </svg>
-  </button>
-
-  <!-- 🧭 Sidebar -->
-  <nav id="sidebar"
-    class="fixed md:static inset-y-0 left-0 w-64 bg-white border-r border-gray-200 flex flex-col py-6 px-2 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out z-40 overflow-y-auto">
-    
-    <div class="flex justify-center mb-4">
-      <img src="snakeengine-logo.png" alt="Logo" class="w-16 h-16 object-contain">
+<body class="bg-gray-50 text-gray-900 antialiased font-inter">
+  <!-- Loading Skeleton -->
+  <div id="loading-skeleton" class="fixed inset-0 bg-white z-50 flex items-center justify-center">
+    <div class="text-center">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+      <p class="text-gray-500">Loading SnakeEngine...</p>
     </div>
+  </div>
 
-    <div class="flex flex-col space-y-2">
-      <a href="#" class="menu-link active-menu flex items-center justify-center md:justify-start px-4 py-3 rounded-lg hover:bg-gray-100">
-        🏠 <span class="ml-2 hidden md:inline font-medium">Home</span>
-      </a>
-      <a href="#" class="menu-link flex items-center justify-center md:justify-start px-4 py-3 rounded-lg hover:bg-gray-100">
-        🔍 <span class="ml-2 hidden md:inline font-medium">Discover</span>
-      </a>
-      <a href="#" class="menu-link flex items-center justify-center md:justify-start px-4 py-3 rounded-lg hover:bg-gray-100">
-        📁 <span class="ml-2 hidden md:inline font-medium">Projects</span>
-      </a>
-      <a href="#" class="menu-link flex items-center justify-center md:justify-start px-4 py-3 rounded-lg hover:bg-gray-100">
-        ⚙️ <span class="ml-2 hidden md:inline font-medium">Settings</span>
-      </a>
+  <!-- Offline Banner -->
+  <div id="offline-banner" class="hidden fixed top-0 left-0 right-0 bg-yellow-500 text-white p-4 z-40 flex justify-between items-center">
+    <span>🔌 You're offline - Using cached data</span>
+    <button onclick="closeOfflineBanner()" class="ml-4">×</button>
+  </div>
+
+  <!-- Error Boundary -->
+  <div id="error-boundary" class="hidden fixed inset-0 bg-red-50 z-50 flex items-center justify-center">
+    <div class="bg-white p-8 rounded-lg shadow-xl max-w-md text-center">
+      <div class="text-red-500 text-4xl mb-4">⚠️</div>
+      <h2 class="text-xl font-bold mb-2">Something went wrong</h2>
+      <p class="text-gray-600 mb-4">Please refresh the page or try again later.</p>
+      <button onclick="location.reload()" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Reload</button>
+    </div>
+  </div>
+
+  <!-- Navigation Overlay -->
+  <div id="nav-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden" onclick="toggleMenu()"></div>
+
+  <!-- Sidebar -->
+  <nav id="sidebar" class="fixed left-0 top-0 h-full w-64 bg-white shadow-xl z-40 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out border-r border-gray-200">
+    <div class="p-6 border-b border-gray-200">
+      <div class="flex items-center space-x-3">
+        <img src="snakeengine-logo.png" alt="Logo" class="h-10 w-10" onerror="this.src='data:image/svg+xml;base64,...'">
+        <h1 class="text-xl font-bold text-gray-900">SnakeEngine.ai</h1>
+      </div>
+    </div>
+    
+    <div class="p-4 space-y-2 overflow-y-auto max-h-[calc(100vh-200px)]">
+      <nav class="space-y-1">
+        <!-- Navigation Items with Icons -->
+        <a href="#" class="nav-link flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors" data-section="home">
+          <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+          </svg>
+          <span>Dashboard</span>
+        </a>
+        
+        <a href="#" class="nav-link flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors" data-section="discover">
+          <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12l-9-9v18l9-9z"/>
+          </svg>
+          <span>Discover</span>
+          <span class="ml-auto bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">100+</span>
+        </a>
+        
+        <!-- More nav items with proper structure -->
+        <a href="#" class="nav-link flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors" data-section="chat">
+          <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+          </svg>
+          <span>AI Chat</span>
+        </a>
+        
+        <a href="#" class="nav-link flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors" data-section="analytics">
+          <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+          </svg>
+          <span>Analytics</span>
+        </a>
+        
+        <!-- User Section -->
+        <div class="border-t border-gray-200 mt-4 pt-4">
+          <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+            <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">U</div>
+            <div>
+              <p class="text-sm font-medium" id="user-name">User</p>
+              <p class="text-xs text-gray-500" id="user-plan">Free</p>
+            </div>
+          </div>
+          <button class="w-full text-left px-3 py-2 text-sm text-gray-600 hover:text-blue-600">Settings</button>
+          <button class="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded">Logout</button>
+        </div>
+      </nav>
     </div>
   </nav>
 
-  <!-- 📄 Main Content -->
-  <main id="main-content"
-    class="flex-1 p-4 md:p-8 mt-14 md:mt-0 overflow-y-auto transition-all duration-300">
+  <!-- Mobile Menu Button -->
+  <button id="mobile-menu-btn" class="fixed top-4 left-4 z-50 lg:hidden p-2 bg-white rounded-lg shadow-lg" onclick="toggleMenu()">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+    </svg>
+  </button>
 
-    <!-- 🏡 Home Section -->
-    <section id="section-home" class="section">
-      <div class="text-center max-w-2xl mx-auto mb-10">
-        <h1 class="text-3xl sm:text-4xl font-bold mb-4">
-          <span class="text-gray-900">snakeengine</span><span class="text-blue-500">.</span><span class="text-green-500">ai</span>
-        </h1>
-        <p class="text-gray-600">AI-driven creativity and automation tools that scale with you.</p>
-      </div>
+  <!-- Main Content -->
+  <main class="lg:ml-0 transition-all duration-300 min-h-screen pb-20 lg:pb-0">
+    <!-- Hero Section -->
+    <section id="dashboard" class="section bg-gradient-to-br from-blue-50 to-emerald-50 py-12">
+      <div class="max-w-6xl mx-auto px-4">
+        <div class="text-center mb-12">
+          <h1 class="text-4xl md:text-6xl font-bold bg-gradient-to-r from-gray-900 via-blue-600 to-emerald-600 bg-clip-text text-transparent mb-6">
+            SnakeEngine<span class="text-emerald-500">.</span>ai
+          </h1>
+          <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+            Professional AI platform with advanced chat, analytics, and 100+ productivity tools
+          </p>
+        </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div class="p-6 bg-white rounded-2xl shadow-sm hover:shadow-md transition">
-          <h2 class="text-xl font-semibold mb-2">AI Builder</h2>
-          <p class="text-gray-600 text-sm">Generate and deploy AI tools instantly with modular blueprints.</p>
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+          <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm font-medium text-gray-600">Active Users</p>
+                <p class="text-2xl font-bold text-gray-900">24,583</p>
+              </div>
+              <svg class="w-8 h-8 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+              </svg>
+            </div>
+          </div>
+          <!-- More stat cards -->
         </div>
-        <div class="p-6 bg-white rounded-2xl shadow-sm hover:shadow-md transition">
-          <h2 class="text-xl font-semibold mb-2">Snake Flow</h2>
-          <p class="text-gray-600 text-sm">Automate workflows between your AI tools seamlessly.</p>
-        </div>
-        <div class="p-6 bg-white rounded-2xl shadow-sm hover:shadow-md transition">
-          <h2 class="text-xl font-semibold mb-2">Data Vision</h2>
-          <p class="text-gray-600 text-sm">Visualize and monitor datasets with interactive dashboards.</p>
+
+        <!-- AI Chat Interface -->
+        <div class="max-w-2xl mx-auto">
+          <div class="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
+            <div class="flex items-center mb-4">
+              <label class="font-medium mr-3">Model:</label>
+              <select id="ai-model" class="flex-1 max-w-xs border border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                <option>GPT-4 Turbo</option>
+                <option>Claude 3</option>
+                <option>Gemini Pro</option>
+                <option>Snake AI Pro</option>
+              </select>
+            </div>
+            
+            <div class="relative">
+              <input 
+                id="chat-input" 
+                type="text" 
+                placeholder="Ask AI anything... (Press Ctrl+Enter to send)" 
+                class="w-full pr-12 pl-4 py-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200"
+                autocomplete="off"
+              >
+              <button class="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 text-gray-400 hover:text-blue-500 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                </svg>
+              </button>
+            </div>
+            
+            <div id="chat-messages" class="mt-4 max-h-96 overflow-y-auto space-y-4">
+              <div class="text-center text-gray-500 py-8">
+                <div class="animate-pulse">🤖 AI ready to assist</div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
+    <!-- Features Grid -->
+    <section id="features" class="py-16 hidden">
+      <div class="max-w-6xl mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center mb-12">Core Features</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <!-- Feature cards with proper structure -->
+        </div>
+      </div>
+    </section>
   </main>
 
-  <!-- ⚙️ Mobile Navigation (Bottom Bar) -->
-  <div class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around py-2 z-40">
-    <button class="text-gray-600 flex flex-col items-center text-sm">
-      🏠 <span>Home</span>
-    </button>
-    <button class="text-gray-600 flex flex-col items-center text-sm">
-      🔍 <span>Discover</span>
-    </button>
-    <button class="text-gray-600 flex flex-col items-center text-sm">
-      📁 <span>Projects</span>
-    </button>
-    <button class="text-gray-600 flex flex-col items-center text-sm">
-      ⚙️ <span>Settings</span>
-    </button>
+  <!-- PWA Install Prompt -->
+  <div id="install-prompt" class="hidden fixed bottom-4 left-4 right-4 bg-gradient-to-r from-blue-500 to-emerald-500 text-white p-4 rounded-lg shadow-xl z-50">
+    <div class="flex items-center justify-between">
+      <div>
+        <h3 class="font-bold">Install SnakeEngine.ai</h3>
+        <p class="text-sm opacity-90">Add to home screen for offline access</p>
+      </div>
+      <div class="flex space-x-2">
+        <button onclick="installPWA()" class="bg-white text-blue-500 px-4 py-2 rounded font-medium">Install</button>
+        <button onclick="dismissInstallPrompt()" class="text-white">×</button>
+      </div>
+    </div>
   </div>
 
-  <!-- 🧠 JavaScript for Sidebar Toggle -->
+  <!-- Core Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script type="module" src="app.js"></script>
   <script>
-    const toggleButton = document.getElementById("menu-toggle");
-    const body = document.body;
-
-    toggleButton.addEventListener("click", () => {
-      body.classList.toggle("menu-open");
+    // Global error handler
+    window.addEventListener('error', (e) => {
+      console.error('Global error:', e.error);
+      document.getElementById('error-boundary').classList.remove('hidden');
     });
 
-    // Close sidebar on link click (mobile)
-    document.querySelectorAll(".menu-link").forEach(link => {
-      link.addEventListener("click", () => {
-        if (window.innerWidth < 768) body.classList.remove("menu-open");
-      });
+    // Offline detection
+    window.addEventListener('online', () => {
+      document.getElementById('offline-banner').classList.add('hidden');
     });
+    
+    window.addEventListener('offline', () => {
+      document.getElementById('offline-banner').classList.remove('hidden');
+    });
+
+    // PWA Install Handler
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      document.getElementById('install-prompt').classList.remove('hidden');
+    });
+
+    function installPWA() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(() => deferredPrompt = null);
+        document.getElementById('install-prompt').classList.add('hidden');
+      }
+    }
   </script>
 </body>
 </html>
