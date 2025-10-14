@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>SnakeEngine.ai - All Features with High-Quality Icons</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#10B981">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css"> <!-- Added: External CSS link -->
+</head>
+<body class="text-gray-800 antialiased">
+  <!-- Menu Button -->
+  <button id="menu-toggle" class="fixed top-4 left-4 z-50 bg-blue-500 text-white p-2 rounded-full neon-glow" onclick="toggleMenu()" aria-label="Toggle navigation menu">
+    <svg class="high-quality-icon stroke-current" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </button>
+  <!-- Sidebar -->
+  <nav id="sidebar" class="flex flex-col items-center w-32 bg-white py-10 border-r border-gray-200 space-y-6 sidebar transition-all duration-300">
+    <a id="nav-home" href="#" class="flex flex-col items-center py-4 rounded-lg w-28 menu-link active-menu" onclick="showSection('home', this)" aria-label="Navigate to Home">
+      <svg class="high-quality-icon stroke-current mb-1" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+        <polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+      <span class="text-sm font-semibold">Home</span>
+    </a>
+    <a id="nav-discover" href="#" class="flex flex-col items-center py-4 rounded-lg w-28 menu-link" onclick="showSection('discover', this)" aria-label="Navigate to Discover">
+      <svg class="high-quality-icon stroke-current mb-1" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <span class="text-sm font-semibold">Discover (100+)</span>
+    </a>
+    <a id="nav-spaces" href="#" class="flex flex-col items-center py-4 rounded-lg w-28 menu-link" onclick="showSection('spaces', this)" aria-label="Navigate to Spaces">
+      <svg class="high-quality-icon stroke-current mb-1" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <path d="M23 21v-2a4 4 0 00-3-3.87"/>
+        <path d="M16 3.13a4 4 0 010 7.75"/>
+      </svg>
+      <span class="text-sm font-semibold">Spaces (100+)</span>
+    </a>
+    <a id="nav-files" href="#" class="flex flex-col items-center py-4 rounded-lg w-28 menu-link" onclick="showSection('files', this)" aria-label="Navigate to Files/Projects">
+      <svg class="high-quality-icon stroke-current mb-1" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z"/>
+        <polyline points="14 2 14 8 20 8"/>
+      </svg>
+      <span class="text-sm font-semibold">Files / Projects</span>
+    </a>
+    <a id="nav-analytics" href="#" class="flex flex-col items-center py-4 rounded-lg w-28 menu-link" onclick="showSection('analytics', this)" aria-label="Navigate to Analytics">
+      <svg class="high-quality-icon stroke-current mb-1" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="4" y1="19" x2="20" y2="19"/>
+        <circle cx="4" cy="19" r="2"/>
+        <circle cx="12" cy="19" r="2"/>
+        <circle cx="20" cy="19" r="2"/>
+      </svg>
+      <span class="text-sm font-semibold">Analytics</span>
+    </a>
+    <a id="nav-templates" href="#" class="flex flex-col items-center py-4 rounded-lg w-28 menu-link" onclick="showSection('templates', this)" aria-label="Navigate to Templates">
+      <svg class="high-quality-icon stroke-current mb-1" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+        <line x1="9" y1="9" x2="15" y2="9"/>
+      </svg>
+      <span class="text-sm font-semibold">Templates / Presets</span>
+    </a>
+    <a id="nav-account" href="#" class="flex flex-col items-center py-4 rounded-lg w-28 menu-link" onclick="showSection('account', this)" aria-label="Navigate to Account">
+      <svg class="high-quality-icon stroke-current mb-1" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+        <circle cx="12" cy="7" r="4"/>
+      </svg>
+      <span class="text-sm font-semibold">Account</span>
+    </a>
+    <a id="nav-plans" href="#" class="flex flex-col items-center py-4 rounded-lg w-28 menu-link" onclick="showSection('plans', this)" aria-label="Navigate to Plans & Billing">
+      <svg class="high-quality-icon stroke-current mb-1" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+        <line x1="9" y1="12" x2="15" y2="12"/>
+      </svg>
+      <span class="text-sm font-semibold">Plans & Billing</span>
+    </a>
+    <a id="nav-notifications" href="#" class="flex flex-col items-center py-4 rounded-lg w-28 menu-link" onclick="showSection('notifications', this)" aria-label="Navigate to Notifications">
+      <svg class="high-quality-icon stroke-current mb-1" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+        <path d="M13.73 21a2 2 0 01-3.46 0"/>
+      </svg>
+      <span class="text-sm font-semibold">Notifications</span>
+    </a>
+    <a id="nav-settings" href="#" class="flex flex-col items-center py-4 rounded-lg w-28 menu-link" onclick="showSection('settings', this)" aria-label="Navigate to Settings">
+      <svg class="high-quality-icon stroke-current mb-1" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06-.06a1.65 1.65 0 00-.33 1.82 1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/>
+      </svg>
+      <span class="text-sm font-semibold">Settings</span>
+    </a>
+    <a id="nav-help" href="#" class="flex flex-col items-center py-4 rounded-lg w-28 menu-link" onclick="showSection('help', this)" aria-label="Navigate to Help/Support">
+      <svg class="high-quality-icon stroke-current mb-1" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/>
+        <line x1="12" y1="17" x2="12" y2="17"/>
+      </svg>
+      <span class="text-sm font-semibold">Help / Support</span>
+    </a>
+    <a id="nav-admin" href="#" class="flex flex-col items-center py-4 rounded-lg w-28 menu-link" onclick="showSection('admin', this)" style="display: none;" aria-label="Navigate to Admin">
+      <svg class="high-quality-icon stroke-current mb-1" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
+        <path d="M12 6v6l4 2"/>
+      </svg>
+      <span class="text-sm font-semibold">Admin</span>
+    </a>
+    <a id="nav-auth" href="#" class="flex flex-col items-center py-4 rounded-lg w-28 menu-link" onclick="toggleAuth()" aria-label="Login to account">
+      <svg class="high-quality-icon stroke-current mb-1" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+      </svg>
+      <span id="auth-text" class="text-sm font-semibold">Login</span>
+    </a>
+  </nav>
+  <!-- Main Content -->
+  <main id="main-content" class="flex-1 flex flex-col items-center p-4 md:p-8 overflow-y-auto transition-all duration-300">
+    <!-- HOME -->
+    <section id="section-home" class="section">
+      <div class="w-full max-w-2xl mx-auto text-center mb-10">
+        <!-- Your Logo -->
+        <img src="snakeengine-logo.png" alt="SnakeEngine.ai Logo" width="120" class="mx-auto mb-5" onerror="this.onerror=null; this.src='https://via.placeholder.com/120?text=SE+AI'; this.alt='SnakeEngine Logo';" />
+       
+        <h1 class="text-4xl font-bold mb-4"><span class="text-gray-900">snakeengine</span><span class="text-blue-500">.</span><span class="text-green-500">ai</span></h1>
+        <p class="text-lg mb-7 text-gray-600">
+          The #1 platform for AI chat, content creation, 8 Ball Pool analytics, and instant productivity tools. Now with 100+ dynamic community features!
+        </p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
+          <div class="bg-white rounded-xl shadow p-6 text-left">
+            <svg class="high-quality-icon stroke-current mb-2" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm1-13h-2v6h2v-6zm0 8h-2v2h2v-2z"/>
+            </svg>
+            <h2 class="font-bold text-lg mb-1">Advanced AI Chat</h2>
+            <p class="text-gray-600">Chat, brainstorm, and solve queries with multiple AI models.</p>
+          </div>
+          <div class="bg-white rounded-xl shadow p-6 text-left">
+            <svg class="high-quality-icon stroke-current mb-2" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm1-13h2v6h-2zm0 8h2v2h-2z"/>
+            </svg>
+            <h2 class="font-bold text-lg mb-1">8 Ball Tool Suite</h2>
+            <p class="text-gray-600">Improve skills, get analytics, and grow at Pool & Carrom with pro tools.</p>
+          </div>
+          <div class="bg-white rounded-xl shadow p-6 text-left">
+            <svg class="high-quality-icon stroke-current mb-2" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm1-13h-2v6h2v-6zm0 8h-2v2h2v-2z"/>
+            </svg>
+            <h2 class="font-bold text-lg mb-1">One-Click Productivity</h2>
+            <p class="text-gray-600">Summaries, code help, templates, and instant automations for your workflow.</p>
+          </div>
+          <div class="bg-white rounded-xl shadow p-6 text-left">
+            <svg class="high-quality-icon stroke-current mb-2" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm1-13h-2v6h2v-6zm0 8h-2v2h-2v-2z"/>
+            </svg>
+            <h2 class="font-bold text-lg mb-1">Flexible Plans</h2>
+            <p class="text-gray-600">Start free. Upgrade any time for more speed, priority, and advanced tool access.</p>
+          </div>
+        </div>
+        <div class="w-full max-w-xl mx-auto flex flex-col items-center">
+          <div class="w-full flex mb-3 justify-center items-center">
+            <label class="mr-2 font-medium">Model:</label>
+            <select id="model-select" class="border rounded p-1 flex-1 max-w-xs text-sm" aria-label="Select AI model">
+              <option value="gpt-3.5-turbo" selected>GPT-3.5 Turbo</option>
+              <option value="gpt-4">GPT-4</option>
+              <option value="perplexity">Perplexity</option>
+              <option value="gemini">Gemini</option>
+              <option value="snake-ai">Snake AI (Fun, Fast)</option>
+            </select>
+          </div>
+          <div class="relative flex items-center bg-white rounded-full p-2 border border-gray-200 neon-glow w-full max-w-xl mb-2">
+            <svg class="high-quality-icon stroke-current ml-3" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input id="chat-input" type="text" placeholder="Chat with AI..." class="flex-grow bg-transparent border-none focus:ring-2 focus:ring-blue-500 text-lg ml-3 placeholder-gray-400 outline-none" aria-label="Chat input field">
+            <!-- Added: Voice input button -->
+            <button id="voice-input" class="ml-2 p-2 rounded-full bg-blue-100 hover:bg-blue-200" aria-label="Voice input">
+              <svg class="high-quality-icon stroke-current" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 1v10M12 1v22M5 8v8M19 8v8M7 11h10"/>
+              </svg>
+            </button>
+          </div>
+          <div id="chat-output" class="w-full max-w-xl mx-auto mt-2 text-left max-h-96 overflow-y-auto min-h-120 bg-white rounded-lg p-4 border border-gray-200">
+            <p class="text-gray-500 text-center py-4">Start a conversation with AI...</p>
+          </div>
+          <!-- Added: Typing indicator -->
+          <div id="typing-indicator" class="hidden mt-2 text-gray-500 text-sm italic text-center">AI is typing...</div>
+          <!-- Added: Suggestions -->
+          <div id="suggestions" class="flex flex-wrap gap-2 mt-2 hidden"></div>
+          <div class="flex space-x-2 mt-4">
+            <button onclick="saveHistory()" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:ring-2 focus:ring-blue-500 transition" role="button" aria-label="Save current chat history">Save Chat</button>
+            <button onclick="loadHistory()" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 focus:ring-2 focus:ring-gray-500 transition" role="button" aria-label="Load the last saved chat history">Load Last Chat</button>
+            <!-- Added: Clear Chat -->
+            <button onclick="clearChat()" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 focus:ring-2 focus:ring-red-500 transition" role="button" aria-label="Clear chat history">Clear Chat</button>
+            <!-- Added: Image Upload -->
+            <input type="file" id="image-upload" accept="image/*" class="hidden" onchange="handleImageUpload(event)" aria-label="Upload image for AI analysis">
+            <button onclick="document.getElementById('image-upload').click()" class="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 focus:ring-2 focus:ring-purple-500 transition" role="button" aria-label="Upload image">Upload Image</button>
+          </div>
+        </div>
+      </div>
+    </section>
+   
+    <!-- DISCOVER -->
+    <section id="section-discover" class="section hidden">
+      <h2 class="text-3xl font-bold mb-2">Discover: Trending AI Tools (100+ Features)</h2>
+      <p class="mb-6 text-lg">Explore & try popular features today! Dynamically generated with 100+ unique tools.</p>
+      <div id="discover-container" class="flex flex-wrap gap-6 w-full justify-center">
+        <div class="text-center py-4">
+          <p>Loading 100+ tools...</p>
+        </div>
+      </div>
+    </section>
+   
+    <!-- SPACES -->
+    <section id="section-spaces" class="section hidden">
+      <h2 class="text-3xl font-bold mb-4 flex items-center justify-center">
+        <svg class="high-quality-icon stroke-current mr-2" viewBox="0 0 24 22" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 00-3-3.87"/>
+          <path d="M16 3.13a4 4 0 010 7.75"/>
+        </svg>
+        Spaces & Community (100+ Features)
+      </h2>
+      <p class="mb-4 text-lg text-center">Collaborate, share, grow! Join thriving AI and gaming spaces or start your own! Dynamically generated with 100+ unique features.</p>
+      <div id="spaces-container" class="flex flex-wrap gap-6 w-full justify-center">
+        <div class="text-center py-4">
+          <p>Loading 100+ spaces...</p>
+        </div>
+      </div>
+      <div class="text-center mt-6">
+        <button onclick="createNewSpace()" class="bg-gray-700 hover:bg-gray-800 text-white rounded px-4 py-2 text-sm focus:ring-2 focus:ring-gray-500 transition" role="button" aria-label="Create a new space">+ Create Your Space</button>
+      </div>
+    </section>
+   
+    <!-- FILES / PROJECTS -->
+    <section id="section-files" class="section hidden">
+      <h2 class="text-3xl font-bold mb-4 flex items-center justify-center">
+        <svg class="high-quality-icon stroke-current mr-2" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z"/>
+          <polyline points="14 2 14 8 20 8"/>
+        </svg>
+        Files / Projects
+      </h2>
+      <p class="mb-6 text-lg text-center">Manage your files and projects with ease.</p>
+      <div class="max-w-2xl mx-auto text-center w-full">
+        <div class="mb-4">
+          <input id="file-name" type="text" placeholder="Enter file name" class="border rounded p-2 w-full mb-2 focus:ring-2 focus:ring-blue-500" aria-label="Enter file name">
+          <button onclick="createFile()" class="bg-blue-500 hover:bg-blue-600 text-white rounded px-4 py-2 focus:ring-2 focus:ring-blue-500 transition" role="button" aria-label="Create a new file">Create File</button>
+        </div>
+        <div class="mb-4">
+          <input id="project-name" type="text" placeholder="Enter project name" class="border rounded p-2 w-full mb-2 focus:ring-2 focus:ring-green-500" aria-label="Enter project name">
+          <button onclick="createProject()" class="bg-green-500 hover:bg-green-600 text-white rounded px-4 py-2 focus:ring-2 focus:ring-green-500 transition" role="button" aria-label="Create a new project">Create Project</button>
+        </div>
+        <div id="files-projects-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full justify-center">
+          <p class="py-4 col-span-full">Loading files and projects...</p>
+        </div>
+      </div>
+    </section>
+   
+    <!-- ANALYTICS -->
+    <section id="section-analytics" class="section hidden">
+      <h2 class="text-3xl font-bold mb-4 flex items-center justify-center">
+        <svg class="high-quality-icon stroke-current mr-2" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="4" y1="19" x2="20" y2="19"/>
+          <circle cx="4" cy="19" r="2"/>
+          <circle cx="12" cy="19" r="2"/>
+          <circle cx="20" cy="19" r="2"/>
+        </svg>
+        Analytics
+      </h2>
+      <p class="mb-6 text-lg text-center">Explore detailed insights and trends</p>
+      <div class="max-w-2xl mx-auto text-center w-full">
+        <!-- Progress Indicator - Now Fully Complete -->
+        <div class="mb-6">
+          <p class="text-lg font-semibold">100% Complete</p>
+          <div class="w-full bg-gray-200 rounded-full h-4">
+            <div class="bg-green-500 h-4 rounded-full" style="width: 100%"></div>
+          </div>
+          <p class="text-sm text-green-600 mt-2">Analytics Dashboard Fully Active - Dive into your data!</p>
+        </div>
+        <!-- Chart -->
+        <div id="analytics-chart" class="w-full h-64 bg-white rounded-lg shadow p-4">
+          <p class="text-center py-4">Loading analytics chart...</p>
+        </div>
+      </div>
+    </section>
+   
+    <!-- TEMPLATES / PRESETS -->
+    <section id="section-templates" class="section hidden">
+      <h2 class="text-3xl font-bold mb-4 flex items-center justify-center">
+        <svg class="high-quality-icon stroke-current mr-2" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+          <line x1="9" y1="9" x2="15" y2="9"/>
+        </svg>
+        Templates / Presets (50+ Features)
+      </h2>
+      <p class="mb-6 text-lg text-center">Access pre-built templates and presets for quick starts. Dynamically generated with 50+ unique options.</p>
+      <div id="templates-container" class="flex flex-wrap gap-6 w-full justify-center">
+        <div class="text-center py-4">
+          <p>Loading 50+ templates...</p>
+        </div>
+      </div>
+      <div class="text-center mt-6">
+        <button onclick="createNewTemplate()" class="bg-gray-700 hover:bg-gray-800 text-white rounded px-4 py-2 text-sm focus:ring-2 focus:ring-gray-500 transition" role="button" aria-label="Create a new template">+ Create Your Template</button>
+      </div>
+    </section>
+   
+    <!-- ACCOUNT -->
+    <section id="section-account" class="section hidden">
+      <h2 class="text-3xl font-bold mb-4 flex items-center justify-center">
+        <svg class="high-quality-icon stroke-current mr-2" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+        My Account
+      </h2>
+      <div class="max-w-md w-full mx-auto bg-white rounded-lg shadow border-t-4 border-emerald-400 p-6">
+        <div class="flex items-center space-x-5 mb-2">
+          <div class="bg-emerald-100 rounded-full w-14 h-14 flex items-center justify-center text-xl text-emerald-600 font-bold" id="user-initial">A</div>
+          <div>
+            <div class="font-medium" id="user-name">Ashwin Kumar</div>
+            <div class="text-sm text-gray-500" id="user-email">ashwin@example.com</div>
+          </div>
+        </div>
+        <div class="mb-2"><span class="text-sm text-gray-500 mr-1">Status:</span> <span class="text-green-600 font-bold">Verified ✅</span></div>
+        <div class="mb-4"><span class="text-sm text-gray-500 mr-1">Plan:</span> <span class="inline-block bg-green-100 text-green-700 px-3 py-1 rounded" id="user-plan">Pro</span></div>
+        <div class="space-y-2">
+          <button onclick="upgradePlan()" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded transition focus:ring-2 focus:ring-blue-500" role="button" aria-label="Upgrade your plan">Upgrade</button>
+          <button onclick="editProfile()" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded transition focus:ring-2 focus:ring-gray-500" role="button" aria-label="Edit your profile">Edit Profile</button>
+        </div>
+      </div>
+    </section>
+   
+    <!-- PLANS & BILLING -->
+    <section id="section-plans" class="section hidden">
+      <h2 class="text-3xl font-bold mb-4 text-center">Plans & Billing</h2>
+      <div id="plans-table" class="w-full max-w-6xl mx-auto"></div>
+    </section>
+   
+    <!-- NOTIFICATIONS -->
+    <section id="section-notifications" class="section hidden">
+      <div class="bg-blue-100 p-3 rounded mb-4 border border-blue-300 text-blue-800 max-w-2xl mx-auto">
+        🚀 <b>PRO TIP:</b> Explore the 100+ new spaces for enhanced collaboration!
+      </div>
+      <div class="max-w-lg w-full mx-auto bg-white rounded-lg shadow border-t-4 border-yellow-400 p-6">
+        <ul id="notification-list" class="divide-y">
+          <li class="py-2 text-gray-500">Loading notifications... <span class="text-xs text-gray-400">(Last updated: Just now)</span></li>
+        </ul>
+        <button onclick="loadNotifications()" class="mt-4 w-full bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 rounded focus:ring-2 focus:ring-gray-500 transition" role="button" aria-label="Refresh notifications">Refresh Notifications</button>
+      </div>
+    </section>
+   
+    <!-- SETTINGS -->
+    <section id="section-settings" class="section hidden">
+      <h2 class="text-3xl font-bold mb-4 flex items-center justify-center">
+        <svg class="high-quality-icon stroke-current mr-2" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06-.06a1.65 1.65 0 00-.33 1.82 1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/>
+        </svg>
+        Settings (20+ Options)
+      </h2>
+      <p class="mb-6 text-lg text-center">Customize your experience with personalized settings. Dynamically generated with 20+ unique options.</p>
+      <div id="settings-container" class="flex flex-wrap gap-6 w-full justify-center">
+        <div class="text-center py-4">
+          <p>Loading 20+ settings...</p>
+        </div>
+      </div>
+    </section>
+   
+    <!-- HELP / SUPPORT -->
+    <section id="section-help" class="section hidden">
+      <h2 class="text-3xl font-bold mb-4 flex items-center justify-center">
+        <svg class="high-quality-icon stroke-current mr-2" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/>
+          <line x1="12" y1="17" x2="12" y2="17"/>
+        </svg>
+        Help / Support
+      </h2>
+      <p class="mb-6 text-lg text-center">Get assistance with any issues. We're here to help!</p>
+      <div id="help-container" class="max-w-4xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- FAQ Section -->
+        <div class="bg-white rounded-lg shadow p-6 border-t-4 border-blue-500">
+          <h3 class="text-2xl font-bold mb-4 flex items-center">
+            <svg class="high-quality-icon stroke-current mr-2" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
+              <path d="M12 6v6l4 2"/>
+            </svg>
+            Frequently Asked Questions
+          </h3>
+          <div id="faq-list" class="space-y-4">
+            <div class="faq-item border border-gray-200 rounded-lg p-4">
+              <button onclick="toggleFAQ(this)" class="w-full text-left font-semibold text-gray-800 flex justify-between items-center">
+                How do I start a chat with AI?
+                <svg class="high-quality-icon stroke-current w-5 h-5" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+              <div class="faq-answer hidden mt-2 text-gray-600">
+                Simply type your message in the chat input on the home page and press Enter. Select a model from the dropdown for different AI personalities.
+              </div>
+            </div>
+            <div class="faq-item border border-gray-200 rounded-lg p-4">
+              <button onclick="toggleFAQ(this)" class="w-full text-left font-semibold text-gray-800 flex justify-between items-center">
+                What is 8 Ball Tool Suite?
+                <svg class="high-quality-icon stroke-current w-5 h-5" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+              <div class="faq-answer hidden mt-2 text-gray-600">
+                It's a set of analytics and training tools for 8 Ball Pool and Carrom. Use Discover to find pro strategies and skill builders.
+              </div>
+            </div>
+            <div class="faq-item border border-gray-200 rounded-lg p-4">
+              <button onclick="toggleFAQ(this)" class="w-full text-left font-semibold text-gray-800 flex justify-between items-center">
+                How can I upgrade my plan?
+                <svg class="high-quality-icon stroke-current w-5 h-5" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+              <div class="faq-answer hidden mt-2 text-gray-600">
+                Go to Plans & Billing in the sidebar. Choose Pro or Enterprise and follow the payment steps. Free trial available!
+              </div>
+            </div>
+            <div class="faq-item border border-gray-200 rounded-lg p-4">
+              <button onclick="toggleFAQ(this)" class="w-full text-left font-semibold text-gray-800 flex justify-between items-center">
+                Why is my chat not responding?
+                <svg class="high-quality-icon stroke-current w-5 h-5" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+              <div class="faq-answer hidden mt-2 text-gray-600">
+                Check your internet connection or try switching models. For offline mode, local replies are generated. Contact support for API issues.
+              </div>
+            </div>
+          </div>
+          <button onclick="loadMoreFAQ()" class="mt-4 w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded focus:ring-2 focus:ring-blue-500 transition" role="button" aria-label="Load more FAQs">Load More FAQs</button>
+        </div>
+
+        <!-- Support Options -->
+        <div class="bg-white rounded-lg shadow p-6 border-t-4 border-green-500">
+          <h3 class="text-2xl font-bold mb-4 flex items-center">
+            <svg class="high-quality-icon stroke-current mr-2" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 01-3.46 0"/>
+            </svg>
+            Get Support
+          </h3>
+          <div class="space-y-4">
+            <div class="support-card p-4 bg-gray-50 rounded-lg">
+              <h4 class="font-semibold mb-2">Live Chat Support</h4>
+              <p class="text-sm text-gray-600 mb-3">Chat with our team instantly.</p>
+              <button onclick="startSupportChat()" class="w-full bg-green-500 hover:bg-green-600 text-white py-2 rounded focus:ring-2 focus:ring-green-500 transition" role="button" aria-label="Start live chat">Start Chat</button>
+            </div>
+            <div class="support-card p-4 bg-gray-50 rounded-lg">
+              <h4 class="font-semibold mb-2">Submit a Ticket</h4>
+              <p class="text-sm text-gray-600 mb-3">For detailed issues, create a ticket.</p>
+              <button onclick="openTicketForm()" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded focus:ring-2 focus:ring-blue-500 transition" role="button" aria-label="Open ticket form">New Ticket</button>
+            </div>
+            <div class="support-card p-4 bg-gray-50 rounded-lg">
+              <h4 class="font-semibold mb-2">Documentation</h4>
+              <p class="text-sm text-gray-600 mb-3">Browse guides and tutorials.</p>
+              <a href="#" onclick="openDocs()" class="w-full block text-center bg-purple-500 hover:bg-purple-600 text-white py-2 rounded focus:ring-2 focus:ring-purple-500 transition" role="button" aria-label="Open documentation">View Docs</a>
+            </div>
+          </div>
+          <div id="ticket-form" class="hidden mt-4 p-4 bg-white border rounded-lg">
+            <h4 class="font-semibold mb-2">Create Support Ticket</h4>
+            <input type="text" id="ticket-subject" placeholder="Subject" class="w-full border rounded p-2 mb-2 focus:ring-2 focus:ring-blue-500" aria-label="Ticket subject">
+            <textarea id="ticket-message" placeholder="Describe your issue..." class="w-full border rounded p-2 mb-2 focus:ring-2 focus:ring-blue-500" rows="4" aria-label="Ticket message"></textarea>
+            <div class="flex space-x-2">
+              <button onclick="submitTicket()" class="flex-1 bg-green-500 hover:bg-green-600 text-white py-2 rounded focus:ring-2 focus:ring-green-500 transition" role="button" aria-label="Submit ticket">Submit</button>
+              <button onclick="closeTicketForm()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded focus:ring-2 focus:ring-gray-500 transition" role="button" aria-label="Cancel ticket">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="text-center mt-8">
+        <p class="text-gray-500">Need urgent help? Email us at <a href="mailto:snakeengineofficial@gmail.com" class="text-blue-500 hover:underline">snakeengineofficial@gmail.com</a></p>
+      </div>
+    </section>
+   
+    <!-- ADMIN -->
+    <section id="section-admin" class="section hidden">
+      <h2 class="text-3xl font-bold mb-4 flex items-center justify-center">
+        <svg class="high-quality-icon stroke-current mr-2" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
+          <path d="M12 6v6l4 2"/>
+        </svg>
+        Admin
+      </h2>
+      <p class="mb-6 text-lg text-center">Manage platform settings and users.</p>
+      <div class="max-w-2xl mx-auto text-center w-full">
+        <p class="py-4">Admin features are restricted. Contact support for access.</p>
+      </div>
+    </section>
+
+    <!-- NEW FEATURE: 8 Ball Pool Simulator -->
+    <section id="section-8ball" class="section hidden">
+      <h2 class="text-3xl font-bold mb-4 flex items-center justify-center">
+        <svg class="high-quality-icon stroke-current mr-2" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+        </svg>
+        8 Ball Pool Simulator
+      </h2>
+      <p class="mb-6 text-lg text-center">Practice your shots with our interactive simulator. Analyze trajectories and improve your game!</p>
+      <div class="max-w-4xl mx-auto">
+        <canvas id="pool-canvas" class="w-full h-96 bg-green-800 rounded-lg shadow-lg mx-auto block"></canvas>
+        <div class="flex justify-center space-x-4 mt-4 flex-wrap">
+          <button onclick="simulateShot()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded m-1">Simulate Shot</button>
+          <button onclick="resetTable()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded m-1">Reset Table</button>
+          <select id="difficulty-select" class="border rounded p-2 m-1">
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+          </select>
+        </div>
+        <div id="shot-analysis" class="mt-4 bg-white rounded-lg p-4 shadow">
+          <h3 class="font-bold mb-2">Shot Analysis</h3>
+          <p id="analysis-text">Ready to play! Aim your shot.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+  <!-- LOGIN MODAL -->
+  <div id="login-modal" class="fixed z-40 inset-0 hidden flex items-center justify-center bg-black bg-opacity-40">
+    <div class="bg-white rounded-lg shadow-xl p-8 max-w-md w-full mx-4">
+      <h2 class="text-xl font-bold mb-4 text-center">Login</h2>
+      <input type="text" id="login-email" placeholder="Email" class="border rounded px-3 py-2 w-full mb-3 focus:ring-2 focus:ring-blue-500" aria-label="Email input">
+      <input type="password" id="login-password" placeholder="Password" class="border rounded px-3 py-2 w-full mb-3 focus:ring-2 focus:ring-blue-500" aria-label="Password input">
+      <button onclick="login()" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded mb-2 focus:ring-2 focus:ring-blue-500 transition" role="button" aria-label="Login button">Login</button>
+      <div class="text-center my-4 relative">
+        <span class="bg-white px-2 text-gray-500 absolute left-1/2 transform -translate-x-1/2">or</span>
+        <hr class="border-gray-300 w-full">
+      </div>
+      <button onclick="loginWithGoogle()" class="w-full bg-white border border-gray-300 text-gray-700 py-2 rounded mb-2 focus:ring-2 focus:ring-blue-500 transition flex items-center justify-center" role="button" aria-label="Login with Google">
+        <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Login with Google
+      </button>
+      <button onclick="loginWithFacebook()" class="w-full bg-blue-800 text-white py-2 rounded focus:ring-2 focus:ring-blue-500 transition flex items-center justify-center" role="button" aria-label="Login with Facebook">
+        <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        Login with Facebook
+      </button>
+      <button onclick="closeLoginModal()" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 rounded focus:ring-2 focus:ring-gray-500 transition mt-2" role="button" aria-label="Cancel login">Cancel</button>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
