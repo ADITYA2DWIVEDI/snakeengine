@@ -100,6 +100,63 @@
     * {
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
+    /* New: Real-Time Clock Styling */
+    #real-time-clock {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #1f2937;
+      margin-top: 1rem;
+      text-align: center;
+    }
+    .dark #real-time-clock {
+      color: #f9fafb;
+    }
+    /* New: Theme Selector Styling */
+    .theme-selector {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .theme-option {
+      padding: 0.5rem 1rem;
+      border: 1px solid #d1d5db;
+      border-radius: 0.375rem;
+      cursor: pointer;
+      background-color: #ffffff;
+    }
+    .theme-option:hover {
+      background-color: #f3f4f6;
+    }
+    .dark .theme-option {
+      background-color: #374151;
+      border-color: #4b5563;
+    }
+    .dark .theme-option:hover {
+      background-color: #4b5563;
+    }
+    /* Enhanced: Unlimited Features Grid */
+    .unlimited-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .feature-card {
+      background: white;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+    .feature-card:hover {
+      transform: translateY(-2px);
+    }
+    @media (max-width: 640px) {
+      .unlimited-grid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body class="text-gray-800 antialiased">
@@ -138,7 +195,7 @@
         <circle cx="11" cy="11" r="8"/>
         <line x1="21" y1="21" x2="16.65" y2="16.65"/>
       </svg>
-      <span class="text-sm font-semibold">Discover (100+)</span>
+      <span class="text-sm font-semibold">Discover (200+)</span>
     </a>
     <a id="nav-spaces" href="#" class="flex flex-col items-center py-4 rounded-lg w-28 menu-link" onclick="showSection('spaces', this)" aria-label="Navigate to Spaces">
       <svg class="high-quality-icon stroke-current mb-1" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -147,7 +204,7 @@
         <path d="M23 21v-2a4 4 0 00-3-3.87"/>
         <path d="M16 3.13a4 4 0 010 7.75"/>
       </svg>
-      <span class="text-sm font-semibold">Spaces (100+)</span>
+      <span class="text-sm font-semibold">Spaces (200+)</span>
     </a>
     <a id="nav-files" href="#" class="flex flex-col items-center py-4 rounded-lg w-28 menu-link" onclick="showSection('files', this)" aria-label="Navigate to Files/Projects">
       <svg class="high-quality-icon stroke-current mb-1" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -198,7 +255,7 @@
     <a id="nav-settings" href="#" class="flex flex-col items-center py-4 rounded-lg w-28 menu-link" onclick="showSection('settings', this)" aria-label="Navigate to Settings">
       <svg class="high-quality-icon stroke-current mb-1" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="12" cy="12" r="3"/>
-        <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/>
+        <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06-.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/>
       </svg>
       <span class="text-sm font-semibold">Settings</span>
     </a>
@@ -239,12 +296,29 @@
         Welcome to SnakeEngine.ai
       </h2>
       <img id="logo" src="snakeengine-logo.png" alt="SnakeEngine Logo">
-      <p class="mb-6 text-lg text-center">Your all-in-one AI platform for chat, analytics, and productivity.</p>
+      <p class="mb-6 text-lg text-center">Your all-in-one AI platform for chat, analytics, and productivity. Updated October 15, 2025 with unlimited features for seamless experience across all devices.</p>
       <div class="max-w-2xl mx-auto text-center w-full">
-        <p class="py-4">Start by exploring our features or log in to personalize your experience.</p>
+        <p class="py-4">Start by exploring our unlimited features or log in to personalize your experience.</p>
         <div class="flex justify-center space-x-4">
           <button onclick="showSection('discover', document.getElementById('nav-discover'))" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded focus:ring-2 focus:ring-blue-500 transition" role="button" aria-label="Explore Discover section">Explore Now</button>
           <button onclick="toggleLoginModal()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded focus:ring-2 focus:ring-gray-500 transition" role="button" aria-label="Login to personalize">Login</button>
+        </div>
+        <!-- New: Real-Time Clock -->
+        <div id="real-time-clock"></div>
+        <!-- Enhanced: Unlimited Features Preview -->
+        <div class="unlimited-grid mt-8">
+          <div class="feature-card">
+            <h3 class="font-bold">Unlimited AI Tools</h3>
+            <p>200+ dynamic tools for every need.</p>
+          </div>
+          <div class="feature-card">
+            <h3 class="font-bold">Cross-Device Sync</h3>
+            <p>Seamless on PC, laptop, tablet, mobile (Android/iOS).</p>
+          </div>
+          <div class="feature-card">
+            <h3 class="font-bold">Pro Analytics</h3>
+            <p>Real-time insights with interactive charts.</p>
+          </div>
         </div>
       </div>
     </section>
@@ -256,9 +330,9 @@
           <circle cx="11" cy="11" r="8"/>
           <line x1="21" y1="21" x2="16.65" y2="16.65"/>
         </svg>
-        Discover Tools (100+)
+        Discover Tools (200+)
       </h2>
-      <p class="mb-6 text-lg text-center">Explore our vast library of AI-powered tools.</p>
+      <p class="mb-6 text-lg text-center">Explore our vast, unlimited library of AI-powered tools, optimized for all devices.</p>
       <div id="discover-container" class="max-w-2xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
         <!-- Tools will be loaded dynamically -->
       </div>
@@ -273,9 +347,9 @@
           <path d="M23 21v-2a4 4 0 00-3-3.87"/>
           <path d="M16 3.13a4 4 0 010 7.75"/>
         </svg>
-        Spaces (100+)
+        Spaces (200+)
       </h2>
-      <p class="mb-6 text-lg text-center">Collaborate and create in dedicated spaces.</p>
+      <p class="mb-6 text-lg text-center">Collaborate and create in dedicated spaces, fully responsive.</p>
       <div id="spaces-container" class="max-w-2xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
         <!-- Spaces will be loaded dynamically -->
       </div>
@@ -290,7 +364,15 @@
         </svg>
         Files / Projects
       </h2>
-      <p class="mb-6 text-lg text-center">Manage your files and projects efficiently.</p>
+      <p class="mb-6 text-lg text-center">Manage your files and projects efficiently across devices.</p>
+      <div class="max-w-2xl mx-auto mb-4">
+        <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 justify-center">
+          <input type="text" id="file-name" placeholder="New file name" class="p-2 border rounded flex-1" aria-label="New file name">
+          <button onclick="createFile()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded focus:ring-2 focus:ring-green-500 transition" role="button" aria-label="Create file">Create File</button>
+          <input type="text" id="project-name" placeholder="New project name" class="p-2 border rounded flex-1" aria-label="New project name">
+          <button onclick="createProject()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded focus:ring-2 focus:ring-green-500 transition" role="button" aria-label="Create project">Create Project</button>
+        </div>
+      </div>
       <div id="files-projects-container" class="max-w-2xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
         <!-- Files will be loaded dynamically -->
       </div>
@@ -307,7 +389,7 @@
         </svg>
         Analytics
       </h2>
-      <p class="mb-6 text-lg text-center">Track your performance with detailed analytics.</p>
+      <p class="mb-6 text-lg text-center">Track your performance with detailed, interactive analytics. Updated data as of October 15, 2025.</p>
       <div class="max-w-4xl mx-auto">
         <canvas id="analytics-chart" class="w-full h-96 bg-white rounded-lg shadow-lg mx-auto block"></canvas>
       </div>
@@ -323,7 +405,7 @@
         </svg>
         Templates
       </h2>
-      <p class="mb-6 text-lg text-center">Access pre-built templates for various tasks.</p>
+      <p class="mb-6 text-lg text-center">Access unlimited pre-built templates for various tasks, device-optimized.</p>
       <div id="templates-container" class="max-w-2xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
         <!-- Templates will be loaded dynamically -->
       </div>
@@ -338,7 +420,7 @@
         </svg>
         Account
       </h2>
-      <p class="mb-6 text-lg text-center">Manage your account details.</p>
+      <p class="mb-6 text-lg text-center">Manage your account details with full device sync.</p>
       <div class="max-w-2xl mx-auto text-center w-full">
         <div class="bg-gray-100 p-6 rounded-lg shadow-md">
           <div class="flex items-center justify-center mb-4">
@@ -348,6 +430,7 @@
           <p class="mb-2"><strong>Email:</strong> <span id="user-email">guest@example.com</span></p>
           <p class="mb-4"><strong>Plan:</strong> <span id="user-plan">Basic</span></p>
           <button onclick="editProfile()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded focus:ring-2 focus:ring-blue-500 transition" role="button" aria-label="Edit profile">Edit Profile</button>
+          <button onclick="upgradePlan()" class="ml-2 bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded focus:ring-2 focus:ring-purple-500 transition" role="button" aria-label="Upgrade plan">Upgrade Plan</button>
         </div>
       </div>
     </section>
@@ -362,18 +445,9 @@
         </svg>
         Plans
       </h2>
-      <p class="mb-6 text-lg text-center">Choose a plan that suits your needs.</p>
-      <div class="max-w-2xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-        <div class="bg-gray-100 p-6 rounded-lg shadow-md">
-          <h3 class="text-xl font-semibold mb-2">Basic</h3>
-          <p class="mb-4">Free plan with limited features.</p>
-          <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded focus:ring-2 focus:ring-blue-500 transition" role="button" aria-label="Select Basic plan">Select</button>
-        </div>
-        <div class="bg-gray-100 p-6 rounded-lg shadow-md">
-          <h3 class="text-xl font-semibold mb-2">Pro</h3>
-          <p class="mb-4">Premium plan with advanced features.</p>
-          <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded focus:ring-2 focus:ring-blue-500 transition" role="button" aria-label="Select Pro plan">Select</button>
-        </div>
+      <p class="mb-6 text-lg text-center">Choose an unlimited plan that suits your needs, with full cross-device support.</p>
+      <div id="plans-table" class="max-w-2xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+        <!-- Plans will be loaded dynamically -->
       </div>
     </section>
 
@@ -386,9 +460,11 @@
         </svg>
         Notifications
       </h2>
-      <p class="mb-6 text-lg text-center">Stay updated with your latest notifications.</p>
+      <p class="mb-6 text-lg text-center">Stay updated with your latest notifications, synced across devices.</p>
       <div id="notifications-container" class="max-w-2xl mx-auto w-full">
-        <!-- Notifications will be loaded dynamically -->
+        <ul id="notification-list" class="space-y-2">
+          <!-- Notifications will be loaded dynamically -->
+        </ul>
         <audio id="notification-sound" src="https://www.soundjay.com/buttons/beep-01a.mp3" preload="auto"></audio>
       </div>
     </section>
@@ -398,11 +474,11 @@
       <h2 class="text-3xl font-bold mb-4 flex items-center justify-center">
         <svg class="high-quality-icon stroke-current mr-2" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="3"/>
-          <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/>
+          <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06-.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/>
         </svg>
         Settings
       </h2>
-      <p class="mb-6 text-lg text-center">Customize your SnakeEngine.ai experience.</p>
+      <p class="mb-6 text-lg text-center">Customize your SnakeEngine.ai experience for optimal performance on all devices.</p>
       <div class="max-w-2xl mx-auto text-center w-full">
         <div class="bg-gray-100 p-6 rounded-lg shadow-md">
           <!-- New: Theme Selector -->
@@ -415,7 +491,12 @@
             </div>
           </div>
           <button onclick="clearChat()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded focus:ring-2 focus:ring-red-500 transition" role="button" aria-label="Clear chat">Clear Chat</button>
+          <!-- New: Dark Mode Toggle Button -->
+          <button onclick="toggleDarkMode()" class="mt-4 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded focus:ring-2 focus:ring-blue-500 transition" role="button" aria-label="Toggle dark mode">Toggle Dark Mode</button>
         </div>
+      </div>
+      <div id="settings-container" class="max-w-2xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full mt-8">
+        <!-- Settings will be loaded dynamically -->
       </div>
     </section>
 
@@ -429,7 +510,7 @@
         </svg>
         Help
       </h2>
-      <p class="mb-6 text-lg text-center">Get support and find answers to your questions.</p>
+      <p class="mb-6 text-lg text-center">Get support and find answers to your questions, accessible on any device.</p>
       <div class="max-w-2xl mx-auto">
         <div id="faq-container" class="space-y-4">
           <div class="faq-item bg-gray-100 p-4 rounded-lg shadow-md">
@@ -452,6 +533,7 @@
         </div>
         <div id="ticket-form" class="hidden mt-4 bg-white p-6 rounded-lg shadow-md">
           <h3 class="text-lg font-semibold mb-2">Submit a Support Ticket</h3>
+          <input type="text" id="ticket-subject" class="w-full p-2 border rounded mb-2" placeholder="Subject" aria-label="Ticket subject">
           <textarea id="ticket-message" class="w-full h-24 p-2 border rounded mb-2" placeholder="Describe your issue..." aria-label="Ticket message"></textarea>
           <div class="flex space-x-2">
             <button onclick="submitTicket()" class="flex-1 bg-green-500 hover:bg-green-600 text-white py-2 rounded focus:ring-2 focus:ring-green-500 transition" role="button" aria-label="Submit ticket">Submit</button>
@@ -484,13 +566,13 @@
         </svg>
         8 Ball Pool Simulator
       </h2>
-      <p class="mb-6 text-lg text-center">Practice your shots with our interactive simulator. Analyze trajectories and improve your game!</p>
+      <p class="mb-6 text-lg text-center">Practice your shots with our interactive simulator. Fully responsive for tablets and mobiles!</p>
       <div class="max-w-4xl mx-auto">
         <canvas id="pool-canvas" class="w-full h-96 bg-green-800 rounded-lg shadow-lg mx-auto block"></canvas>
-        <div class="flex justify-center space-x-4 mt-4 flex-wrap">
-          <button onclick="simulateShot()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded m-1">Simulate Shot</button>
-          <button onclick="resetTable()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded m-1">Reset Table</button>
-          <select id="difficulty-select" class="border rounded p-2 m-1">
+        <div class="flex flex-col sm:flex-row justify-center space-y-2 sm:space-y-0 sm:space-x-4 mt-4">
+          <button onclick="simulateShot()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded" aria-label="Simulate shot">Simulate Shot</button>
+          <button onclick="resetTable()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded" aria-label="Reset table">Reset Table</button>
+          <select id="difficulty-select" class="border rounded p-2" aria-label="Select difficulty">
             <option value="easy">Easy</option>
             <option value="medium">Medium</option>
             <option value="hard">Hard</option>
@@ -511,13 +593,18 @@
         </svg>
         Chat with AI
       </h2>
-      <p class="mb-6 text-lg text-center">Interact with our AI assistant.</p>
+      <p class="mb-6 text-lg text-center">Interact with our AI assistant, enhanced for voice and image on all devices.</p>
       <div class="max-w-2xl mx-auto">
         <div id="chat-output" class="bg-gray-100 p-4 rounded-lg mb-4 overflow-y-auto max-h-96" role="log" aria-live="polite">
           <p class="text-gray-500 text-center py-4">Start a conversation with AI...</p>
         </div>
-        <div class="flex space-x-2">
+        <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
           <input type="text" id="chat-input" class="flex-1 p-2 border rounded focus:ring-2 focus:ring-blue-500" placeholder="Type your message..." aria-label="Chat input">
+          <!-- New: Model Selector -->
+          <select id="model-select" class="border rounded p-2" aria-label="Select AI model">
+            <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+            <option value="grok">Grok</option>
+          </select>
           <button id="voice-input" class="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded focus:ring-2 focus:ring-blue-500 transition" onclick="toggleVoiceInput()" aria-label="Voice input">
             <svg class="high-quality-icon stroke-current" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/>
@@ -589,12 +676,34 @@
     function toggleDarkMode() {
       document.body.classList.toggle('dark');
       localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+      updateClockTheme(); // Update clock color based on theme
     }
 
     // Load Theme
     if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
       document.body.classList.add('dark');
     }
+
+    // New: Real-Time Clock Function
+    function updateClock() {
+      const now = new Date();
+      const options = { timeZone: 'Asia/Kolkata', hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit', day: '2-digit', month: 'long', year: 'numeric' };
+      const timeString = now.toLocaleString('en-IN', options).replace(/(\d+)\/(\d+)\/(\d+)/, '$2 $1 $3');
+      document.getElementById('real-time-clock').textContent = `Current Time: ${timeString} IST`;
+    }
+    setInterval(updateClock, 1000); // Update every second
+    updateClock(); // Initial call
+
+    // New: Update Clock Theme
+    function updateClockTheme() {
+      const clock = document.getElementById('real-time-clock');
+      if (document.body.classList.contains('dark')) {
+        clock.style.color = '#f9fafb';
+      } else {
+        clock.style.color = '#1f2937';
+      }
+    }
+    updateClockTheme();
 
     // Hide Loading Overlay
     window.addEventListener('load', () => {
