@@ -10,6 +10,7 @@ export interface Conversation {
     title: string;
     messages: ChatMessage[];
     persona?: string;
+    model?: string;
 }
 
 export interface User {
