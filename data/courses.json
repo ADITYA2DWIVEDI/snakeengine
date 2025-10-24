@@ -15,7 +15,7 @@
       "title": "JS DOM & Events",
       "type": "paid",
       "price": 199,
-      "youtube_url": "https://www.youtube.com/watch?v=YYYYYYYYYYY",
+      "youtube_url": "https://www.youtube.com/watch?v=5fb2aPlgoys",
       "description": "DOM manipulation, events, and practical examples.",
       "duration": "3h",
       "tags": ["javascript", "dom"]
@@ -25,7 +25,7 @@
       "title": "React Crash Course",
       "type": "paid",
       "price": 399,
-      "youtube_url": "https://www.youtube.com/watch?v=ZZZZZZZZZZZ",
+      "youtube_url": "https://www.youtube.com/watch?v=sBws8MSXN7A",
       "description": "Start building SPAs with React and hooks.",
       "duration": "4h 30m",
       "tags": ["react", "frontend"]
@@ -695,7 +695,7 @@
       "title": "Hak5 - Cybersecurity Basics",
       "type": "free",
       "price": 0,
-      "youtube_url": "https://youtu.be/3FNYvj2U0HM",
+      "youtube_url": "https://www.youtube.com/watch?v=inWWhr5tnEA",
       "description": "Introduction to cybersecurity.",
       "duration": "2h",
       "tags": ["cybersecurity", "beginner", "hacking"]
@@ -705,7 +705,7 @@
       "title": "John Hammond - Hacking Walkthroughs",
       "type": "free",
       "price": 0,
-      "youtube_url": "https://youtu.be/3FNYvj2U0HM",
+      "youtube_url": "https://www.youtube.com/watch?v=r_s-i-B1T-A",
       "description": "Hacking machine walkthroughs.",
       "duration": "1h",
       "tags": ["ethical hacking", "ctf", "intermediate"]

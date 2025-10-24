@@ -1,3 +1,4 @@
+/// <reference types="react" />
 import React, { useState } from 'react';
 import { generatePresentationOutline } from '../../services/geminiService';
 import { Feature, Presentation } from '../../types';
@@ -74,8 +75,10 @@ const PresentationGeneratorView: React.FC = () => {
                             {result.slides.map((slide, index) => (
                                 <div key={index} className="bg-white dark:bg-slate-800/70 p-5 rounded-xl shadow-sm">
                                     <h3 className="text-lg font-bold text-purple-600 dark:text-teal-400">Slide {index + 1}: {slide.title}</h3>
-                                    <ul className="mt-2 space-y-1.5 pl-5 list-disc text-sm text-slate-700 dark:text-slate-200">
-                                        {slide.points.map((point, i) => <li key={i}>{point}</li>)}
+                                    <ul className="mt-3 list-disc list-inside space-y-1 text-sm text-slate-700 dark:text-slate-200">
+                                        {slide.points.map((point, i) => (
+                                            <li key={i}>{point}</li>
+                                        ))}
                                     </ul>
                                 </div>
                             ))}

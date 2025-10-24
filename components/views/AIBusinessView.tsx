@@ -1,4 +1,5 @@
-
+// Fix: Add React types reference to resolve JSX compilation errors.
+/// <reference types="react" />
 import React from 'react';
 import { Page } from '../../types';
 import { Icon } from '../icons';

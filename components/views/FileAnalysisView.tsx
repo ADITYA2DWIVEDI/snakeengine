@@ -1,3 +1,4 @@
+/// <reference types="react" />
 import React, { useState, useRef, useEffect } from 'react';
 import { ChatMessage as ChatMessageType } from '../../types';
 import { analyzeImage, analyzeVideo } from '../../services/geminiService';

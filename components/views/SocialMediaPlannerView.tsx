@@ -1,6 +1,5 @@
-
-
-import React, { useState } from 'react';
+/// <reference types="react" />
+import * as React from 'react';
 import { Page, ScheduledPost, SocialPlatform, Feature } from '../../types';
 import { Icon } from '../icons';
 import { generateSocialMediaPost } from '../../services/geminiService';
@@ -24,11 +23,11 @@ const initialPosts: ScheduledPost[] = [
 
 
 const SocialMediaPlannerView: React.FC = () => {
-    const [posts, setPosts] = useState<ScheduledPost[]>(initialPosts);
-    const [currentDate, setCurrentDate] = useState(new Date());
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedPost, setSelectedPost] = useState<ScheduledPost | null>(null);
-    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+    const [posts, setPosts] = React.useState<ScheduledPost[]>(initialPosts);
+    const [currentDate, setCurrentDate] = React.useState(new Date());
+    const [isModalOpen, setIsModalOpen] = React.useState(false);
+    const [selectedPost, setSelectedPost] = React.useState<ScheduledPost | null>(null);
+    const [selectedDate, setSelectedDate] = React.useState<Date | null>(null);
 
     const startOfWeek = new Date(currentDate);
     startOfWeek.setDate(currentDate.getDate() - currentDate.getDay());
@@ -66,11 +65,11 @@ const SocialMediaPlannerView: React.FC = () => {
     };
     
     const PostModal: React.FC = () => {
-        const [platform, setPlatform] = useState<SocialPlatform>(selectedPost?.platform || 'Instagram');
-        const [content, setContent] = useState(selectedPost?.content || '');
-        const [scheduledAt, setScheduledAt] = useState(selectedPost?.scheduledAt || selectedDate || new Date());
-        const [aiPrompt, setAiPrompt] = useState('');
-        const [isGenerating, setIsGenerating] = useState(false);
+        const [platform, setPlatform] = React.useState<SocialPlatform>(selectedPost?.platform || 'Instagram');
+        const [content, setContent] = React.useState(selectedPost?.content || '');
+        const [scheduledAt, setScheduledAt] = React.useState(selectedPost?.scheduledAt || selectedDate || new Date());
+        const [aiPrompt, setAiPrompt] = React.useState('');
+        const [isGenerating, setIsGenerating] = React.useState(false);
 
         const handleGenerateContent = async () => {
             if (!aiPrompt.trim()) return;
@@ -165,7 +164,8 @@ const SocialMediaPlannerView: React.FC = () => {
                     <button onClick={() => setCurrentDate(new Date(currentDate.setDate(currentDate.getDate() + 7)))} className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700"><Icon name="chevron-right" /></button>
                 </div>
 
-                <div className="overflow-x-auto">
+                {/* Desktop View: Grid */}
+                <div className="hidden md:block overflow-x-auto">
                     <div className="min-w-[56rem]">
                         <div className="grid grid-cols-7">
                             {daysOfWeek.map(day => (
@@ -194,6 +194,41 @@ const SocialMediaPlannerView: React.FC = () => {
                                 );
                             })}
                         </div>
+                    </div>
+                </div>
+
+                {/* Mobile View: List */}
+                <div className="block md:hidden p-4">
+                    <div className="space-y-4">
+                        {weekDates.map(date => {
+                            const postsForDay = posts.filter(p => p.scheduledAt.toDateString() === date.toDateString());
+                            const isToday = date.toDateString() === new Date().toDateString();
+                            return (
+                                <div key={date.toISOString()} className="border-b border-slate-200 dark:border-slate-700 pb-4 last:border-b-0">
+                                    <div className="flex items-center gap-3 mb-2">
+                                        <span className={`font-bold ${isToday ? 'text-purple-600 dark:text-teal-400' : 'text-slate-600 dark:text-slate-300'}`}>{daysOfWeek[date.getDay()]}</span>
+                                        <span className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold ${isToday ? 'bg-purple-600 dark:bg-teal-500 text-white' : 'bg-slate-200 dark:bg-slate-700'}`}>{date.getDate()}</span>
+                                    </div>
+                                    <div className="pl-11 space-y-2">
+                                        {postsForDay.length > 0 ? postsForDay.map(post => {
+                                            const platformInfo = platforms.find(p => p.name === post.platform);
+                                            return (
+                                                <button key={post.id} onClick={(e) => { e.stopPropagation(); handleOpenModal(date, post); }} className="w-full p-2 rounded-lg text-left text-xs bg-slate-200 dark:bg-slate-700 hover:ring-2 ring-purple-500">
+                                                    <div className="flex items-center gap-2">
+                                                        <div className={`w-5 h-5 rounded ${platformInfo?.color} flex items-center justify-center text-white flex-shrink-0`}><Icon name={platformInfo!.icon} className="w-4 h-4"/></div>
+                                                        <p className="truncate text-slate-800 dark:text-slate-200 text-sm">{post.content}</p>
+                                                    </div>
+                                                </button>
+                                            );
+                                        }) : (
+                                            <button onClick={() => handleOpenModal(date)} className="w-full text-left text-sm text-slate-400 dark:text-slate-500 p-2 rounded-lg border-2 border-dashed border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700/50">
+                                                + Schedule a post
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+                            )
+                        })}
                     </div>
                 </div>
             </div>

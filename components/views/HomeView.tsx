@@ -1,6 +1,4 @@
-
-
-
+/// <reference types="react" />
 import React, { useState, useEffect, useRef } from 'react';
 import { Page, Feature, ChatMessage as ChatMessageType } from '../../types';
 import { Icon } from '../icons';

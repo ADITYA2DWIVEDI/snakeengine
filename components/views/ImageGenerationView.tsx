@@ -1,3 +1,4 @@
+/// <reference types="react" />
 import React, { useState } from 'react';
 import { AspectRatio } from '../../types';
 import { generateImage } from '../../services/geminiService';

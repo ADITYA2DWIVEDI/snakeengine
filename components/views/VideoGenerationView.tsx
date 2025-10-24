@@ -1,4 +1,4 @@
-
+/// <reference types="react" />
 import React, { useState, useEffect, useRef } from 'react';
 import { useVeoGenerator } from '../../hooks/useVeoGenerator';
 import { Icon } from '../icons';

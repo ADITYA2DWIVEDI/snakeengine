@@ -1,4 +1,5 @@
-
+// Fix: Add React types reference to resolve JSX compilation errors.
+/// <reference types="react" />
 import React, { useState, useRef, useEffect } from 'react';
 import { ChatMessage as ChatMessageType } from '../../types';
 import { analyzeVideo } from '../../services/geminiService';

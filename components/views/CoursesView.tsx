@@ -1,3 +1,4 @@
+/// <reference types="react" />
 import React, { useState, useMemo, useEffect } from 'react';
 import { Page, Course } from '../../types';
 import { Icon } from '../icons';

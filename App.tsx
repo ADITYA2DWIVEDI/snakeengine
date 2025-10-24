@@ -1,8 +1,5 @@
-
-
-
-
-import React, { useState, useEffect } from 'react';
+/// <reference types="react" />
+import React from 'react';
 import { Page, Feature, FontStyle, DesignDensity } from './types';
 import Sidebar from './components/Sidebar';
 import HomeView from './components/views/HomeView';
@@ -32,14 +29,14 @@ const ApiKeyBanner: React.FC = () => (
 );
 
 const App: React.FC = () => {
-    const [activePage, setActivePage] = useState<ActivePage>({ page: Page.HOME });
-    const [isSidebarCollapsed, setSidebarCollapsed] = useState(false);
-    const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [isApiKeyMissing, setIsApiKeyMissing] = useState(false);
-    const [isLoginVisible, setIsLoginVisible] = useState(false);
-    const [isWhatsNewVisible, setIsWhatsNewVisible] = useState(false);
-    const [hasSeenWhatsNew, setHasSeenWhatsNew] = useState(false);
+    const [activePage, setActivePage] = React.useState<ActivePage>({ page: Page.HOME });
+    const [isSidebarCollapsed, setSidebarCollapsed] = React.useState(false);
+    const [isMobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+    const [isAuthenticated, setIsAuthenticated] = React.useState(false);
+    const [isApiKeyMissing, setIsApiKeyMissing] = React.useState(false);
+    const [isLoginVisible, setIsLoginVisible] = React.useState(false);
+    const [isWhatsNewVisible, setIsWhatsNewVisible] = React.useState(false);
+    const [hasSeenWhatsNew, setHasSeenWhatsNew] = React.useState(false);
 
     const applyDynamicStyles = () => {
         const styleId = 'dynamic-styles';
@@ -92,7 +89,7 @@ const App: React.FC = () => {
         `;
     };
 
-    useEffect(() => {
+    React.useEffect(() => {
         if (!process.env.API_KEY) {
             console.warn("API_KEY environment variable is not set. Most features will fail.");
             setIsApiKeyMissing(true);

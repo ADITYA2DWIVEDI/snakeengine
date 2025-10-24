@@ -1,5 +1,6 @@
-
-import React from 'react';
+// Fix: Add React types reference to resolve JSX compilation errors.
+/// <reference types="react" />
+import * as React from 'react';
 import { Page, Feature } from '../../types';
 import { Icon } from '../icons';
 
@@ -62,18 +63,6 @@ const SnakeEngineView: React.FC = () => {
                                 </div>
                             ))}
                         </div>
-                    </div>
-
-                     <div className="bg-gradient-to-r from-purple-500 to-teal-500 p-6 rounded-2xl shadow-lg text-white text-center">
-                        <h2 className="text-2xl font-bold">Get the Full Experience</h2>
-                        <p className="mt-2 mb-4">Download the SnakeEngine.AI app to get access to all our powerful tools, including the game assistant features.</p>
-                         <a
-                            href="snakeengine.ai.apk"
-                            download
-                            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white/20 font-semibold rounded-lg hover:bg-white/30 transition-colors"
-                        >
-                            <Icon name="android" className="w-5 h-5"/> Download App
-                        </a>
                     </div>
                 </div>
             </div>

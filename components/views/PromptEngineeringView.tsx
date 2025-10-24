@@ -1,3 +1,5 @@
+// Fix: Add React types reference to resolve JSX compilation errors.
+/// <reference types="react" />
 import React, { useState, useEffect } from 'react';
 import { ApiKey, ApiProvider, Page } from '../../types';
 import { generatePrompt } from '../../services/geminiService';

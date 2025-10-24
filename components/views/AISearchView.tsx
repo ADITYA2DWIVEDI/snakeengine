@@ -1,4 +1,5 @@
-
+// Fix: Add React types reference to resolve JSX compilation errors.
+/// <reference types="react" />
 import React, { useState } from 'react';
 import { GroundingSource, Page } from '../../types';
 import { generateTextWithGrounding } from '../../services/geminiService';

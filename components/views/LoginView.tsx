@@ -1,5 +1,5 @@
-
-import React, { useState, useEffect, useRef } from 'react';
+/// <reference types="react" />
+import React from 'react';
 import { Icon } from '../icons';
 import Spinner from '../common/Spinner';
 
@@ -24,7 +24,7 @@ const InputField: React.FC<{
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void 
 }> = ({ id, type, placeholder, icon, value, onChange }) => {
     const isPassword = type === 'password';
-    const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+    const [isPasswordVisible, setIsPasswordVisible] = React.useState(false);
 
     const togglePasswordVisibility = () => {
         setIsPasswordVisible(prev => !prev);
@@ -103,18 +103,18 @@ const PasswordStrengthIndicator: React.FC<{ score: number, label: string }> = ({
 };
 
 const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess, isModal, onClose }) => {
-    const [isSignUp, setIsSignUp] = useState(false);
-    const [isAuthenticating, setIsAuthenticating] = useState(false);
+    const [isSignUp, setIsSignUp] = React.useState(false);
+    const [isAuthenticating, setIsAuthenticating] = React.useState(false);
     
-    const [fullName, setFullName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [rememberMe, setRememberMe] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const [passwordStrength, setPasswordStrength] = useState({ score: 0, label: '' });
+    const [fullName, setFullName] = React.useState('');
+    const [email, setEmail] = React.useState('');
+    const [password, setPassword] = React.useState('');
+    const [confirmPassword, setConfirmPassword] = React.useState('');
+    const [rememberMe, setRememberMe] = React.useState(true);
+    const [error, setError] = React.useState<string | null>(null);
+    const [passwordStrength, setPasswordStrength] = React.useState({ score: 0, label: '' });
 
-    const googleButtonDiv = useRef<HTMLDivElement>(null);
+    const googleButtonDiv = React.useRef<HTMLDivElement>(null);
 
     const handleGoogleSignIn = (response: any) => {
         console.log("Google Sign-In successful. Encoded JWT ID token: " + response.credential);
@@ -126,13 +126,13 @@ const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess, isModal, onClose 
         }, 1500);
     };
     
-    useEffect(() => {
+    React.useEffect(() => {
         if (isSignUp) {
             setPasswordStrength(calculatePasswordStrength(password));
         }
     }, [password, isSignUp]);
     
-    useEffect(() => {
+    React.useEffect(() => {
         const renderError = (message: string) => {
             if (googleButtonDiv.current) {
                 googleButtonDiv.current.innerHTML = `<div class="p-4 border border-dashed border-red-300 rounded-md text-center"><p class="text-sm text-red-500">${message}</p></div>`;
@@ -266,10 +266,10 @@ const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess, isModal, onClose 
                         className="w-full py-3 px-4 rounded-lg font-semibold text-white transition-all duration-300 bg-gradient-to-r from-purple-500 to-teal-500 hover:opacity-90 flex items-center justify-center disabled:opacity-70 !mt-6"
                     >
                        {isAuthenticating ? (
-                           <>
+                           <React.Fragment>
                                <Spinner/>
                                <span className="ml-2">{isSignUp ? 'Creating Account...' : 'Signing In...'}</span>
-                           </>
+                           </React.Fragment>
                        ) : (isSignUp ? 'Create Account' : 'Sign In')}
                     </button>
                 </form>

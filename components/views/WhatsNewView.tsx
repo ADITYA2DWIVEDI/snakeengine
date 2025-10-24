@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { Icon } from '../icons';
 import { Page, Feature } from '../../types';
 

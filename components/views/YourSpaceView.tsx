@@ -1,3 +1,4 @@
+/// <reference types="react" />
 import React from 'react';
 import { Page } from '../../types';
 import { Icon } from '../icons';

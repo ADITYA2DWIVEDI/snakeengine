@@ -1,3 +1,4 @@
+/// <reference types="react" />
 import React from 'react';
 
 const Spinner: React.FC = () => {

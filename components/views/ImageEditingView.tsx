@@ -1,4 +1,4 @@
-
+/// <reference types="react" />
 import React, { useState, useRef } from 'react';
 import { Feature } from '../../types';
 import { editImage } from '../../services/geminiService';

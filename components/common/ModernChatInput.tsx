@@ -1,7 +1,4 @@
-
-
-
-
+/// <reference types="react" />
 import React, { useRef, useState, useEffect } from 'react';
 import { Icon } from '../icons';
 import Spinner from './Spinner';

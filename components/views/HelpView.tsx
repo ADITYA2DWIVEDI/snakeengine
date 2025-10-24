@@ -1,4 +1,4 @@
-
+/// <reference types="react" />
 import React, { useState } from 'react';
 import { Page } from '../../types';
 import { Icon } from '../icons';

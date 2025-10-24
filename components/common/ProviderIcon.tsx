@@ -1,3 +1,5 @@
+// Fix: Add React types reference to resolve JSX compilation errors.
+/// <reference types="react" />
 import React from 'react';
 import { ApiProvider } from '../../types';
 import { Icon } from '../icons';

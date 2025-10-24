@@ -1,5 +1,4 @@
-
-
+/// <reference types="react" />
 import React, { useState } from 'react';
 import { generateWithThinking } from '../../services/geminiService';
 import { Icon } from '../icons';

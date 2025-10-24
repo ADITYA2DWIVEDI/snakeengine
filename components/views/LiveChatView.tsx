@@ -1,5 +1,4 @@
-
-
+/// <reference types="react" />
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { GoogleGenAI, LiveServerMessage, Modality, Blob as GenaiBlob } from '@google/genai';
 import { Icon } from '../icons';

@@ -1,5 +1,4 @@
-
-
+/// <reference types="react" />
 import React, { useState, useEffect } from 'react';
 import { Page, Feature } from '../../types';
 import { Icon } from '../icons';

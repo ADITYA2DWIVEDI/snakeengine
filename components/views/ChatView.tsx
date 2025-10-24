@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+/// <reference types="react" />
+import React from 'react';
 import { ChatMessage as ChatMessageType, GroundingSource, Feature, ApiKey, ApiProvider } from '../../types';
 import { startChat, generateTextWithGrounding, textToSpeech, sendMessage, getSystemInstruction } from '../../services/geminiService';
 import { Chat } from '@google/genai';
@@ -18,25 +19,25 @@ interface ChatViewProps {
 }
 
 const ChatView: React.FC<ChatViewProps> = ({ onNavigateToFeature, initialPrompt, onPromptUsed }) => {
-    const [messages, setMessages] = useState<ChatMessageType[]>([]);
-    const [input, setInput] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-    const [useSearch, setUseSearch] = useState(false);
-    const [useMaps, setUseMaps] = useState(false);
-    const chatRef = useRef<Chat | null>(null);
-    const messagesEndRef = useRef<HTMLDivElement>(null);
-    const audioContextRef = useRef<AudioContext | null>(null);
+    const [messages, setMessages] = React.useState<ChatMessageType[]>([]);
+    const [input, setInput] = React.useState('');
+    const [isLoading, setIsLoading] = React.useState(false);
+    const [useSearch, setUseSearch] = React.useState(false);
+    const [useMaps, setUseMaps] = React.useState(false);
+    const chatRef = React.useRef<Chat | null>(null);
+    const messagesEndRef = React.useRef<HTMLDivElement>(null);
+    const audioContextRef = React.useRef<AudioContext | null>(null);
     
-    const [availableModels, setAvailableModels] = useState<ApiKey[]>([]);
-    const [selectedModel, setSelectedModel] = useState<ApiProvider>('Google');
-    const [isModelSelectorOpen, setIsModelSelectorOpen] = useState(false);
+    const [availableModels, setAvailableModels] = React.useState<ApiKey[]>([]);
+    const [selectedModel, setSelectedModel] = React.useState<ApiProvider>('Google');
+    const [isModelSelectorOpen, setIsModelSelectorOpen] = React.useState(false);
     
-    const [attachment, setAttachment] = useState<File | null>(null);
-    const [attachmentPreview, setAttachmentPreview] = useState<string | null>(null);
+    const [attachment, setAttachment] = React.useState<File | null>(null);
+    const [attachmentPreview, setAttachmentPreview] = React.useState<string | null>(null);
 
 
     // Load available models from storage
-    useEffect(() => {
+    React.useEffect(() => {
         try {
             const storedKeys = localStorage.getItem(STORAGE_KEY);
             const parsedKeys = storedKeys ? (JSON.parse(storedKeys) as ApiKey[]) : [];
@@ -57,18 +58,18 @@ const ChatView: React.FC<ChatViewProps> = ({ onNavigateToFeature, initialPrompt,
     }, []);
     
     // Reset chat session when model changes
-    useEffect(() => {
+    React.useEffect(() => {
         const baseInstruction = getSystemInstruction();
         chatRef.current = startChat(baseInstruction + ` The user has selected the ${selectedModel} model. Tailor your response style accordingly if it makes sense.`);
         setMessages([{ id: 'init-model-select', role: 'model', text: `Switched to ${selectedModel} model. How can I assist you?` }]);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedModel]);
 
-    useEffect(() => {
+    React.useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
     
-     const handlePlayAudio = useCallback(async (text: string) => {
+     const handlePlayAudio = React.useCallback(async (text: string) => {
         try {
             if (!audioContextRef.current) {
                 audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
@@ -103,7 +104,7 @@ const ChatView: React.FC<ChatViewProps> = ({ onNavigateToFeature, initialPrompt,
         setAttachmentPreview(null);
     };
 
-    const handleSend = useCallback(async (prompt?: string) => {
+    const handleSend = React.useCallback(async (prompt?: string) => {
         const currentInput = prompt || input;
         if ((!currentInput.trim() && !attachment) || isLoading) return;
 
@@ -177,8 +178,8 @@ const ChatView: React.FC<ChatViewProps> = ({ onNavigateToFeature, initialPrompt,
     }, [input, isLoading, useSearch, useMaps, selectedModel, attachment, attachmentPreview]);
 
     // Fix: Handle the initialPrompt prop to send a message when the component is loaded with a prompt.
-    const initialPromptSent = useRef(false);
-    useEffect(() => {
+    const initialPromptSent = React.useRef(false);
+    React.useEffect(() => {
         if (initialPrompt && !initialPromptSent.current) {
             handleSend(initialPrompt);
             if (onPromptUsed) {
