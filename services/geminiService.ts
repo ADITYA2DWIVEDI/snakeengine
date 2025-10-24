@@ -1,218 +1,120 @@
-import { GoogleGenAI, Part, Chat, GenerateContentResponse, Operation, GenerateVideosResponse, GenerateVideosConfig, LiveSession, LiveServerMessage, Modality, Blob } from "@google/genai";
 
-// Fix: The original global declaration for window.aistudio used an anonymous type,
-// which conflicted with an existing declaration that expected the named type 'AIStudio'.
-// This has been updated to define and use the 'AIStudio' interface to resolve the conflict.
-declare global {
-    interface AIStudio {
-        hasSelectedApiKey: () => Promise<boolean>;
-        openSelectKey: () => Promise<void>;
+
+import { GoogleGenAI, Chat, GenerateContentResponse, Modality, Type, GenerationConfig } from '@google/genai';
+import { AspectRatio, SocialPlatform, AIPersonality } from '../types';
+
+if (!process.env.API_KEY) {
+  console.warn("API_KEY environment variable not set. The application may not function without it.");
+}
+
+const getAI = () => new GoogleGenAI({ apiKey: process.env.API_KEY });
+
+const handleApiError = (error: any): Error => {
+    console.error("Gemini API Error:", error);
+    let message = "An unexpected error occurred with the AI service. Please try again later.";
+    if (error instanceof Error) {
+        if (error.message.includes('API key not valid')) {
+            message = "Your API key is not valid. Please check your key in the settings.";
+        } else if (error.message.includes('429')) { // Quota exceeded
+            message = "You have exceeded your API quota. Please check your usage or upgrade your plan.";
+        } else if (error.message.includes('permission')) {
+            message = "You do not have permission to use this model with the provided API key.";
+        }
     }
-    interface Window {
-        // Fix: Made `aistudio` optional to resolve declaration conflict about modifiers.
-        aistudio?: AIStudio;
-    }
+    return new Error(message);
 }
 
-const getApiKey = (): string => {
-    // Prioritize user-provided key from localStorage.
-    const userKey = localStorage.getItem('gemini_api_key');
-    // Fallback to the environment variable.
-    return userKey || process.env.API_KEY || ''; 
-};
-
-const getAi = () => new GoogleGenAI({ apiKey: getApiKey() });
-
-// A simple in-memory store for chat sessions
-const chatSessions: Map<string, Chat> = new Map();
-
-export function getChat(conversationId: string, model: string = 'gemini-2.5-flash', persona?: string): Chat {
-    const session = chatSessions.get(conversationId);
-
-    // Conditions to invalidate the session:
-    // 1. No session exists.
-    // 2. The existing session's model doesn't match the requested model.
-    // 3. The existing session's persona doesn't match the requested persona.
-    const isInvalid = !session || session.model !== `models/${model}` || session.config.systemInstruction !== persona;
-    
-    if (isInvalid) {
-        console.log(`Creating/Updating chat session for ${conversationId} with model ${model}`);
-        const ai = getAi();
-        const config = persona ? { systemInstruction: persona } : {};
-        const newSession = ai.chats.create({ 
-            model: model,
-            config
-        });
-        chatSessions.set(conversationId, newSession);
-        return newSession;
-    }
-
-    return session;
-}
-
-export function clearChatSession(conversationId: string) {
-    chatSessions.delete(conversationId);
-}
-
-export async function sendMessage(conversationId: string, userMessageText: string, imageParts: Part[], persona?: string, model: string = 'gemini-2.5-flash') {
-    const chat = getChat(conversationId, model, persona);
-    const parts = [...imageParts, { text: userMessageText }];
-    // Fix: The `chat.sendMessageStream` method expects an object with a `message` property
-    // that contains the array of Parts. The previous implementation used a `contents`
-    // property, which is incorrect for the Chat API and caused the "ContentUnion is required" error.
-    return chat.sendMessageStream({ message: parts });
-}
-
-export function fileToGenerativePart(file: File): Promise<Part> {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-            const base64Data = (reader.result as string).split(',')[1];
-            resolve({
-                inlineData: {
-                    data: base64Data,
-                    mimeType: file.type,
-                },
-            });
-        };
-        reader.onerror = (err) => reject(err);
-        reader.readAsDataURL(file);
-    });
-}
-
-export async function generateTitleForConversation(userMessage: string, aiResponse: string): Promise<string> {
-    try {
-        const ai = getAi();
-        const prompt = `Generate a short, concise title (4 words max) for the following conversation:\n\nUSER: "${userMessage}"\nAI: "${aiResponse}"`;
-        const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: prompt,
-        });
-        return response.text.replace(/"/g, '').trim();
-    } catch (error) {
-        console.error("Error generating title:", error);
-        return "SnakeEngine.AI";
+export const getSystemInstruction = (): string => {
+    const personality = localStorage.getItem('snakeEngineAIPersonality') as AIPersonality || 'Assistant';
+    switch (personality) {
+        case 'Creative':
+            return 'You are SnakeEngine AI. Your persona is creative, playful, and full of ideas. You use emojis and a friendly, informal tone.';
+        case 'Professional':
+            return 'You are SnakeEngine AI, a formal and professional assistant. Provide well-structured, precise, and polite responses suitable for a business context.';
+        case 'Concise':
+            return 'You are SnakeEngine AI. Be concise and to the point. Provide direct answers without unnecessary filler or conversation.';
+        case 'Assistant':
+        default:
+            return 'You are SnakeEngine AI, a friendly, creative, and helpful assistant. Your responses should be informative and engaging.';
     }
 }
 
-export async function generateImage(prompt: string): Promise<string> {
-    const ai = getAi();
-    const response = await ai.models.generateImages({
-        model: 'imagen-4.0-generate-001',
-        prompt: prompt,
+export const startChat = (systemInstruction?: string): Chat => {
+    const ai = getAI();
+    return ai.chats.create({
+        model: 'gemini-2.5-flash',
         config: {
-          numberOfImages: 1,
-          outputMimeType: 'image/jpeg',
-          aspectRatio: '1:1',
+            systemInstruction: systemInstruction === undefined ? getSystemInstruction() : systemInstruction,
         },
     });
-    const base64ImageBytes: string = response.generatedImages[0].image.imageBytes;
-    return `data:image/jpeg;base64,${base64ImageBytes}`;
-}
+};
 
-interface VideoGenerationParams {
+export const generatePrompt = async (params: {
+    model: string;
     prompt: string;
-    aspectRatio: '16:9' | '9:16';
-    length: number;
-    style: string;
-    image?: Part;
-}
+    systemInstruction?: string;
+    generationConfig?: GenerationConfig;
+}): Promise<GenerateContentResponse> => {
+    const ai = getAI();
+    try {
+        const response = await ai.models.generateContent({
+            model: params.model,
+            contents: params.prompt,
+            config: {
+                systemInstruction: params.systemInstruction,
+                ...params.generationConfig,
+            },
+        });
+        return response;
+    } catch (error) {
+        throw handleApiError(error);
+    }
+};
 
-export async function generateVideo(
-    { prompt, aspectRatio, length, style, image }: VideoGenerationParams,
-    onPoll: (op: Operation<GenerateVideosResponse>) => void
-): Promise<string> {
-    const ai = getAi();
+export const createChatSession = (): Chat => {
+    return startChat('You are SnakeEngine AI, a friendly, creative, and helpful assistant. Your responses should be informative and engaging.');
+};
 
-    const fullPrompt = `${prompt}, ${style} style, ${length} seconds long`;
-    
-    const generateConfig: any = {
-        model: 'veo-3.1-fast-generate-preview',
-        prompt: fullPrompt,
-        config: {
-            numberOfVideos: 1,
-            resolution: '720p',
-            aspectRatio,
+export const sendMessage = async (
+    chat: Chat, 
+    message: string, 
+    image?: { base64: string; mimeType: string }
+): Promise<GenerateContentResponse> => {
+    try {
+        let content: any;
+        if (image) {
+            content = {
+                parts: [
+                    { text: message },
+                    { inlineData: { data: image.base64, mimeType: image.mimeType } }
+                ]
+            };
+        } else {
+            content = { message };
         }
+        const result = await chat.sendMessage(content);
+        return result;
+    } catch (error) {
+        throw handleApiError(error);
+    }
+};
+
+export const generateTextWithGrounding = async (
+    prompt: string,
+    tool: 'googleSearch' | 'googleMaps',
+    location?: { latitude: number, longitude: number }
+): Promise<GenerateContentResponse> => {
+    const ai = getAI();
+    const config: any = {
+        tools: tool === 'googleSearch' ? [{ googleSearch: {} }] : [{ googleMaps: {} }],
     };
 
-    if (image && image.inlineData) {
-        generateConfig.image = {
-            imageBytes: image.inlineData.data,
-            mimeType: image.inlineData.mimeType
-        };
-    }
-
-    let operation = await ai.models.generateVideos(generateConfig);
-
-    while (!operation.done) {
-        onPoll(operation);
-        await new Promise(resolve => setTimeout(resolve, 5000));
-        operation = await ai.operations.getVideosOperation({ operation: operation });
-    }
-    
-    const downloadLink = operation.response?.generatedVideos?.[0]?.video?.uri;
-    if (!downloadLink) {
-        throw new Error("Video generation succeeded but no download link was found.");
-    }
-    
-    const apiKey = getApiKey();
-    const response = await fetch(`${downloadLink}&key=${apiKey}`);
-    const videoBlob = await response.blob();
-    return URL.createObjectURL(videoBlob);
-}
-
-export async function checkApiKey(): Promise<boolean> {
-    if (window.aistudio) {
-        return await window.aistudio.hasSelectedApiKey();
-    }
-    return true; // Fallback if aistudio is not available, assume key exists
-}
-
-export async function openApiKeyDialog(): Promise<void> {
-    if (window.aistudio) {
-        await window.aistudio.openSelectKey();
-    }
-}
-
-const generateText = async (model: string, prompt: string, systemInstruction?: string): Promise<string> => {
-    try {
-        const ai = getAi();
-        const config = systemInstruction ? { systemInstruction } : {};
-        const response = await ai.models.generateContent({
-            model,
-            contents: prompt,
-            config,
-        });
-        return response.text;
-    } catch (error) {
-        console.error(`Error with model ${model}:`, error);
-        throw error;
-    }
-}
-
-// Generic function for new placeholder tools
-export const runAiTool = (systemInstruction: string, userPrompt: string) => generateText('gemini-2.5-pro', userPrompt, systemInstruction);
-
-
-export const processAudio = (prompt: string) => generateText('gemini-2.5-flash', `Pretend you are an audio processing AI. The user's request is: "${prompt}". Respond as if you analyzed an audio file.`);
-export const generateCode = (prompt: string) => generateText('gemini-2.5-pro', prompt);
-export const analyzeDocument = (question: string, documentText: string) => generateText('gemini-2.5-pro', `Based on the following document, answer the user's question.\n\nDOCUMENT:\n"""\n${documentText}\n"""\n\nQUESTION: ${question}`);
-export const composeMusic = (prompt: string) => generateText('gemini-2.5-flash', `Compose music based on this prompt: "${prompt}". Respond with musical notation.`);
-
-export async function groundedSearch(query: string, location: { latitude: number, longitude: number } | null): Promise<GenerateContentResponse> {
-    const ai = getAi();
-
-    const tools: any[] = [{ googleSearch: {} }];
-    let toolConfig: any = {};
-
-    if (location) {
-        tools.push({ googleMaps: {} });
-        toolConfig = {
+    if (tool === 'googleMaps' && location) {
+        config.toolConfig = {
             retrievalConfig: {
                 latLng: {
                     latitude: location.latitude,
-                    longitude: location.longitude,
+                    longitude: location.longitude
                 }
             }
         };
@@ -221,124 +123,454 @@ export async function groundedSearch(query: string, location: { latitude: number
     try {
         const response = await ai.models.generateContent({
             model: "gemini-2.5-flash",
-            contents: query,
+            contents: prompt,
+            config: config,
+        });
+        return response;
+    } catch (error) {
+        throw handleApiError(error);
+    }
+};
+
+export const textToSpeech = async (text: string): Promise<string> => {
+    const ai = getAI();
+    try {
+        const response = await ai.models.generateContent({
+            model: "gemini-2.5-flash-preview-tts",
+            contents: [{ parts: [{ text: `Say it clearly: ${text}` }] }],
             config: {
-                tools,
-                ...(Object.keys(toolConfig).length > 0 && { toolConfig }),
+                responseModalities: [Modality.AUDIO],
+                speechConfig: {
+                    voiceConfig: {
+                        prebuiltVoiceConfig: { voiceName: 'Kore' },
+                    },
+                },
+            },
+        });
+        const base64Audio = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+        if (!base64Audio) {
+            throw new Error("No audio data returned from TTS API.");
+        }
+        return base64Audio;
+    } catch (error) {
+        throw handleApiError(error);
+    }
+};
+
+export const generateImage = async (prompt: string, aspectRatio: AspectRatio): Promise<string> => {
+    const ai = getAI();
+    try {
+        const response = await ai.models.generateImages({
+            model: 'imagen-4.0-generate-001',
+            prompt: prompt,
+            config: {
+                numberOfImages: 1,
+                outputMimeType: 'image/png',
+                aspectRatio: aspectRatio,
+            },
+        });
+
+        const base64ImageBytes = response.generatedImages?.[0]?.image?.imageBytes;
+        if (!base64ImageBytes) {
+            throw new Error("No image data returned from image generation API.");
+        }
+        return base64ImageBytes;
+    } catch (error) {
+        throw handleApiError(error);
+    }
+};
+
+export const editImage = async (prompt: string, base64ImageData: string, mimeType: string): Promise<string> => {
+    const ai = getAI();
+    try {
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-flash-image',
+            contents: {
+                parts: [
+                    {
+                        inlineData: {
+                            data: base64ImageData,
+                            mimeType: mimeType,
+                        },
+                    },
+                    {
+                        text: prompt,
+                    },
+                ],
+            },
+            config: {
+                responseModalities: [Modality.IMAGE],
+            },
+        });
+
+        for (const part of response.candidates[0].content.parts) {
+            if (part.inlineData) {
+                return part.inlineData.data;
+            }
+        }
+        throw new Error("No edited image data returned.");
+
+    } catch (error) {
+        throw handleApiError(error);
+    }
+};
+
+export const analyzeImage = async (prompt: string, imageBase64: string, mimeType: string): Promise<GenerateContentResponse> => {
+    const ai = getAI();
+    const imagePart = {
+        inlineData: {
+            mimeType: mimeType,
+            data: imageBase64,
+        },
+    };
+    const textPart = {
+        text: prompt,
+    };
+
+    try {
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents: { parts: [imagePart, textPart] },
+        });
+        return response;
+    } catch (error) {
+        throw handleApiError(error);
+    }
+};
+
+export const analyzeVideo = async (prompt: string, videoBase64: string, mimeType: string): Promise<GenerateContentResponse> => {
+    const ai = getAI();
+    const videoPart = {
+        inlineData: {
+            mimeType: mimeType,
+            data: videoBase64,
+        },
+    };
+    const textPart = {
+        text: prompt,
+    };
+
+    try {
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-pro',
+            contents: { parts: [videoPart, textPart] },
+        });
+        return response;
+    } catch (error) {
+        throw handleApiError(error);
+    }
+};
+
+export const generateWithThinking = async (prompt: string): Promise<GenerateContentResponse> => {
+    const ai = getAI();
+    try {
+        const response = await ai.models.generateContent({
+            model: "gemini-2.5-pro",
+            contents: prompt,
+            config: {
+                thinkingConfig: { thinkingBudget: 32768 } // max budget for 2.5-pro
+            }
+        });
+        return response;
+    } catch (error) {
+        throw handleApiError(error);
+    }
+};
+
+export const analyzeSpreadsheet = async (prompt: string, data: string): Promise<GenerateContentResponse> => {
+    const ai = getAI();
+    try {
+        const response = await ai.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: `The user has provided the following CSV data:\n\n${data}\n\nBased on this data, please answer the following question: "${prompt}"`,
+            config: {
+                systemInstruction: "You are an expert spreadsheet analyst. Analyze the provided data and answer the user's question concisely."
+            }
+        });
+        return response;
+    } catch (error) {
+        throw handleApiError(error);
+    }
+};
+
+export const convertNumberToWords = async (number: string): Promise<GenerateContentResponse> => {
+    const ai = getAI();
+    try {
+        const response = await ai.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: `Convert the following number into words, suitable for a check or legal document: ${number}. Only return the text representation of the number. For example, for "123.45", return "One Hundred Twenty-Three and 45/100".`,
+        });
+        return response;
+    } catch (error) {
+        throw handleApiError(error);
+    }
+};
+
+export const generatePdfExtractionGuide = async (description: string): Promise<GenerateContentResponse> => {
+    const ai = getAI();
+    try {
+        const response = await ai.models.generateContent({
+            model: "gemini-2.5-pro",
+            contents: `The user wants to extract the following data from a PDF into Excel: "${description}". 
+            
+            Please generate two things in a JSON object:
+            1. A simple, step-by-step guide for a non-technical user on how to use Microsoft Excel's built-in "Get Data > From File > From PDF" feature to achieve this. The guide should be clear, easy to follow, and formatted with markdown.
+            2. A simple VBA macro that prompts the user to select a PDF file and then attempts to find and extract a table that might contain the described data. The macro should be well-commented.`,
+            config: {
+                responseMimeType: "application/json",
+                responseSchema: {
+                    type: Type.OBJECT,
+                    properties: {
+                        guide: { 
+                            type: Type.STRING,
+                            description: "Step-by-step guide for using Excel's Get Data from PDF feature."
+                        },
+                        vbaMacro: { 
+                            type: Type.STRING,
+                            description: "A simple, commented VBA macro for extracting data from a PDF."
+                        }
+                    }
+                }
+            }
+        });
+        return response;
+    } catch (error) {
+        throw handleApiError(error);
+    }
+};
+
+export const generateAppSpecification = async (prompt: string): Promise<GenerateContentResponse> => {
+    const ai = getAI();
+    try {
+        const response = await ai.models.generateContent({
+            model: "gemini-2.5-pro",
+            contents: prompt,
+            config: {
+                systemInstruction: "You are an expert software architect and full-stack developer. Based on the user's prompt, generate a complete application specification. Provide a thoughtful tech stack and generate clear, simple, and functional boilerplate code for HTML, CSS, and JavaScript.",
+                responseMimeType: "application/json",
+                responseSchema: {
+                    type: Type.OBJECT,
+                    properties: {
+                        appName: { type: Type.STRING },
+                        description: { type: Type.STRING },
+                        features: { type: Type.ARRAY, items: { type: Type.STRING } },
+                        techStack: {
+                            type: Type.OBJECT,
+                            properties: {
+                                frontend: { type: Type.STRING },
+                                backend: { type: Type.STRING },
+                                database: { type: Type.STRING }
+                            },
+                            required: ['frontend', 'backend', 'database']
+                        },
+                        code: {
+                            type: Type.OBJECT,
+                            properties: {
+                                html: { type: Type.STRING },
+                                css: { type: Type.STRING },
+                                javascript: { type: Type.STRING }
+                            },
+                             required: ['html', 'css', 'javascript']
+                        }
+                    },
+                    required: ['appName', 'description', 'features', 'techStack', 'code']
+                }
+            }
+        });
+        return response;
+    } catch (error) {
+        throw handleApiError(error);
+    }
+};
+
+export const generateWebsite = async (prompt: string): Promise<GenerateContentResponse> => {
+    const ai = getAI();
+    try {
+        const response = await ai.models.generateContent({
+            model: "gemini-2.5-pro",
+            contents: prompt,
+            config: {
+                systemInstruction: "You are an expert web designer and developer. Based on the user's prompt, generate a complete, single-file responsive HTML document. The HTML should include embedded CSS for styling inside a <style> tag. Ensure the design is modern, aesthetically pleasing, and directly reflects the user's request. Provide a relevant color palette and font pairing. Use Google Fonts for any custom fonts.",
+                responseMimeType: "application/json",
+                responseSchema: {
+                    type: Type.OBJECT,
+                    properties: {
+                        siteName: { type: Type.STRING },
+                        colorPalette: {
+                            type: Type.OBJECT,
+                            properties: {
+                                primary: { type: Type.STRING, description: "Hex code, e.g., #FFFFFF" },
+                                secondary: { type: Type.STRING, description: "Hex code, e.g., #000000" },
+                                accent: { type: Type.STRING, description: "Hex code, e.g., #FF00FF" },
+                            },
+                            required: ['primary', 'secondary', 'accent']
+                        },
+                        fontPairing: {
+                            type: Type.OBJECT,
+                            properties: {
+                                heading: { type: Type.STRING, description: "e.g., 'Poppins', sans-serif" },
+                                body: { type: Type.STRING, description: "e.g., 'Lato', sans-serif" },
+                            },
+                             required: ['heading', 'body']
+                        },
+                        htmlStructure: { type: Type.STRING, description: "A complete, single-file HTML structure with embedded CSS." }
+                    },
+                     required: ['siteName', 'colorPalette', 'fontPairing', 'htmlStructure']
+                }
+            }
+        });
+        return response;
+    } catch (error) {
+        throw handleApiError(error);
+    }
+};
+
+export const generateLearningPlan = async (prompt: string): Promise<GenerateContentResponse> => {
+    const ai = getAI();
+    try {
+        const response = await ai.models.generateContent({
+            model: "gemini-2.5-pro",
+            contents: prompt,
+            config: {
+                systemInstruction: "You are an expert curriculum designer and teacher. Based on the user's request, create a structured, comprehensive learning plan or knowledge base outline. Break the topic down into logical modules, and for each module, provide key sub-topics to cover.",
+                responseMimeType: "application/json",
+                responseSchema: {
+                    type: Type.OBJECT,
+                    properties: {
+                        planTitle: { type: Type.STRING, description: "A concise title for the learning plan." },
+                        planDescription: { type: Type.STRING, description: "A brief, one-sentence summary of the learning plan's goal." },
+                        modules: {
+                            type: Type.ARRAY,
+                            description: "An array of learning modules.",
+                            items: {
+                                type: Type.OBJECT,
+                                properties: {
+                                    title: { type: Type.STRING, description: "The title of the module." },
+                                    description: { type: Type.STRING, description: "A short description of what is covered in this module." },
+                                    subTopics: {
+                                        type: Type.ARRAY,
+                                        description: "A list of key sub-topics or concepts to learn within this module.",
+                                        items: { type: Type.STRING }
+                                    }
+                                },
+                                required: ['title', 'description', 'subTopics']
+                            }
+                        }
+                    },
+                    required: ['planTitle', 'planDescription', 'modules']
+                }
+            }
+        });
+        return response;
+    } catch (error) {
+        throw handleApiError(error);
+    }
+};
+
+export const generateYouTubeMetadata = async (prompt: string): Promise<GenerateContentResponse> => {
+    const ai = getAI();
+    try {
+        const response = await ai.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: `The video was generated from this prompt: "${prompt}"`,
+            config: {
+                systemInstruction: "You are a YouTube content expert specializing in viral content. Based on the user's video prompt, generate a catchy, SEO-friendly title, a detailed and engaging description that includes a call-to-action, and a list of 10-15 highly relevant tags.",
+                responseMimeType: "application/json",
+                responseSchema: {
+                    type: Type.OBJECT,
+                    properties: {
+                        title: {
+                            type: Type.STRING,
+                            description: "A short, catchy, and SEO-optimized title for the YouTube video (max 70 characters)."
+                        },
+                        description: {
+                            type: Type.STRING,
+                            description: "A detailed and engaging YouTube description. Include a summary, key moments (if applicable), and a call to action to like, comment, and subscribe."
+                        },
+                        tags: {
+                            type: Type.ARRAY,
+                            description: "An array of 10-15 relevant keywords and phrases for YouTube tags.",
+                            items: { type: Type.STRING }
+                        }
+                    },
+                    required: ['title', 'description', 'tags']
+                }
+            }
+        });
+        return response;
+    } catch (error) {
+        throw handleApiError(error);
+    }
+};
+
+export const generateSocialMediaPost = async (prompt: string, platform: SocialPlatform): Promise<GenerateContentResponse> => {
+    const ai = getAI();
+    try {
+        const response = await ai.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: prompt,
+            config: {
+                systemInstruction: `You are a social media marketing expert. Write an engaging post for ${platform} based on the user's prompt. Include relevant hashtags and emojis. Tailor the length and tone appropriately for the platform.`
+            }
+        });
+        return response;
+    } catch (error) {
+        throw handleApiError(error);
+    }
+};
+
+export const findTrendingYouTubeTopics = async (topic: string): Promise<GenerateContentResponse> => {
+    const ai = getAI();
+    try {
+        const response = await ai.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: `Based on the latest web results, list 5 viral or trending YouTube video ideas about "${topic}". For each idea, provide a catchy title and a brief one-sentence concept. Format the entire response as a single JSON object with a key "ideas" which is an array of objects, where each object has a "title" and "concept" key.`,
+            config: {
+                tools: [{ googleSearch: {} }],
             },
         });
         return response;
     } catch (error) {
-        console.error("Error performing grounded search:", error);
-        throw error;
+        throw handleApiError(error);
     }
-}
+};
 
-// Old Features Services (some will be deprecated by new ones)
-export const generateIdeas = (topic: string) => generateText('gemini-2.5-pro', topic, 'You are a world-class brainstorming assistant. Given a topic, generate a structured list of related ideas, sub-points, and creative angles. Use Markdown for formatting.');
-export const translateText = (text: string, sourceLang: string, targetLang: string) => generateText('gemini-2.5-flash', `Translate the following text from ${sourceLang} to ${targetLang}:\n\n"${text}"`);
-export const generateGameConcept = (idea: string) => generateText('gemini-2.5-pro', idea, 'You are a creative game designer. Flesh out the user\'s game idea into a full concept. Include details on gameplay mechanics, story, character ideas, and unique selling points.');
-
-// Pro Tools Services
-export const analyzeFinancialData = (query: string) => generateText('gemini-2.5-pro', query, 'You are an expert financial analyst. Provide detailed, insightful, and balanced analysis based on the user\'s query. Do not provide financial advice.');
-export const getHealthAdvice = (query: string) => generateText('gemini-2.5-flash', query, 'You are an AI health and wellness advisor. Provide helpful, general information. You must strongly state that you are not a medical professional and the user should consult a doctor for any health concerns.');
-export const getStyleAdvice = (query: string) => generateText('gemini-2.5-flash', query, 'You are a friendly and knowledgeable personal stylist. Provide fashion advice and outfit suggestions based on the user\'s request.');
-
-// Fix: Add missing service functions for various tool views.
-export const writeContent = (prompt: string) => runAiTool('You are a professional content writer and editor. Generate a complete, well-structured, and engaging piece of long-form content. Use Markdown for formatting.', prompt);
-export const generateWebsiteCopy = (description: string) => runAiTool('You are an expert web copywriter and UI/UX designer. Based on the user\'s description, generate compelling website copy and a logical content structure. Use Markdown. The output should include a headline, sub-headline, sections for features/services, about us, and a call-to-action.', description);
-export const generatePresentationOutline = (topic: string) => runAiTool('You are a professional presentation designer and public speaking coach. Create a structured and engaging presentation outline based on the user\'s topic. Use Markdown. The outline should include a title slide, introduction, several key point slides with sub-bullets, and a concluding slide with a call to action or summary.', topic);
-export const generateEmailDraft = (prompt: string) => runAiTool('You are a professional communications assistant. Write a clear, concise, and effective email based on the user\'s prompt. Ensure the tone is appropriate for the context provided. Structure it with a subject line and body. Use Markdown for formatting.', prompt);
-export const generateSocialMediaPlan = (topic: string) => runAiTool('You are a social media marketing expert. Create a one-week social media content calendar based on the user\'s topic or brand. Use Markdown. For each day, provide a post idea, a caption, and relevant hashtags for at least two platforms (e.g., Instagram, Twitter).', topic);
-export const generateTravelItinerary = (details: string) => runAiTool('You are an expert travel agent. Create a detailed, day-by-day travel itinerary based on the user\'s destination, duration, and interests. Use Markdown. Include suggestions for activities, restaurants, and transportation for each day.', details);
-
-// --- NEW FULLY IMPLEMENTED FEATURES ---
-
-// CREATE
-export const generateBlogPost = (topic: string) => runAiTool('You are an expert blog post writer and SEO specialist. Generate a complete, well-structured, and engaging blog post on the given topic. Use Markdown for formatting, including a compelling title (H1), an introduction, several subheadings (H2), and a concluding paragraph. Ensure the content is informative and easy to read.', topic);
-export const generateSeoKeywords = (topic: string) => runAiTool('You are an expert SEO analyst. For the given topic, generate a comprehensive list of SEO keywords. Use Markdown. Structure the response into three sections: 1. Primary Keywords (a short list of the most important keywords). 2. Secondary Keywords (a longer list of related terms). 3. LSI Keywords & User Questions (long-tail keywords and common questions users might ask).', topic);
-
-// BUSINESS
-export const generateBusinessPlan = (idea: string) => runAiTool('You are a professional business consultant and strategist. Create a comprehensive, one-page business plan based on the user\'s idea. Use Markdown for clear formatting. The plan must include the following sections: Executive Summary, Company Description, Market Analysis (including target audience), Organization & Management, Products or Services, Marketing & Sales Strategy, and a brief Financial Projections summary.', idea);
-
-// EDUCATION
-export const generateLessonPlan = (details: string) => runAiTool('You are an experienced educator and curriculum designer. Create a detailed lesson plan based on the user\'s request. Use Markdown. The plan should include: Learning Objectives, Materials Needed, a step-by-step Activity Procedure (including introduction, main activity, and conclusion/wrap-up), and an Assessment method. The user will provide the topic, subject, and grade level.', details);
-
-// LIFESTYLE
-export const generateRecipe = (details: string) => runAiTool('You are a creative and experienced chef. Based on the ingredients and preferences provided by the user, create a unique and delicious recipe. Use Markdown. Give the recipe a catchy name. List all necessary ingredients (including quantities), provide clear step-by-step instructions, and estimate the prep and cook time. If some key ingredients seem to be missing, you can suggest them as optional additions.', `Generate a recipe with these details: ${details}`);
-export const generateWorkout = (details: string) => runAiTool('You are a certified personal trainer. Create a personalized workout plan based on the user\'s details and goals. Use Markdown. The plan should include a Warm-Up section, the main Workout section (listing exercises with sets, reps, and rest times), and a Cool-Down section. You must include a disclaimer stating that the user should consult with a healthcare professional before starting any new fitness program.', details);
-
-// Live Conversation Service
-export function decode(base64: string) {
-  const binaryString = atob(base64);
-  const len = binaryString.length;
-  const bytes = new Uint8Array(len);
-  for (let i = 0; i < len; i++) {
-    bytes[i] = binaryString.charCodeAt(i);
-  }
-  return bytes;
-}
-
-export function encode(bytes: Uint8Array) {
-  let binary = '';
-  const len = bytes.byteLength;
-  for (let i = 0; i < len; i++) {
-    binary += String.fromCharCode(bytes[i]);
-  }
-  return btoa(binary);
-}
-
-export async function decodeAudioData(
-  data: Uint8Array,
-  ctx: AudioContext,
-  sampleRate: number,
-  numChannels: number,
-): Promise<AudioBuffer> {
-  const dataInt16 = new Int16Array(data.buffer);
-  const frameCount = dataInt16.length / numChannels;
-  const buffer = ctx.createBuffer(numChannels, frameCount, sampleRate);
-
-  for (let channel = 0; channel < numChannels; channel++) {
-    const channelData = buffer.getChannelData(channel);
-    for (let i = 0; i < frameCount; i++) {
-      channelData[i] = dataInt16[i * numChannels + channel] / 32768.0;
-    }
-  }
-  return buffer;
-}
-
-export function createBlob(data: Float32Array): Blob {
-  const l = data.length;
-  const int16 = new Int16Array(l);
-  for (let i = 0; i < l; i++) {
-    int16[i] = data[i] * 32768;
-  }
-  return {
-    data: encode(new Uint8Array(int16.buffer)),
-    mimeType: 'audio/pcm;rate=16000',
-  };
-}
-
-export const liveSessionManager = {
-    connect: (onMessage: (message: LiveServerMessage) => void, onError: (e: ErrorEvent) => void, onClose: (e: CloseEvent) => void, onOpen: () => void): Promise<LiveSession> => {
-        const ai = getAi();
-        return ai.live.connect({
-            model: 'gemini-2.5-flash-native-audio-preview-09-2025',
-            callbacks: {
-                onopen: onOpen,
-                onmessage: onMessage,
-                onerror: onError,
-                onclose: onClose,
-            },
+export const generatePresentationOutline = async (topic: string): Promise<GenerateContentResponse> => {
+    const ai = getAI();
+    try {
+        const response = await ai.models.generateContent({
+            model: "gemini-2.5-pro",
+            contents: `Generate a complete presentation outline for the topic: "${topic}". Include a main title and at least 5 slides, each with a title and 3-4 bullet points.`,
             config: {
-                responseModalities: [Modality.AUDIO],
-                speechConfig: {
-                    voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Zephyr' } },
-                },
-                inputAudioTranscription: {},
-                outputAudioTranscription: {},
-                systemInstruction: 'You are a friendly and helpful AI assistant from SnakeEngine.AI.',
-            },
+                systemInstruction: "You are an expert presentation creator. Your goal is to generate clear, concise, and well-structured presentation outlines in JSON format.",
+                responseMimeType: "application/json",
+                responseSchema: {
+                    type: Type.OBJECT,
+                    properties: {
+                        mainTitle: { type: Type.STRING, description: "The main title of the presentation." },
+                        slides: {
+                            type: Type.ARRAY,
+                            description: "An array of presentation slides.",
+                            items: {
+                                type: Type.OBJECT,
+                                properties: {
+                                    title: { type: Type.STRING, description: "The title of the slide." },
+                                    points: {
+                                        type: Type.ARRAY,
+                                        description: "A list of bullet points for the slide content.",
+                                        items: { type: Type.STRING }
+                                    }
+                                },
+                                required: ['title', 'points']
+                            }
+                        }
+                    },
+                    required: ['mainTitle', 'slides']
+                }
+            }
         });
+        return response;
+    } catch (error) {
+        throw handleApiError(error);
     }
 };

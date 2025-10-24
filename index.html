@@ -2,101 +2,102 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SnakeEngine.AI</title>
+    <title>SnakeEngine.AI - Comprehensive AI Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-      :root {
-        --brand-purple: #8B5CF6;
-        --brand-pink: #EC4899;
-        --brand-red: #EF4444;
-        --bg-main: #FFFFFF;
-        --bg-secondary: #F8FAFC;
-        --text-primary: #1E293B;
-        --text-secondary: #64748B;
-        --border-color: #E2E8F0;
-      }
-      body {
-        background-color: var(--bg-main);
-        color: var(--text-primary);
-        overflow: hidden;
-        font-family: 'Inter', sans-serif;
-      }
-      .glass-pane {
-         background-color: rgba(255, 255, 255, 0.6);
-         backdrop-filter: blur(12px);
-         border: 1px solid var(--border-color);
-      }
-      ::-webkit-scrollbar {
-        width: 6px;
-      }
-      ::-webkit-scrollbar-track {
-        background: transparent;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: rgba(0, 0, 0, 0.2);
-        border-radius: 3px;
-      }
-      ::-webkit-scrollbar-thumb:hover {
-        background: rgba(0, 0, 0, 0.3);
-      }
-      .gradient-text {
-        background: linear-gradient(to right, var(--brand-purple), var(--brand-pink));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-      }
-      @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-      .animate-fade-in {
-        animation: fadeIn 0.5s ease-out forwards;
-      }
-    </style>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            fontFamily: {
-              sans: ['Inter', 'sans-serif'],
-            },
-            colors: {
-              'brand-purple': 'var(--brand-purple)',
-              'brand-pink': 'var(--brand-pink)',
-              'brand-red': 'var(--brand-red)',
-              'bg-main': 'var(--bg-main)',
-              'bg-secondary': 'var(--bg-secondary)',
-              'text-primary': 'var(--text-primary)',
-              'text-secondary': 'var(--text-secondary)',
-              'border-color': 'var(--border-color)',
-            },
-            boxShadow: {
-              'glow-purple': '0 0 20px 0 rgba(139, 92, 246, 0.4)',
-              'glow-pink': '0 0 20px 0 rgba(236, 72, 153, 0.4)',
-            }
-          }
+        /* Injects fonts from Google Fonts for a cleaner UI */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=Roboto:wght@400;500;700&family=Source+Code+Pro:wght@400;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
         }
-      }
-    </script>
+
+        /* Custom scrollbar for a more modern look */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .dark ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #475569;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        .dark ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+
+        /* Helper class for gradient text */
+        .gradient-text {
+            background: linear-gradient(to right, #8e44ad, #3498db, #1abc9c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
+        }
+
+        /* Custom keyframes for animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .animate-fade-in-up {
+            animation: fadeInUp 0.4s ease-out forwards;
+        }
+
+        /* Animated background for login screen */
+        .premium-background {
+            background: linear-gradient(-45deg, #8e44ad, #e73c7e, #23a6d5, #1abc9c);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+    </style>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <script type="importmap">
 {
   "imports": {
-    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.26.0",
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
     "react/": "https://aistudiocdn.com/react@^19.2.0/",
     "react": "https://aistudiocdn.com/react@^19.2.0",
-    "react-markdown": "https://aistudiocdn.com/react-markdown@^10.1.0",
-    "remark-gfm": "https://aistudiocdn.com/remark-gfm@^4.0.1"
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.26.0",
+    "emoji-picker-element": "https://cdn.jsdelivr.net/npm/emoji-picker-element@^1.21.3/+esm"
   }
 }
 </script>
 <link rel="stylesheet" href="/index.css">
 </head>
-<body>
+<body class="bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-200">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
 </body>

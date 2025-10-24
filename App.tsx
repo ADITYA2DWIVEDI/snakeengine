@@ -1,338 +1,275 @@
-import React, { useState, useCallback, useMemo } from 'react';
-import { Sidebar } from './components/Sidebar';
-import { AuthPage } from './views/AuthPage';
-import { DashboardView } from './views/DashboardView';
-import { ChatView } from './views/ChatView';
-import { ImageGenView } from './views/ImageGenView';
-import { VideoGenView } from './views/VideoGenView';
-import { TemplatesView } from './views/TemplatesView';
-import { SearchView } from './views/SearchView';
-import { DiscoverPage } from './views/DiscoverPage';
-import { TopicListView } from './views/TopicListView';
-import { ExcelAutomationPage } from './views/ExcelAutomationPage';
-import { SettingsPage } from './views/SettingsPage';
-import { SubscriptionPage } from './views/SubscriptionPage';
-import { HelpPage } from './views/HelpPage';
-import { AudioToolView } from './views/AudioToolView';
-import { CodeAssistantView } from './views/CodeAssistantView';
-import { CommunityPage } from './views/CommunityPage';
-import { CreatorsPage } from './views/CreatorsPage';
-import { AdminPage } from './views/AdminPage';
-import { TrendingPage } from './views/TrendingPage';
-import { ChatHistoryPage } from './views/ChatHistoryPage';
-import { PersonaHubView } from './views/PersonaHubView';
-import { DocumentAnalyzerView } from './views/DocumentAnalyzerView';
-import { MusicComposerView } from './views/MusicComposerView';
-import { LiveConversationView } from './views/LiveConversationView';
-import { IdeaGeneratorView } from './views/IdeaGeneratorView';
-import { TranslatorView } from './views/TranslatorView';
-import { GameCreatorView } from './views/GameCreatorView';
-import { LeaderboardPage } from './views/LeaderboardPage';
-import { ChallengesPage } from './views/ChallengesPage';
-import { FinancialAnalystView } from './views/FinancialAnalystView';
-import { HealthAdvisorView } from './views/HealthAdvisorView';
-import { PersonalStylistView } from './views/PersonalStylistView';
-import { ApiDocsPage } from './views/ApiDocsPage';
-import { Conversation, ChatMessage as Message, User } from './types';
-
-// New Create Views
-import { BlogPostView } from './views/BlogPostView';
-import { AdCopyView } from './views/AdCopyView';
-import { ProductDescriptionView } from './views/ProductDescriptionView';
-import { StoryWriterView } from './views/StoryWriterView';
-import { ScriptWriterView } from './views/ScriptWriterView';
-import { SeoKeywordsView } from './views/SeoKeywordsView';
-
-// New Business Views
-import { BusinessPlanView } from './views/BusinessPlanView';
-import { SwotAnalysisView } from './views/SwotAnalysisView';
-import { MarketResearchView } from './views/MarketResearchView';
-import { BrandNamerView } from './views/BrandNamerView';
-import { SloganMakerView } from './views/SloganMakerView';
-import { ColdEmailView } from './views/ColdEmailView';
-import { JobDescriptionView } from './views/JobDescriptionView';
-import { PressReleaseView } from './views/PressReleaseView';
-
-// New Developer Views
-import { RegexGeneratorView } from './views/RegexGeneratorView';
-import { CronGeneratorView } from './views/CronGeneratorView';
-import { ApiDocsWriterView } from './views/ApiDocsWriterView';
-import { UnitTestWriterView } from './views/UnitTestWriterView';
-import { DbSchemaView } from './views/DbSchemaView';
-import { ColorPaletteView } from './views/ColorPaletteView';
-import { CommitMessageView } from './views/CommitMessageView';
-
-// New Education Views
-import { LessonPlannerView } from './views/LessonPlannerView';
-import { StudyGuideView } from './views/StudyGuideView';
-import { QuizMakerView } from './views/QuizMakerView';
-import { TopicSimplifierView } from './views/TopicSimplifierView';
-import { HistoricalExplainerView } from './views/HistoricalExplainerView';
-import { FlashcardsView } from './views/FlashcardsView';
-
-// New Lifestyle Views
-import { SocialPlannerView } from './views/SocialPlannerView';
-import { TravelPlannerView } from './views/TravelPlannerView';
-import { MealPlannerView } from './views/MealPlannerView';
-import { DreamInterpreterView } from './views/DreamInterpreterView';
-import { WorkoutGeneratorView } from './views/WorkoutGeneratorView';
-import { GiftIdeasView } from './views/GiftIdeasView';
-import { HoroscopeView } from './views/HoroscopeView';
-import { RecipeGeneratorView } from './views/RecipeGeneratorView';
-import { SpeechWriterView } from './views/SpeechWriterView';
-
-// New Fun & Creative Views
-import { PoemGeneratorView } from './views/PoemGeneratorView';
-import { SongLyricWriterView } from './views/SongLyricWriterView';
-import { DndCharacterView } from './views/DndCharacterView';
-import { JokeWriterView } from './views/JokeWriterView';
-import { MoviePitchView } from './views/MoviePitchView';
-import { TattooDesignerView } from './views/TattooDesignerView';
 
 
-export type View =
-  | 'dashboard' | 'chat' | 'imageGen' | 'videoGen' | 'templates'
-  | 'search' | 'discover' | 'excel' | 'settings' | 'subscription'
-  | 'help' | 'audio' | 'code' | 'community' | 'creators'
-  | 'admin' | 'trending' | 'history' | 'persona' | 'document'
-  | 'music' | 'live' | 'idea'
-  | 'translator' | 'social' | 'travel'
-  | 'game' | 'leaderboard' | 'challenges' | 'financial' | 'health' | 'stylist'
-  | 'apiDocs' | 'topicList'
-  // Create
-  | 'blogPost' | 'adCopy' | 'productDesc' | 'storyWriter' | 'scriptWriter' | 'seoKeywords'
-  // Business
-  | 'businessPlan' | 'swotAnalysis' | 'marketResearch' | 'brandNamer' | 'sloganMaker'
-  | 'coldEmail' | 'jobDescription' | 'pressRelease'
-  // Developer
-  | 'regexGenerator' | 'cronGenerator' | 'apiDocsWriter' | 'unitTestWriter' | 'dbSchema'
-  | 'colorPalette' | 'commitMessage'
-  // Education
-  | 'lessonPlanner' | 'studyGuide' | 'quizMaker' | 'topicSimplifier'
-  | 'historicalExplainer' | 'flashcards'
-  // Lifestyle
-  | 'mealPlanner' | 'dreamInterpreter' | 'workoutGenerator' | 'giftIdeas'
-  | 'horoscope' | 'recipeGenerator' | 'speechWriter'
-  // Fun & Creative
-  | 'poemGenerator' | 'songLyricWriter' | 'dndCharacter' | 'jokeWriter'
-  | 'moviePitch' | 'tattooDesigner';
 
+
+import React, { useState, useEffect } from 'react';
+import { Page, Feature, FontStyle, DesignDensity } from './types';
+import Sidebar from './components/Sidebar';
+import HomeView from './components/views/HomeView';
+import SettingsView from './components/views/SettingsView';
+import PlansView from './components/views/PlansView';
+import { Icon } from './components/icons';
+import LoginView from './components/views/LoginView';
+import WhatsNewView from './components/views/WhatsNewView';
+import AdminView from './components/views/AdminView';
+import HelpView from './components/views/HelpView';
+import CoursesView from './components/views/CoursesView';
+import BuildEverythingView from './components/views/BuildEverythingView';
+// Fix: Import the missing TopModelKeysView component.
+import TopModelKeysView from './components/views/TopModelKeysView';
+import AIBusinessView from './components/views/AIBusinessView';
+import LiveChatPlatformView from './components/views/LiveChatPlatformView';
+
+interface ActivePage {
+    page: Page;
+    subPage?: string; // For deep-linking into features
+}
+
+const ApiKeyBanner: React.FC = () => (
+    <div className="bg-yellow-500 dark:bg-yellow-600 text-white p-2 h-10 flex items-center justify-center text-center text-sm fixed top-0 left-0 right-0 z-50 shadow-lg">
+        <strong>Warning:</strong> API_KEY is not configured. Most AI features will not work. For Video Generation, please use the in-app API key selector.
+    </div>
+);
 
 const App: React.FC = () => {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [user, setUser] = useState<User | null>(null);
+    const [activePage, setActivePage] = useState<ActivePage>({ page: Page.HOME });
+    const [isSidebarCollapsed, setSidebarCollapsed] = useState(false);
+    const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isApiKeyMissing, setIsApiKeyMissing] = useState(false);
+    const [isLoginVisible, setIsLoginVisible] = useState(false);
+    const [isWhatsNewVisible, setIsWhatsNewVisible] = useState(false);
+    const [hasSeenWhatsNew, setHasSeenWhatsNew] = useState(false);
 
-    const [currentView, setCurrentView] = useState<View>('chat');
-    const [conversations, setConversations] = useState<Conversation[]>([
-        {
-            id: '1',
-            title: 'SnakeEngine.AI',
-            messages: [{ id: '1-1', sender: 'ai', text: 'Hello! I am SnakeEngine.AI. How can I help you today?' }],
-            model: 'gemini-2.5-flash'
+    const applyDynamicStyles = () => {
+        const styleId = 'dynamic-styles';
+        let styleElement = document.getElementById(styleId) as HTMLStyleElement;
+        if (!styleElement) {
+            styleElement = document.createElement('style');
+            styleElement.id = styleId;
+            document.head.appendChild(styleElement);
         }
-    ]);
-    const [activeConversationId, setActiveConversationId] = useState<string | null>('1');
 
-    const handleLogin = () => {
-        setUser({ name: 'Demo User', email: 'demo@snakeengine.ai' });
-        setIsLoggedIn(true);
+        const font = localStorage.getItem('snakeEngineFontStyle') as FontStyle || 'Inter';
+        const radius = parseInt(localStorage.getItem('snakeEngineCornerRadius') || '12', 10);
+        const shadow = parseFloat(localStorage.getItem('snakeEngineShadowStrength') || '1');
+        const density = localStorage.getItem('snakeEngineDesignDensity') as DesignDensity || 'Comfortable';
+        
+        let densityStyles = '';
+        if (density === 'Compact') {
+            densityStyles = `
+                .p-2 { padding: 0.25rem; } .p-3 { padding: 0.5rem; } .p-4 { padding: 0.75rem; } .p-6 { padding: 1rem; } .p-8 { padding: 1.5rem; }
+                .py-2 { padding-top: 0.25rem; padding-bottom: 0.25rem; } .py-3 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+                .gap-2 { gap: 0.25rem; } .gap-3 { gap: 0.5rem; } .gap-4 { gap: 0.75rem; } .gap-6 { gap: 1rem; } .gap-8 { gap: 1.5rem; }
+                .space-y-2 > :not([hidden]) ~ :not([hidden]) { margin-top: 0.25rem; } .space-y-4 > :not([hidden]) ~ :not([hidden]) { margin-top: 0.75rem; } .space-y-6 > :not([hidden]) ~ :not([hidden]) { margin-top: 1rem; }
+            `;
+        } else if (density === 'Spacious') {
+             densityStyles = `
+                .p-2 { padding: 0.75rem; } .p-3 { padding: 1rem; } .p-4 { padding: 1.5rem; } .p-6 { padding: 2.25rem; } .p-8 { padding: 3rem; }
+                .py-2 { padding-top: 0.75rem; padding-bottom: 0.75rem; } .py-3 { padding-top: 1rem; padding-bottom: 1rem; }
+                .gap-2 { gap: 0.75rem; } .gap-3 { gap: 1rem; } .gap-4 { gap: 1.5rem; } .gap-6 { gap: 2rem; } .gap-8 { gap: 2.5rem; }
+                .space-y-2 > :not([hidden]) ~ :not([hidden]) { margin-top: 0.75rem; } .space-y-4 > :not([hidden]) ~ :not([hidden]) { margin-top: 1.5rem; } .space-y-6 > :not([hidden]) ~ :not([hidden]) { margin-top: 2rem; }
+            `;
+        }
+        
+        styleElement.innerHTML = `
+            body { font-family: '${font}', sans-serif; }
+            .rounded-sm { border-radius: ${radius * 0.5}px; }
+            .rounded-md { border-radius: ${radius * 0.75}px; }
+            .rounded-lg { border-radius: ${radius}px; }
+            .rounded-xl { border-radius: ${radius * 1.25}px; }
+            .rounded-2xl { border-radius: ${radius * 1.5}px; }
+            
+            .shadow-sm { box-shadow: 0 1px 2px 0 rgb(0 0 0 / ${0.05 * shadow}); }
+            .shadow-md { box-shadow: 0 4px 6px -1px rgb(0 0 0 / ${0.1 * shadow}), 0 2px 4px -2px rgb(0 0 0 / ${0.1 * shadow}); }
+            .shadow-lg { box-shadow: 0 10px 15px -3px rgb(0 0 0 / ${0.1 * shadow}), 0 4px 6px -4px rgb(0 0 0 / ${0.1 * shadow}); }
+            .shadow-xl { box-shadow: 0 20px 25px -5px rgb(0 0 0 / ${0.1 * shadow}), 0 8px 10px -6px rgb(0 0 0 / ${0.1 * shadow}); }
+            
+            .dark .shadow-sm, .dark .shadow-md, .dark .shadow-lg, .dark .shadow-xl {
+                 box-shadow: 0 0 #0000, 0 0 #0000, 0 10px 15px -3px rgb(0 0 0 / ${0.3 * shadow}), 0 4px 6px -4px rgb(0 0 0 / ${0.3 * shadow});
+            }
+            ${densityStyles}
+        `;
+    };
+
+    useEffect(() => {
+        if (!process.env.API_KEY) {
+            console.warn("API_KEY environment variable is not set. Most features will fail.");
+            setIsApiKeyMissing(true);
+        }
+
+        try {
+            const authStatus = localStorage.getItem('snakeEngineAuthenticated');
+            if (authStatus === 'true') {
+                setIsAuthenticated(true);
+            }
+            const seenStatus = localStorage.getItem('snakeEngineSeenWhatsNew');
+            if (seenStatus === 'true') {
+                setHasSeenWhatsNew(true);
+            }
+        } catch (error) {
+            console.error("Could not access localStorage.", error);
+        }
+
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+        
+        applyDynamicStyles();
+
+        // Add protection against content copying
+        const handleContextMenu = (e: MouseEvent) => e.preventDefault();
+        document.addEventListener('contextmenu', handleContextMenu);
+
+        const style = document.createElement('style');
+        style.innerHTML = `
+          body, html {
+            -webkit-user-select: none; /* Safari */
+            -ms-user-select: none; /* IE 10 and IE 11 */
+            user-select: none; /* Standard syntax */
+          }
+        `;
+        document.head.appendChild(style);
+
+        return () => {
+          document.removeEventListener('contextmenu', handleContextMenu);
+          if(document.head.contains(style)) {
+            document.head.removeChild(style);
+          }
+        };
+    }, []);
+    
+    const handleLogin = (remember: boolean) => {
+        if (remember) {
+            localStorage.setItem('snakeEngineAuthenticated', 'true');
+        }
+        setIsAuthenticated(true);
+        setIsLoginVisible(false);
     };
 
     const handleLogout = () => {
-        setUser(null);
-        setIsLoggedIn(false);
+        localStorage.removeItem('snakeEngineAuthenticated');
+        setIsAuthenticated(false);
+        setMobileMenuOpen(false);
     };
 
-    const handleNewChat = useCallback(() => {
-        const newConversation: Conversation = {
-            id: Date.now().toString(),
-            title: 'SnakeEngine.AI',
-            messages: [{ id: `${Date.now().toString()}-1`, sender: 'ai', text: 'Hello! I am SnakeEngine.AI. How can I assist you?' }],
-            model: 'gemini-2.5-flash',
-        };
-        setConversations(prev => [newConversation, ...prev]);
-        setActiveConversationId(newConversation.id);
-        setCurrentView('chat');
-    }, []);
-    
-    const handleSelectConversation = (id: string) => {
-        setActiveConversationId(id);
-        setCurrentView('chat');
+    const handleShowLogin = () => {
+        setIsLoginVisible(true);
+        setMobileMenuOpen(false);
     };
 
-    const handleDeleteConversation = (id: string) => {
-        setConversations(prev => prev.filter(c => c.id !== id));
-        if (activeConversationId === id) {
-            setActiveConversationId(conversations.length > 1 ? conversations.find(c => c.id !== id)?.id ?? null : null);
-            if (conversations.length <= 1) {
-                setCurrentView('chat');
-            }
-        }
+    const handleCloseLogin = () => {
+        setIsLoginVisible(false);
     };
 
-    const updateConversationMessages = useCallback((conversationId: string, updateFn: (messages: Message[]) => Message[]) => {
-        setConversations(prev =>
-            prev.map(c =>
-                c.id === conversationId ? { ...c, messages: updateFn(c.messages) } : c
-            )
-        );
-    }, []);
-
-    const updateConversationTitle = useCallback((conversationId: string, title: string) => {
-        // Title is now fixed, but we keep the function in case it's needed elsewhere
-        if (title !== "SnakeEngine.AI") {
-             setConversations(prev =>
-                prev.map(c => (c.id === conversationId ? { ...c, title } : c))
-            );
-        }
-    }, []);
-
-    const handleUpdateConversationModel = useCallback((conversationId: string, model: string) => {
-        setConversations(prev =>
-            prev.map(c =>
-                c.id === conversationId ? { ...c, model } : c
-            )
-        );
-    }, []);
-    
-    const activeConversation = useMemo(() => {
-        return conversations.find(c => c.id === activeConversationId);
-    }, [conversations, activeConversationId]);
-    
-    const handleSetPersona = (persona: string) => {
-        if (activeConversationId) {
-            setConversations(prev => prev.map(c => c.id === activeConversationId ? { ...c, persona } : c));
-            updateConversationMessages(activeConversationId, (messages) => [
-                ...messages,
-                { id: Date.now().toString(), sender: 'ai', text: `Persona set! I am now: ${persona}` }
-            ]);
-            setCurrentView('chat');
-        }
-    };
-
-
-    const renderView = () => {
-        const chatViewProps = {
-            conversations,
-            activeConversationId,
-            updateConversationMessages,
-            updateConversationTitle,
-            onUpdateConversationModel: handleUpdateConversationModel,
-        };
-
-        switch (currentView) {
-            case 'dashboard': return <DashboardView />;
-            case 'chat': return <ChatView {...chatViewProps} />;
-            case 'imageGen': return <ImageGenView />;
-            case 'videoGen': return <VideoGenView />;
-            case 'templates': return <TemplatesView />;
-            case 'search': return <SearchView />;
-            case 'discover': return <DiscoverPage />;
-            case 'topicList': return <TopicListView />;
-            case 'excel': return <ExcelAutomationPage />;
-            case 'settings': return <SettingsPage />;
-            case 'subscription': return <SubscriptionPage />;
-            case 'help': return <HelpPage />;
-            case 'audio': return <AudioToolView />;
-            case 'code': return <CodeAssistantView />;
-            case 'community': return <CommunityPage />;
-            case 'creators': return <CreatorsPage />;
-            case 'admin': return <AdminPage />;
-            case 'trending': return <TrendingPage />;
-            case 'history': return <ChatHistoryPage 
-                conversations={conversations} 
-                onSelectConversation={handleSelectConversation}
-                onDeleteConversation={handleDeleteConversation}
-                onNewChat={handleNewChat}
-            />;
-            case 'persona': return <PersonaHubView onSetPersona={handleSetPersona} />;
-            case 'document': return <DocumentAnalyzerView />;
-            case 'music': return <MusicComposerView />;
-            case 'live': return <LiveConversationView />;
-            case 'idea': return <IdeaGeneratorView />;
-            case 'translator': return <TranslatorView />;
-            case 'social': return <SocialPlannerView />;
-            case 'travel': return <TravelPlannerView />;
-            case 'game': return <GameCreatorView />;
-            case 'leaderboard': return <LeaderboardPage />;
-            case 'challenges': return <ChallengesPage />;
-            case 'financial': return <FinancialAnalystView />;
-            case 'health': return <HealthAdvisorView />;
-            case 'stylist': return <PersonalStylistView />;
-            case 'apiDocs': return <ApiDocsPage />;
-            
-            // Create
-            case 'blogPost': return <BlogPostView />;
-            case 'adCopy': return <AdCopyView />;
-            case 'productDesc': return <ProductDescriptionView />;
-            case 'storyWriter': return <StoryWriterView />;
-            case 'scriptWriter': return <ScriptWriterView />;
-            case 'seoKeywords': return <SeoKeywordsView />;
-
-            // Business
-            case 'businessPlan': return <BusinessPlanView />;
-            case 'swotAnalysis': return <SwotAnalysisView />;
-            case 'marketResearch': return <MarketResearchView />;
-            case 'brandNamer': return <BrandNamerView />;
-            case 'sloganMaker': return <SloganMakerView />;
-            case 'coldEmail': return <ColdEmailView />;
-            case 'jobDescription': return <JobDescriptionView />;
-            case 'pressRelease': return <PressReleaseView />;
-
-            // Developer
-            case 'regexGenerator': return <RegexGeneratorView />;
-            case 'cronGenerator': return <CronGeneratorView />;
-            case 'apiDocsWriter': return <ApiDocsWriterView />;
-            case 'unitTestWriter': return <UnitTestWriterView />;
-            case 'dbSchema': return <DbSchemaView />;
-            case 'colorPalette': return <ColorPaletteView />;
-            case 'commitMessage': return <CommitMessageView />;
-
-            // Education
-            case 'lessonPlanner': return <LessonPlannerView />;
-            case 'studyGuide': return <StudyGuideView />;
-            case 'quizMaker': return <QuizMakerView />;
-            case 'topicSimplifier': return <TopicSimplifierView />;
-            case 'historicalExplainer': return <HistoricalExplainerView />;
-            case 'flashcards': return <FlashcardsView />;
-
-            // Lifestyle
-            case 'mealPlanner': return <MealPlannerView />;
-            case 'dreamInterpreter': return <DreamInterpreterView />;
-            case 'workoutGenerator': return <WorkoutGeneratorView />;
-            case 'giftIdeas': return <GiftIdeasView />;
-            case 'horoscope': return <HoroscopeView />;
-            case 'recipeGenerator': return <RecipeGeneratorView />;
-            case 'speechWriter': return <SpeechWriterView />;
-
-            // Fun & Creative
-            case 'poemGenerator': return <PoemGeneratorView />;
-            case 'songLyricWriter': return <SongLyricWriterView />;
-            case 'dndCharacter': return <DndCharacterView />;
-            case 'jokeWriter': return <JokeWriterView />;
-            case 'moviePitch': return <MoviePitchView />;
-            case 'tattooDesigner': return <TattooDesignerView />;
-
-            default: return <ChatView {...chatViewProps} />;
-        }
-    };
-
-    if (!isLoggedIn) {
-        return <AuthPage onLoginSuccess={handleLogin} />;
+    const handleShowWhatsNew = () => {
+        setIsWhatsNewVisible(true);
+        setHasSeenWhatsNew(true);
+        localStorage.setItem('snakeEngineSeenWhatsNew', 'true');
+        setMobileMenuOpen(false);
     }
 
+    const handleSetActivePage = (page: Page, subPage?: Feature) => {
+        if (page === Page.WHATS_NEW) {
+            handleShowWhatsNew();
+            return;
+        }
+        setActivePage({ page, subPage });
+        setMobileMenuOpen(false);
+    };
+
+    const renderPage = () => {
+        switch (activePage.page) {
+            case Page.HOME:
+                return <HomeView setActivePage={handleSetActivePage} />;
+            case Page.BUILD_EVERYTHING:
+                return <BuildEverythingView initialFeature={activePage.subPage as Feature} />;
+            case Page.AI_BUSINESS:
+                return <AIBusinessView />;
+            case Page.LIVE_CHAT_PLATFORM:
+                return <LiveChatPlatformView />;
+            case Page.COURSES:
+                return <CoursesView />;
+            case Page.SETTINGS:
+                return <SettingsView applyStyles={applyDynamicStyles} />;
+            case Page.PLANS_SUBSCRIPTIONS:
+                return <PlansView />;
+            case Page.TOP_MODEL_KEYS:
+                return <TopModelKeysView />;
+            case Page.OWNER_ADMINS:
+                return <AdminView />;
+            case Page.HELP_SUPPORT:
+                return <HelpView />;
+            default:
+                return <HomeView setActivePage={handleSetActivePage} />;
+        }
+    };
+
     return (
-        <div className="flex h-screen w-screen bg-bg-primary text-text-primary font-sans antialiased">
+        <div className="h-screen bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-200 transition-colors duration-300 overflow-hidden">
+            {isApiKeyMissing && <ApiKeyBanner />}
             <Sidebar 
-              currentView={currentView} 
-              setCurrentView={setCurrentView} 
-              onNewChat={handleNewChat}
-              user={user}
-              onLogout={handleLogout}
+                id="mobile-sidebar"
+                activePage={activePage.page} 
+                setActivePage={handleSetActivePage}
+                isCollapsed={isSidebarCollapsed}
+                setCollapsed={setSidebarCollapsed}
+                isMobileOpen={isMobileMenuOpen}
+                setMobileOpen={setMobileMenuOpen}
+                isAuthenticated={isAuthenticated}
+                onLoginRequest={handleShowLogin}
+                onLogout={handleLogout}
+                hasNewUpdates={!hasSeenWhatsNew}
             />
-            <main className="flex-1 flex flex-col overflow-hidden">
-                {renderView()}
+
+            {isMobileMenuOpen && (
+                <div 
+                    className="fixed inset-0 bg-black/60 z-30 md:hidden"
+                    onClick={() => setMobileMenuOpen(false)}
+                ></div>
+            )}
+
+            <main className={`flex-1 flex flex-col h-full transition-all duration-300 ease-in-out md:${isSidebarCollapsed ? 'ml-20' : 'ml-64'} ${isApiKeyMissing ? 'pt-10' : ''}`}>
+                {/* Mobile Header */}
+                <header className="md:hidden flex items-center justify-between h-16 px-4 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 flex-shrink-0">
+                    <button 
+                        onClick={() => setMobileMenuOpen(prev => !prev)} 
+                        className="p-2 text-slate-500 dark:text-slate-400"
+                        aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+                        aria-expanded={isMobileMenuOpen}
+                        aria-controls="mobile-sidebar"
+                    >
+                        <Icon name="hamburger" className="w-6 h-6" />
+                    </button>
+                    <div className="flex items-center gap-2">
+                        <Icon name="logo" className="w-7 h-7" />
+                        <h1 className="text-lg font-bold gradient-text">SnakeEngine</h1>
+                    </div>
+                    <div className="w-8" /> {/* Spacer to center the title */}
+                </header>
+
+                <div className="flex-1 overflow-y-auto p-4 sm:p-6">
+                    <div className="mx-auto w-full h-full max-w-screen-2xl">
+                        {renderPage()}
+                    </div>
+                </div>
             </main>
+
+            {isLoginVisible && (
+                <div className="fixed inset-0 z-50 animate-fade-in">
+                    <LoginView
+                        onLoginSuccess={handleLogin}
+                        isModal={true}
+                        onClose={handleCloseLogin}
+                    />
+                </div>
+            )}
+            
+            {isWhatsNewVisible && (
+                <WhatsNewView onClose={() => setIsWhatsNewVisible(false)} />
+            )}
         </div>
     );
 };

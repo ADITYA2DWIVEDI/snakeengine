@@ -1,5 +1,5 @@
 {
-  "name": "copy-of-snakeengine.ai",
+  "name": "copy-of-snakeengine",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -9,11 +9,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@google/genai": "^1.26.0",
     "react-dom": "^19.2.0",
     "react": "^19.2.0",
-    "react-markdown": "^10.1.0",
-    "remark-gfm": "^4.0.1"
+    "@google/genai": "^1.26.0",
+    "emoji-picker-element": "^1.21.3"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",

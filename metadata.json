@@ -1,8 +1,9 @@
 {
-  "name": "Copy of SnakeEngine.AI",
-  "description": "A powerful and friendly AI chatbot app with a modern, glass-like UI. It supports text and image inputs, AI image generation, and provides a suite of productivity tools.",
+  "name": "Copy of SNAKEENGINE",
+  "description": "A next-generation, comprehensive AI platform that reimagines user experience through an inventive, mixed-color interface.",
   "requestFramePermissions": [
     "microphone",
-    "geolocation"
+    "geolocation",
+    "camera"
   ]
 }
