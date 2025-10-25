@@ -1,6 +1,5 @@
-
-import { useState, useCallback, useRef, useEffect } from 'react';
 import { GoogleGenAI } from '@google/genai';
+import * as React from 'react';
 
 interface VeoGenerationParams {
     prompt: string;
@@ -22,15 +21,15 @@ declare global {
 }
 
 export const useVeoGenerator = () => {
-    const [isGenerating, setIsGenerating] = useState(false);
-    const [videoUrl, setVideoUrl] = useState<string | null>(null);
-    const [error, setError] = useState<string | null>(null);
-    const [progressMessage, setProgressMessage] = useState<string>('');
-    const [isKeySelected, setIsKeySelected] = useState(false);
+    const [isGenerating, setIsGenerating] = React.useState(false);
+    const [videoUrl, setVideoUrl] = React.useState<string | null>(null);
+    const [error, setError] = React.useState<string | null>(null);
+    const [progressMessage, setProgressMessage] = React.useState<string>('');
+    const [isKeySelected, setIsKeySelected] = React.useState(false);
 
-    const pollingTimeout = useRef<number | null>(null);
+    const pollingTimeout = React.useRef<number | null>(null);
 
-    const cleanup = useCallback(() => {
+    const cleanup = React.useCallback(() => {
         if (pollingTimeout.current) {
             clearTimeout(pollingTimeout.current);
             pollingTimeout.current = null;
@@ -39,7 +38,7 @@ export const useVeoGenerator = () => {
         setProgressMessage('');
     }, []);
     
-    const checkApiKey = useCallback(async () => {
+    const checkApiKey = React.useCallback(async () => {
         if (!window.aistudio) {
              setError("AISTUDIO environment not found. This feature requires the AISTUDIO environment.");
              return false;
@@ -65,7 +64,7 @@ export const useVeoGenerator = () => {
     };
 
 
-    const generateVideo = useCallback(async ({ prompt, image, aspectRatio }: VeoGenerationParams) => {
+    const generateVideo = React.useCallback(async ({ prompt, image, aspectRatio }: VeoGenerationParams) => {
         setIsGenerating(true);
         setVideoUrl(null);
         setError(null);
@@ -82,7 +81,6 @@ export const useVeoGenerator = () => {
             
             setProgressMessage('Initializing video generation engine...');
             
-            // Re-create AI instance to use the latest key
             const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
             setProgressMessage('Sending configuration to the model...');
@@ -135,7 +133,7 @@ export const useVeoGenerator = () => {
                     cleanup();
                 }
             };
-            pollingTimeout.current = window.setTimeout(pollOperation, 10000); // Poll every 10 seconds
+            pollingTimeout.current = window.setTimeout(pollOperation, 10000);
 
         } catch (e: any) {
             console.error('Video generation error:', e);
@@ -149,7 +147,7 @@ export const useVeoGenerator = () => {
         }
     }, [checkApiKey, cleanup]);
     
-    useEffect(() => {
+    React.useEffect(() => {
         return () => {
             cleanup();
         }

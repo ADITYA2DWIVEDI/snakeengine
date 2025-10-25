@@ -1,5 +1,5 @@
-/// <reference types="react" />
-import React, { useState, useRef, useEffect } from 'react';
+// Fix: Changed React import to `import * as React from 'react'` to resolve JSX typing issues.
+import * as React from 'react';
 import { Page, ChatMessage as ChatMessageType, Feature } from '../../types';
 import { Icon } from '../icons';
 import { analyzeSpreadsheet, convertNumberToWords, generatePdfExtractionGuide } from '../../services/geminiService';
@@ -24,15 +24,15 @@ const sampleBudget = `Category,Allocated,Spent,Remaining
 
 // Sub-component for Spreadsheet Co-Pilot
 const SpreadsheetCoPilotView: React.FC = () => {
-    const [data, setData] = useState<string[][] | null>(null);
-    const [fileName, setFileName] = useState<string | null>(null);
-    const [messages, setMessages] = useState<ChatMessageType[]>([]);
-    const [input, setInput] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-    const fileInputRef = useRef<HTMLInputElement>(null);
-    const messagesEndRef = useRef<HTMLDivElement>(null);
+    const [data, setData] = React.useState<string[][] | null>(null);
+    const [fileName, setFileName] = React.useState<string | null>(null);
+    const [messages, setMessages] = React.useState<ChatMessageType[]>([]);
+    const [input, setInput] = React.useState('');
+    const [isLoading, setIsLoading] = React.useState(false);
+    const fileInputRef = React.useRef<HTMLInputElement>(null);
+    const messagesEndRef = React.useRef<HTMLDivElement>(null);
     
-    useEffect(() => {
+    React.useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages, isLoading]);
 
@@ -189,10 +189,10 @@ const SpreadsheetCoPilotView: React.FC = () => {
 
 // Sub-component for Number to Words
 const NumberToWordsView: React.FC = () => {
-    const [inputNumber, setInputNumber] = useState('');
-    const [resultText, setResultText] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState('');
+    const [inputNumber, setInputNumber] = React.useState('');
+    const [resultText, setResultText] = React.useState('');
+    const [isLoading, setIsLoading] = React.useState(false);
+    const [error, setError] = React.useState('');
 
     const handleConvert = async () => {
         if (!inputNumber.trim()) {
@@ -236,10 +236,10 @@ const NumberToWordsView: React.FC = () => {
 
 // Sub-component for PDF Extractor
 const PdfExtractorView: React.FC = () => {
-    const [description, setDescription] = useState('');
-    const [result, setResult] = useState<{guide: string, vbaMacro: string} | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState('');
+    const [description, setDescription] = React.useState('');
+    const [result, setResult] = React.useState<{guide: string, vbaMacro: string} | null>(null);
+    const [isLoading, setIsLoading] = React.useState(false);
+    const [error, setError] = React.useState('');
 
      const handleGenerate = async () => {
         if (!description.trim()) {
@@ -288,10 +288,10 @@ const PdfExtractorView: React.FC = () => {
 
 // Main View Component
 const ExcelAutomationView: React.FC = () => {
-    const [activeTool, setActiveTool] = useState<ExcelTool>('copilot');
+    const [activeTool, setActiveTool] = React.useState<ExcelTool>('copilot');
 
-    const tools: { id: ExcelTool, name: string, icon: Page | Feature, description: string }[] = [
-        { id: 'copilot', name: 'Spreadsheet Co-Pilot', icon: Page.EXCEL_AUTOMATION, description: 'Analyze CSV data with AI chat.' },
+    const tools: { id: ExcelTool, name: string, icon: Feature, description: string }[] = [
+        { id: 'copilot', name: 'Spreadsheet Co-Pilot', icon: Feature.EXCEL_AUTOMATION, description: 'Analyze CSV data with AI chat.' },
         { id: 'numberToWords', name: 'Number to Words', icon: Feature.EXCEL_NUMBER_TO_WORDS, description: 'Convert numbers to text.' },
         { id: 'pdfExtractor', name: 'PDF Data Extractor', icon: Feature.EXCEL_PDF_EXTRACTOR, description: 'Get guides to extract data from PDFs.' },
     ];

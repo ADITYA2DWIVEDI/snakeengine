@@ -1,5 +1,5 @@
-/// <reference types="react" />
-import React from 'react';
+// Fix: Changed React import to `import * as React from 'react'` to resolve JSX typing issues.
+import * as React from 'react';
 import { Page } from '../../types';
 import { Icon } from '../icons';
 
@@ -11,10 +11,13 @@ const users = [
 ];
 
 const AdminView: React.FC = () => {
+    const chartData = [60, 80, 75, 90, 65, 70, 85].reverse(); // Mock data for last 7 days
+
     return (
-        <div>
+        <div className="animate-fade-in">
             <div className="flex items-center gap-3 mb-4">
-                <Icon name={Page.OWNER_ADMINS} className="w-8 h-8 gradient-text" />
+                {/* Fix: Replaced non-existent Page.OWNER_ADMINS with Page.ADMIN. */}
+                <Icon name={Page.ADMIN} className="w-8 h-8 gradient-text" />
                 <h1 className="text-3xl font-bold text-slate-800 dark:text-slate-100">Admin Dashboard</h1>
             </div>
             <p className="text-slate-500 dark:text-slate-400 mb-8">
@@ -44,42 +47,38 @@ const AdminView: React.FC = () => {
                 <div className="mt-8">
                     <h3 className="font-bold text-lg text-slate-700 dark:text-slate-200 mb-4">API Usage Last 7 Days</h3>
                     <div className="bg-slate-100 dark:bg-slate-700/50 p-4 rounded-lg h-64 flex items-end gap-2">
-                        {/* Chart placeholder */}
-                        <div className="w-full h-[60%] bg-gradient-to-t from-purple-200 to-purple-300 dark:from-teal-800 dark:to-teal-700 rounded-t-md"></div>
-                        <div className="w-full h-[80%] bg-gradient-to-t from-purple-200 to-purple-300 dark:from-teal-800 dark:to-teal-700 rounded-t-md"></div>
-                        <div className="w-full h-[50%] bg-gradient-to-t from-purple-200 to-purple-300 dark:from-teal-800 dark:to-teal-700 rounded-t-md"></div>
-                        <div className="w-full h-[70%] bg-gradient-to-t from-purple-200 to-purple-300 dark:from-teal-800 dark:to-teal-700 rounded-t-md"></div>
-                        <div className="w-full h-[90%] bg-gradient-to-t from-purple-200 to-purple-300 dark:from-teal-800 dark:to-teal-700 rounded-t-md"></div>
-                        <div className="w-full h-[65%] bg-gradient-to-t from-purple-200 to-purple-300 dark:from-teal-800 dark:to-teal-700 rounded-t-md"></div>
-                        <div className="w-full h-[85%] bg-gradient-to-t from-purple-200 to-purple-300 dark:from-teal-800 dark:to-teal-700 rounded-t-md"></div>
+                         {chartData.map((height, i) => (
+                            <div key={i} className="flex-1 bg-gradient-to-t from-purple-400 to-teal-400 rounded-t-md transition-all duration-300" style={{ height: `${height}%` }}></div>
+                        ))}
                     </div>
                 </div>
-
+                
                 <div className="mt-8">
-                    <h3 className="font-bold text-lg text-slate-700 dark:text-slate-200 mb-2">User Management</h3>
+                    <h3 className="font-bold text-lg text-slate-700 dark:text-slate-200 mb-4">User Management</h3>
                     <div className="overflow-x-auto">
-                        <table className="w-full text-sm text-left">
-                            <thead className="text-xs text-slate-500 dark:text-slate-400 uppercase">
+                        <table className="w-full text-sm text-left text-slate-500 dark:text-slate-400">
+                            <thead className="text-xs text-slate-700 uppercase bg-slate-100 dark:bg-slate-700 dark:text-slate-300">
                                 <tr>
-                                    <th className="p-2">Email</th>
-                                    <th className="p-2">Plan</th>
-                                    <th className="p-2">Status</th>
-                                    <th className="p-2">Joined</th>
-                                    <th className="p-2 text-right">Actions</th>
+                                    <th scope="col" className="px-6 py-3">Email</th>
+                                    <th scope="col" className="px-6 py-3">Plan</th>
+                                    <th scope="col" className="px-6 py-3">Status</th>
+                                    <th scope="col" className="px-6 py-3">Joined</th>
+                                    <th scope="col" className="px-6 py-3"><span className="sr-only">Actions</span></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {users.map(user => (
-                                    <tr key={user.email} className="border-b border-slate-200 dark:border-slate-700">
-                                        <td className="p-2 font-medium text-slate-800 dark:text-slate-100">{user.email}</td>
-                                        <td className="p-2 text-slate-600 dark:text-slate-300">{user.plan}</td>
-                                        <td className="p-2">
-                                            <span className={`px-2 py-1 text-xs font-semibold rounded-full ${user.status === 'Active' ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300' : 'bg-slate-200 text-slate-600 dark:bg-slate-600 dark:text-slate-200'}`}>{user.status}</span>
+                                    <tr key={user.email} className="bg-white border-b dark:bg-slate-800 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-600/50">
+                                        <td className="px-6 py-4 font-medium text-slate-900 whitespace-nowrap dark:text-white">{user.email}</td>
+                                        <td className="px-6 py-4">{user.plan}</td>
+                                        <td className="px-6 py-4">
+                                            <span className={`px-2 py-1 text-xs font-semibold rounded-full ${user.status === 'Active' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'}`}>
+                                                {user.status}
+                                            </span>
                                         </td>
-                                        <td className="p-2 text-slate-600 dark:text-slate-300">{user.joined}</td>
-                                        <td className="p-2 text-right">
-                                            <button className="p-1 text-slate-500 hover:text-purple-600 dark:hover:text-teal-400"><Icon name="edit" className="w-4 h-4"/></button>
-                                            <button className="p-1 text-slate-500 hover:text-red-500"><Icon name="delete" className="w-4 h-4"/></button>
+                                        <td className="px-6 py-4">{user.joined}</td>
+                                        <td className="px-6 py-4 text-right">
+                                            <a href="#" className="font-medium text-purple-600 dark:text-teal-400 hover:underline">Edit</a>
                                         </td>
                                     </tr>
                                 ))}
@@ -87,6 +86,7 @@ const AdminView: React.FC = () => {
                         </table>
                     </div>
                 </div>
+
             </div>
         </div>
     );

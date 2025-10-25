@@ -1,4 +1,3 @@
-
 // File to Base64 converter
 export const fileToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {

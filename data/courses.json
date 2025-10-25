@@ -695,7 +695,7 @@
       "title": "Hak5 - Cybersecurity Basics",
       "type": "free",
       "price": 0,
-      "youtube_url": "https://www.youtube.com/watch?v=inWWhr5tnEA",
+      "youtube_url": "https://youtu.be/3FNYvj2U0HM",
       "description": "Introduction to cybersecurity.",
       "duration": "2h",
       "tags": ["cybersecurity", "beginner", "hacking"]
@@ -705,7 +705,7 @@
       "title": "John Hammond - Hacking Walkthroughs",
       "type": "free",
       "price": 0,
-      "youtube_url": "https://www.youtube.com/watch?v=r_s-i-B1T-A",
+      "youtube_url": "https://youtu.be/3FNYvj2U0HM",
       "description": "Hacking machine walkthroughs.",
       "duration": "1h",
       "tags": ["ethical hacking", "ctf", "intermediate"]
@@ -746,7 +746,7 @@
       "type": "free",
       "price": 0,
       "youtube_url": "https://youtu.be/wIuVvCuiJhU",
-      "description": "UI design with Figma.",
+      "description": "UI design in Figma.",
       "duration": "30m",
       "tags": ["ui design", "figma", "beginner"]
     },

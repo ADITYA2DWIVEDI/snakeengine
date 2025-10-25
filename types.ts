@@ -2,48 +2,52 @@
 
 export enum Page {
     HOME = "Home",
-    BUILD_EVERYTHING = "Build Everything",
+    SMART_STUDIO = "Smart Studio",
     COURSES = "Courses",
     SETTINGS = "Settings",
     PLANS_SUBSCRIPTIONS = "Plans & Subscription",
-    TOP_MODEL_KEYS = "Top Model API Keys",
-    OWNER_ADMINS = "Owner & Admins",
     HELP_SUPPORT = "Help & Support",
     WHATS_NEW = "What's New",
-    // Fix: Add missing Page enum members for Discover, Your Space, and Templates views.
+    
+    // These are not primary pages anymore but might be used internally
     DISCOVER = "Discover",
     YOUR_SPACE = "Your Space",
     TEMPLATES = "Templates",
-    // Fix: Add `TUTORIAL` to the Page enum.
+    CREATORS = "Creators",
     TUTORIAL = "Tutorial",
-    AI_BUSINESS = "AI Business",
-    LIVE_CHAT_PLATFORM = "Live Chat Platform",
-    // Fix: Add missing Page enum members for new views.
-    EXCEL_AUTOMATION = "Excel Automation",
-    AI_SEARCH = "AI Search",
-    PROMPT_ENGINEERING = "Prompt Engineering",
-    SNAKE_ENGINE = "Snake Engine",
+    ADMIN = "Admin",
+    API_KEYS = "API Keys",
+    SNAKE_ENGINE = "SnakeEngine",
+    BUILD_EVERYTHING = "Build Everything",
 }
 
 export enum Feature {
+    // AI Platform Features
     SMART_CHAT = "Smart Chat",
-    LIVE_VOICE = "Live Voice",
+    LIVE_CHAT = "Live Chat",
     IMAGE_GENERATION = "Image Generation",
     IMAGE_EDITING = "Image Editing",
     VIDEO_GENERATION = "Video Generation",
-    FILE_ANALYSIS = "File Analysis",
+    FILE_ANALYSIS = "Image Analysis",
+    VIDEO_ANALYSIS = "Video Analysis",
     THINKING_MODE = "Thinking Mode",
-    APP_BUILDER = "App Builder",
-    WEBSITE_BUILDER = "Website Builder",
-    GAME_ASSET_GENERATOR = "Game Asset Generator",
-    STORYBOARD_CREATOR = "Storyboard Creator",
-    PRESENTATION_GENERATOR = "Presentation Generator",
-    LEARNING_PLAN_BUILDER = "Learning Plan Builder",
+    AUDIO_TRANSCRIPTION = "Audio Transcription",
+    LIVE_VOICE = "Live Voice",
+    
+    // Creator Tools
     YOUTUBE_STUDIO = "YouTube Studio",
     SOCIAL_PLANNER = "Social Planner",
+    STORYBOARD_CREATOR = "Storyboard Creator",
+    PRESENTATION_GENERATOR = "Presentation Generator",
+
+    // Pro Tools
+    APP_BUILDER = "App Builder",
+    WEBSITE_BUILDER = "Website Builder",
+    EXCEL_AUTOMATION = "Excel Automation",
     EXCEL_NUMBER_TO_WORDS = "Number to Words",
-    EXCEL_PDF_EXTRACTOR = "PDF Data Extractor",
-    AI_MUSIC_GENERATOR = "AI Music Generator",
+    EXCEL_PDF_EXTRACTOR = "PDF Extractor",
+    AI_SEARCH = "AI Search",
+    PROMPT_ENGINEERING = "Prompt Engineering",
     CODE_CONVERTER = "Code Converter",
 }
 
@@ -59,8 +63,24 @@ export interface ChatMessage {
     role: 'user' | 'model';
     text: string;
     sources?: GroundingSource[];
-    image?: string; // for image previews in chat
-    video?: string; // for video previews in chat
+    image?: string; 
+    video?: string;
+}
+
+export type FontStyle = 'Inter' | 'Roboto' | 'Poppins' | 'Source Code Pro';
+export type DesignDensity = 'Compact' | 'Comfortable' | 'Spacious';
+
+export type AIPersonality = 'Assistant' | 'Creative' | 'Professional' | 'Concise';
+
+export interface Course {
+  id: number;
+  title: string;
+  type: 'free' | 'paid';
+  price: number;
+  youtube_url: string;
+  description: string;
+  duration: string;
+  tags: string[];
 }
 
 export type SocialPlatform = 'Instagram' | 'Facebook' | 'Twitter' | 'LinkedIn';
@@ -69,21 +89,11 @@ export interface ScheduledPost {
     id: string;
     platform: SocialPlatform;
     content: string;
-    imageUrl?: string;
     scheduledAt: Date;
+    imageUrl?: string;
 }
 
-export interface Slide {
-    title: string;
-    points: string[];
-}
-
-export interface Presentation {
-    mainTitle: string;
-    slides: Slide[];
-}
-
-export type ApiProvider = 'Google' | 'OpenAI' | 'Perplexity' | 'DeepSeek' | 'Grok' | 'Anthropic';
+export type ApiProvider = 'Google' | 'OpenAI' | 'Anthropic' | 'Perplexity' | 'DeepSeek' | 'Grok' | 'Default';
 
 export interface ApiKey {
     id: string;
@@ -92,17 +102,10 @@ export interface ApiKey {
     key: string;
 }
 
-export interface Course {
-    id: number;
-    title: string;
-    type: 'free' | 'paid';
-    price: number;
-    youtube_url: string;
-    description: string;
-    duration: string;
-    tags: string[];
+export interface Presentation {
+    mainTitle: string;
+    slides: {
+        title: string;
+        points: string[];
+    }[];
 }
-
-export type FontStyle = 'Inter' | 'Roboto' | 'Poppins' | 'Source Code Pro';
-export type AIPersonality = 'Assistant' | 'Creative' | 'Professional' | 'Concise';
-export type DesignDensity = 'Compact' | 'Comfortable' | 'Spacious';

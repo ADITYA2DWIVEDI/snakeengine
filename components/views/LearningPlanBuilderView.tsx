@@ -1,5 +1,3 @@
-// Fix: Add React types reference to resolve JSX compilation errors.
-/// <reference types="react" />
 import React, { useState } from 'react';
 import { generateLearningPlan } from '../../services/geminiService';
 import { Page, Feature } from '../../types';

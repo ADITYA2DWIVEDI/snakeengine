@@ -10,9 +10,9 @@ interface MockAccountChooserProps {
 }
 
 const mockAccounts = [
-    { name: 'Aditya Dwivedi', email: 'aditya2dwivediyt@gmail.com', initial: 'A', color: 'bg-purple-500' },
-    { name: 'ADITYA DWIVEDI', email: 'aditya2dwivedi@gmail.com', initial: 'A', color: 'bg-green-500' },
-    { name: 'SNAKE ENGINE', email: 'snakeengineofficial@gmail.com', initial: 'S', color: 'bg-indigo-500' },
+    { name: 'User One', email: 'user.one@example.com', initial: 'U', color: 'bg-purple-500' },
+    { name: 'User Two', email: 'user.two@example.com', initial: 'U', color: 'bg-green-500' },
+    { name: 'Admin User', email: 'admin@example.com', initial: 'A', color: 'bg-indigo-500' },
 ];
 
 const MockAccountChooser: React.FC<MockAccountChooserProps> = ({ onAccountSelect, onCancel, isAuthenticating, selectedEmail }) => (

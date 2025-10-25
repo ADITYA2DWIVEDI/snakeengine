@@ -1,293 +1,173 @@
-/// <reference types="react" />
 import React, { useState, useMemo, useEffect } from 'react';
 import { Page, Course } from '../../types';
 import { Icon } from '../icons';
 import Spinner from '../common/Spinner';
 
-// Define the modal component inside the view file for simplicity
+// Video Modal Component
 const VideoModal: React.FC<{ courseTitle: string; videoUrl: string; onClose: () => void; }> = ({ courseTitle, videoUrl, onClose }) => {
-    const isYoutubeUrl = videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be');
-    const [isLoading, setIsLoading] = useState(isYoutubeUrl);
-
-    useEffect(() => {
-        const handleKeyDown = (event: KeyboardEvent) => {
-            if (event.key === 'Escape') {
-                onClose();
-            }
-        };
-        window.addEventListener('keydown', handleKeyDown);
-        return () => {
-            window.removeEventListener('keydown', handleKeyDown);
-        };
-    }, [onClose]);
-
-    
-    // Convert to embeddable URL
     const getEmbedUrl = (url: string) => {
+        let videoId: string | null = null;
         try {
-            if (url.includes('/embed/')) {
-                const urlObject = new URL(url);
-                urlObject.searchParams.set('autoplay', '1');
-                return urlObject.toString();
-            }
-            if (url.includes('youtu.be/')) {
-                const videoId = url.split('youtu.be/')[1].split('?')[0];
-                return `https://www.youtube.com/embed/${videoId}?autoplay=1`;
-            }
-            if (url.includes('watch?v=')) {
-                const videoId = new URL(url).searchParams.get('v');
-                return `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+            const urlObj = new URL(url);
+            const hostname = urlObj.hostname;
+    
+            if (hostname.includes('youtube.com')) {
+                videoId = urlObj.searchParams.get('v');
+            } else if (hostname.includes('youtu.be')) {
+                videoId = urlObj.pathname.substring(1); // remove leading '/'
             }
         } catch (error) {
-            console.error("Error parsing video URL:", error);
+            console.warn('URL parsing failed, falling back to regex for:', url);
         }
-        return url; // Fallback to original URL
+    
+        // If URL parsing didn't find an ID, use regex. This handles more formats.
+        if (!videoId) {
+            const youtubeRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+            const match = url.match(youtubeRegex);
+            if (match && match[1]) {
+                videoId = match[1];
+            }
+        }
+    
+        // Ensure no extra params are attached to the videoId
+        if (videoId && videoId.includes('?')) {
+            videoId = videoId.split('?')[0];
+        }
+
+        return videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0` : '';
     };
 
-    const embedUrl = isYoutubeUrl ? getEmbedUrl(videoUrl) : videoUrl;
-    
+    const embedUrl = getEmbedUrl(videoUrl);
+
+    if (!embedUrl) {
+        return (
+             <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4" onClick={onClose}>
+                <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-lg overflow-hidden p-8 text-center" onClick={e => e.stopPropagation()}>
+                    <h3 className="font-bold text-lg mb-4">Invalid Video URL</h3>
+                    <p className="text-slate-500 dark:text-slate-400 mb-6">Could not load the video for "{courseTitle}". The YouTube URL appears to be invalid.</p>
+                     <button onClick={onClose} className="px-4 py-2 bg-purple-600 text-white font-semibold rounded-lg">Close</button>
+                </div>
+            </div>
+        )
+    }
+
     return (
-        <div 
-            className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 animate-fade-in" 
-            onClick={onClose}
-            aria-modal="true"
-            role="dialog"
-        >
-            <div 
-                className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-4xl overflow-hidden" 
-                onClick={e => e.stopPropagation()}
-            >
+        <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 animate-fade-in" onClick={onClose}>
+            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-4xl overflow-hidden" onClick={e => e.stopPropagation()}>
                 <div className="p-4 flex justify-between items-center border-b border-slate-200 dark:border-slate-700">
                     <h3 className="font-bold text-lg text-slate-800 dark:text-slate-100">{courseTitle}</h3>
-                    <button onClick={onClose} className="p-1 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors" aria-label="Close video player">
-                        <Icon name="close" className="w-5 h-5 text-slate-500 dark:text-slate-400" />
-                    </button>
+                    <button onClick={onClose} className="p-1 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400"><Icon name="close" className="w-5 h-5" /></button>
                 </div>
-                <div className="bg-black aspect-video relative">
-                     {isLoading && isYoutubeUrl && (
-                        <div className="absolute inset-0 flex items-center justify-center">
-                           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
-                        </div>
-                    )}
-                     {isYoutubeUrl ? (
-                        <iframe
-                            className={`w-full h-full transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
-                            src={embedUrl}
-                            title={courseTitle}
-                            frameBorder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
-                            onLoad={() => setIsLoading(false)}
-                        ></iframe>
-                    ) : (
-                        <video src={embedUrl} controls autoPlay className="w-full h-full">
-                            Your browser does not support the video tag.
-                        </video>
-                    )}
+                <div className="aspect-video bg-black">
+                    <iframe className="w-full h-full" src={embedUrl} title={courseTitle} frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
                 </div>
             </div>
         </div>
     );
 };
 
+const CourseCard: React.FC<{ course: Course; onWatch: (course: Course) => void; }> = ({ course, onWatch }) => {
+    const firstTag = course.tags[0] || 'general';
 
-const INITIAL_LOAD_COUNT = 9;
+    return (
+        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-5 flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+            <div className="flex justify-between items-center">
+                <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold uppercase tracking-wider text-violet-500 dark:text-violet-400">{firstTag}</span>
+                    <div className="w-3 h-3 rounded-full bg-slate-100 dark:bg-slate-600 border border-slate-300 dark:border-slate-500"></div>
+                </div>
+                {course.type === 'free' ? (
+                    <span className="text-xs font-bold px-3 py-1 rounded-full bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300">Free</span>
+                ) : (
+                    <span className="text-xs font-bold px-3 py-1 rounded-full bg-violet-600 text-white dark:bg-violet-500">${course.price}</span>
+                )}
+            </div>
+            
+            <h3 className="text-lg font-extrabold text-slate-900 dark:text-slate-50 mt-4">{course.title}</h3>
+            <p className="text-sm text-slate-600 dark:text-slate-400 mt-1 flex-grow">{course.description}</p>
+            
+            <div className="mt-4">
+                 <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">Duration: {course.duration}</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                    {course.tags.map(tag => (
+                        <span key={tag} className="text-xs bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 px-2.5 py-1 rounded-full font-medium">{tag}</span>
+                    ))}
+                </div>
+            </div>
+
+            <button 
+                onClick={() => onWatch(course)} 
+                className="w-full text-center mt-6 py-3 bg-violet-100 text-violet-700 dark:bg-violet-900/50 dark:text-violet-300 font-bold rounded-xl hover:bg-violet-200 dark:hover:bg-violet-900 transition-colors"
+            >
+                Watch Video
+            </button>
+        </div>
+    );
+};
+
 
 const CoursesView: React.FC = () => {
     const [courses, setCourses] = useState<Course[]>([]);
-    const [isLoadingCourses, setIsLoadingCourses] = useState(true);
-    const [errorLoading, setErrorLoading] = useState<string | null>(null);
-    
-    useEffect(() => {
-        const fetchCourses = async () => {
-            try {
-                const response = await fetch('./data/courses.json');
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const data = await response.json();
-                setCourses(data.courses);
-            } catch (e) {
-                console.error("Could not fetch courses.json", e);
-                setErrorLoading("Failed to load course data. Please try again later.");
-            } finally {
-                setIsLoadingCourses(false);
-            }
-        };
+    const [isLoading, setIsLoading] = useState(true);
+    const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
+    const [searchTerm, setSearchTerm] = useState('');
 
-        fetchCourses();
+    useEffect(() => {
+        fetch('./data/courses.json')
+            .then(res => res.json())
+            .then(data => {
+                setCourses(data.courses);
+                setIsLoading(false);
+            })
+            .catch(err => {
+                console.error("Failed to load courses:", err);
+                setIsLoading(false);
+            });
     }, []);
 
-
-    const [selectedCourse, setSelectedCourse] = useState<{ title: string; videoUrl: string; } | null>(null);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [visibleCount, setVisibleCount] = useState(INITIAL_LOAD_COUNT);
-    const [selectedCategory, setSelectedCategory] = useState<string>('All');
-    
-    const categories = useMemo(() => ['All', ...Array.from(new Set<string>(courses.flatMap((c) => c.tags || [])))], [courses]);
-
-    useEffect(() => {
-        // Reset pagination when filters change to provide clear feedback to the user
-        setVisibleCount(INITIAL_LOAD_COUNT);
-    }, [searchTerm, selectedCategory]);
-
-    const filteredCourses = useMemo(() => courses.filter((course: Course) => {
-        const matchesCategory = selectedCategory === 'All' || course.tags.includes(selectedCategory);
-
-        const lowerCaseSearch = searchTerm.toLowerCase();
-        const matchesSearch = searchTerm.trim() === '' ||
-                            course.title.toLowerCase().includes(lowerCaseSearch) ||
-                            course.description.toLowerCase().includes(lowerCaseSearch) ||
-                            course.tags.join(' ').toLowerCase().includes(lowerCaseSearch);
-
-        return matchesCategory && matchesSearch;
-    }), [courses, searchTerm, selectedCategory]);
-
-    const coursesToShow = filteredCourses.slice(0, visibleCount);
-    
-    if (isLoadingCourses) {
-        return (
-            <div className="h-full flex items-center justify-center">
-                <Spinner />
-                <span className="ml-2">Loading courses...</span>
-            </div>
+    const filteredCourses = useMemo(() => {
+        if (!searchTerm.trim()) return courses;
+        const lowercasedSearchTerm = searchTerm.toLowerCase();
+        return courses.filter(course => 
+            course.title.toLowerCase().includes(lowercasedSearchTerm) ||
+            course.description.toLowerCase().includes(lowercasedSearchTerm) ||
+            course.tags.some(tag => tag.toLowerCase().includes(lowercasedSearchTerm))
         );
-    }
-    
-    if (errorLoading) {
-        return (
-             <div className="h-full flex items-center justify-center text-red-500">
-                <Icon name="close" className="w-6 h-6 mr-2" />
-                <span>{errorLoading}</span>
-            </div>
-        );
+    }, [courses, searchTerm]);
+
+    if (isLoading) {
+        return <div className="flex justify-center items-center h-full"><Spinner /></div>;
     }
 
     return (
-        <div className="animate-fade-in">
-            {selectedCourse && (
-                <VideoModal 
-                    courseTitle={selectedCourse.title}
-                    videoUrl={selectedCourse.videoUrl} 
-                    onClose={() => setSelectedCourse(null)} 
+        <div className="animate-fade-in max-w-4xl mx-auto">
+            {selectedCourse && <VideoModal courseTitle={selectedCourse.title} videoUrl={selectedCourse.youtube_url} onClose={() => setSelectedCourse(null)} />}
+            
+            <div className="mb-8 relative">
+                 <div className="absolute inset-y-0 left-0 flex items-center pl-5 pointer-events-none">
+                    <Icon name="search" className="w-5 h-5 text-slate-400" />
+                </div>
+                <input 
+                    type="text"
+                    placeholder="Search by title, description, or tag..."
+                    className="w-full p-4 pl-14 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500 shadow-sm"
+                    onChange={e => setSearchTerm(e.target.value)}
                 />
+            </div>
+
+            {filteredCourses.length > 0 ? (
+                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    {filteredCourses.map(course => (
+                        <CourseCard key={course.id} course={course} onWatch={setSelectedCourse} />
+                    ))}
+                </div>
+            ) : (
+                <div className="text-center py-16 text-slate-500 dark:text-slate-400">
+                    <Icon name="search" className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                    <h3 className="text-lg font-semibold">No Courses Found</h3>
+                    <p>Try adjusting your search term.</p>
+                </div>
             )}
-            <div className="flex items-center gap-3 mb-4">
-                <Icon name={Page.COURSES} className="w-8 h-8 gradient-text" />
-                <h1 className="text-3xl font-bold text-slate-800 dark:text-slate-100">AI Learning Center</h1>
-            </div>
-            <p className="text-slate-500 dark:text-slate-400 mb-8">
-                Explore our comprehensive library of AI courses to accelerate your learning journey.
-            </p>
-
-            <div className="flex flex-col md:flex-row gap-8">
-                {/* Sidebar */}
-                <aside className="w-full md:w-64 flex-shrink-0">
-                    <div className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700">
-                         <h3 className="font-bold text-slate-700 dark:text-slate-200 mb-4">Categories</h3>
-                        <ul className="space-y-2">
-                            {categories.map(category => (
-                                <li key={category}>
-                                    <button 
-                                        onClick={() => setSelectedCategory(category)}
-                                        className={`w-full text-left px-3 py-2 text-sm font-medium rounded-md transition-colors capitalize ${
-                                            selectedCategory === category 
-                                            ? 'bg-purple-100 dark:bg-teal-900/50 text-purple-700 dark:text-teal-300' 
-                                            : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
-                                        }`}
-                                    >
-                                        {category}
-                                    </button>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                </aside>
-
-                {/* Main Content */}
-                <main className="flex-1">
-                    <div className="relative w-full mb-6">
-                        <input
-                            type="text"
-                            placeholder="Search by title, description, or tag..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full py-3 pl-10 pr-4 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-teal-500"
-                        />
-                        <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                            <Icon name="search" className="w-5 h-5 text-slate-400" />
-                        </div>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-                        {coursesToShow.map((course) => {
-                            const coursePrice = course.price === 0 ? 'Free' : `$${course.price}`;
-                            const category = course.tags[0] || 'General';
-                            const hasVideo = !!course.youtube_url;
-                            
-                            return (
-                                <div key={course.id} className="bg-white dark:bg-slate-800 rounded-xl shadow-lg flex flex-col overflow-hidden group border border-slate-200 dark:border-slate-700">
-                                    <div className="p-6 flex flex-col flex-1">
-                                        <div className="flex items-center justify-between">
-                                            <div className="flex items-center gap-2">
-                                                <span className="text-xs font-semibold text-purple-600 dark:text-teal-400 uppercase">{category}</span>
-                                                {hasVideo && (
-                                                    <Icon name="video" className="w-4 h-4 text-slate-400" />
-                                                )}
-                                            </div>
-                                             <div className={`px-2 py-1 text-xs font-bold text-white rounded-md ${
-                                                coursePrice === 'Free' ? 'bg-green-600' : 'bg-purple-600'
-                                            }`}>
-                                                {coursePrice}
-                                            </div>
-                                        </div>
-                                        <h3 className="font-bold text-lg text-slate-800 dark:text-slate-100 mt-2">{course.title}</h3>
-                                        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 flex-1">{course.description}</p>
-                                        <p className="text-sm text-slate-500 dark:text-slate-400 mt-2 font-semibold">Duration: {course.duration}</p>
-                                        <div className="mt-2 flex flex-wrap gap-1">
-                                            {course.tags.map((tag: string) => (
-                                                <span key={tag} className="text-xs bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 px-2 py-0.5 rounded-full capitalize">{tag}</span>
-                                            ))}
-                                        </div>
-                                        <div className="flex-1" />
-                                        <button
-                                            onClick={() => {
-                                                if (hasVideo && course.youtube_url) {
-                                                    setSelectedCourse({ title: course.title, videoUrl: course.youtube_url });
-                                                } else {
-                                                    alert('Course details will be available soon!');
-                                                }
-                                            }}
-                                            className="mt-6 w-full py-2 px-4 text-sm font-semibold rounded-lg transition-colors bg-purple-100 dark:bg-teal-900/50 text-purple-700 dark:text-teal-300 hover:bg-purple-200 dark:hover:bg-teal-800/50"
-                                        >
-                                            {hasVideo ? 'Watch Video' : 'View Course'}
-                                        </button>
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
-
-                    {filteredCourses.length === 0 && (
-                        <div className="col-span-full text-center py-12 text-slate-500 dark:text-slate-400">
-                            <Icon name="search" className="w-12 h-12 mx-auto mb-2"/>
-                            <p className="font-semibold">No courses match your search.</p>
-                            <p className="text-sm">Try adjusting your search term or filter options.</p>
-                        </div>
-                    )}
-                    
-                    {visibleCount < filteredCourses.length && (
-                        <div className="text-center mt-8">
-                            <button
-                                onClick={() => setVisibleCount(prev => prev + INITIAL_LOAD_COUNT)}
-                                className="px-6 py-3 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold rounded-lg shadow-md hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors"
-                            >
-                                Load More Courses
-                            </button>
-                        </div>
-                    )}
-                </main>
-            </div>
         </div>
     );
 };

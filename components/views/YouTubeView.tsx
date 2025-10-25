@@ -1,4 +1,3 @@
-/// <reference types="react" />
 import React from 'react';
 import { Page, Feature } from '../../types';
 import { Icon } from '../icons';
@@ -89,8 +88,21 @@ const YouTubeView: React.FC = () => {
         setTrendingIdeas(null);
         try {
             const response = await findTrendingYouTubeTopics(trendTopic);
-            const parsedResult = JSON.parse(response.text) as { ideas: TrendingIdea[] };
-            setTrendingIdeas(parsedResult.ideas);
+            // Fix: Added robust JSON parsing to handle potential markdown wrappers and errors,
+            // as response.text is not guaranteed to be JSON when using grounding.
+            let responseText = response.text;
+            const jsonMatch = responseText.match(/```json\n([\s\S]*?)\n```/);
+            if (jsonMatch && jsonMatch[1]) {
+                responseText = jsonMatch[1];
+            }
+
+            try {
+                const parsedResult = JSON.parse(responseText) as { ideas: TrendingIdea[] };
+                setTrendingIdeas(parsedResult.ideas);
+            } catch (parseError) {
+                 console.error("JSON parsing error:", parseError, "Raw text:", responseText);
+                 throw new Error("The AI returned an invalid format. Please try again.");
+            }
         } catch (e: any) {
             console.error("Trending topics error:", e);
             setTrendError(`Failed to find trends: ${e.message}`);
@@ -140,8 +152,8 @@ const YouTubeView: React.FC = () => {
     );
 
     return (
-        <div className="h-full flex flex-col md:flex-row gap-6">
-            <div className="md:w-1/3 lg:w-1/4 bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-lg flex flex-col gap-4">
+        <div className="h-full flex flex-col lg:flex-row gap-6">
+            <div className="w-full lg:w-1/3 xl:w-1/4 bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-lg flex flex-col gap-4">
                 <div>
                     <h2 className="text-lg font-bold flex items-center gap-2"><Icon name={Feature.YOUTUBE_STUDIO as any} className="w-5 h-5" /> Video Tools</h2>
                     <div className="mt-4 p-3 bg-slate-100 dark:bg-slate-700/50 rounded-lg">
@@ -178,10 +190,10 @@ const YouTubeView: React.FC = () => {
                 </div>
             </div>
 
-            <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-0">
-                <div className="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-lg flex flex-col">
+            <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6 min-h-0">
+                <div className="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-lg flex flex-col md:col-span-2 lg:col-span-1">
                     <h2 className="text-lg font-bold mb-2">Video Preview</h2>
-                    <div className="flex-1 flex items-center justify-center bg-slate-100 dark:bg-slate-900/50 rounded-lg">
+                    <div className="flex-1 flex items-center justify-center bg-slate-100 dark:bg-slate-900/50 rounded-lg min-h-[200px]">
                          {isGenerating ? (
                             <div className="text-center p-4">
                                 <Spinner />
@@ -200,9 +212,9 @@ const YouTubeView: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-lg flex flex-col">
+                <div className="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-lg flex flex-col md:col-span-2 lg:col-span-1">
                     <h2 className="text-lg font-bold mb-2">AI Generated Metadata</h2>
-                    <div className="flex-1 bg-slate-100/50 dark:bg-slate-700/20 rounded-lg p-3 overflow-y-auto">
+                    <div className="flex-1 bg-slate-100/50 dark:bg-slate-700/20 rounded-lg p-3 overflow-y-auto min-h-[200px]">
                         {isGeneratingMetadata ? (
                             <div className="flex items-center justify-center h-full"><Spinner /></div>
                         ) : metadata ? (
@@ -219,9 +231,9 @@ const YouTubeView: React.FC = () => {
                     </div>
                 </div>
 
-                 <div className="lg:col-span-2 bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-lg flex flex-col">
+                 <div className="md:col-span-2 bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-lg flex flex-col">
                     <h2 className="text-lg font-bold mb-2">Trending Video Ideas</h2>
-                    <div className="flex-1 bg-slate-100/50 dark:bg-slate-700/20 rounded-lg p-3 overflow-y-auto">
+                    <div className="flex-1 bg-slate-100/50 dark:bg-slate-700/20 rounded-lg p-3 overflow-y-auto min-h-[200px]">
                         {isFindingTrends ? (
                             <div className="flex items-center justify-center h-full"><Spinner /></div>
                         ) : trendingIdeas ? (

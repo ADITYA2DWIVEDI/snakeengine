@@ -1,19 +1,18 @@
-/// <reference types="react" />
 import React from 'react';
 import { Page, Feature } from '../../types';
 import { Icon } from '../icons';
 
 interface TutorialViewProps {
-    setActivePage: (page: Page, subPage?: Feature) => void;
+    onTryFeature: (feature: Feature) => void;
 }
 
-const TutorialView: React.FC<TutorialViewProps> = ({ setActivePage }) => {
+const TutorialView: React.FC<TutorialViewProps> = ({ onTryFeature }) => {
 
     const features = [
         {
             feature: Feature.SMART_CHAT,
-            // Fix: Replace non-existent Page.CHAT_WITH_AI with Page.BUILD_EVERYTHING
-            icon: Page.BUILD_EVERYTHING,
+            // Fix: Replace non-existent Page.BUILD_EVERYTHING with Feature.SMART_CHAT for the icon.
+            icon: Feature.SMART_CHAT,
             description: "Engage in intelligent text conversations. Ask questions, get information, and even tap into Google Search and Maps for real-time, grounded answers.",
         },
         {
@@ -60,8 +59,7 @@ const TutorialView: React.FC<TutorialViewProps> = ({ setActivePage }) => {
             </div>
             <p className="mt-4 text-sm text-slate-500 dark:text-slate-400 flex-1">{description}</p>
             <button 
-                // Fix: Replace non-existent Page.CHAT_WITH_AI with Page.BUILD_EVERYTHING
-                onClick={() => setActivePage(Page.BUILD_EVERYTHING, feature)}
+                onClick={() => onTryFeature(feature)}
                 className="mt-6 w-full py-2 px-4 bg-purple-100 dark:bg-teal-900/50 text-purple-700 dark:text-teal-300 text-sm font-semibold rounded-lg hover:bg-purple-200 dark:hover:bg-teal-800/50 transition-colors"
             >
                 Try it Now

@@ -1,7 +1,5 @@
-// Fix: Add React types reference to resolve JSX compilation errors.
-/// <reference types="react" />
 import React, { useState, useEffect } from 'react';
-import { ApiKey, ApiProvider, Page } from '../../types';
+import { ApiKey, ApiProvider, Page, Feature } from '../../types';
 import { generatePrompt } from '../../services/geminiService';
 import { Icon } from '../icons';
 import Spinner from '../common/Spinner';
@@ -93,7 +91,8 @@ const PromptEngineeringView: React.FC = () => {
     return (
         <div className="h-full flex flex-col">
              <div className="flex items-center gap-3 mb-4">
-                <Icon name={Page.PROMPT_ENGINEERING} className="w-8 h-8 gradient-text" />
+                {/* Fix: Use Feature.PROMPT_ENGINEERING instead of Page.PROMPT_ENGINEERING */}
+                <Icon name={Feature.PROMPT_ENGINEERING} className="w-8 h-8 gradient-text" />
                 <h1 className="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-slate-100">Prompt Engineering</h1>
             </div>
             <p className="text-slate-500 dark:text-slate-400 mb-6 max-w-2xl">
@@ -139,7 +138,7 @@ const PromptEngineeringView: React.FC = () => {
                         value={prompt}
                         onChange={(e) => setPrompt(e.target.value)}
                         placeholder="Enter your prompt here..."
-                        className="w-full flex-1 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg p-4 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        className="w-full flex-1 bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-lg p-4 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-purple-500"
                     />
                     <div className="flex justify-end mt-4">
                         <button

@@ -1,5 +1,5 @@
-/// <reference types="react" />
-import React from 'react';
+// Fix: Changed React import to `import * as React from 'react'` to resolve JSX typing issues.
+import * as React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 

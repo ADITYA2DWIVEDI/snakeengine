@@ -1,7 +1,6 @@
-// Fix: Add React types reference to resolve JSX compilation errors.
-/// <reference types="react" />
 import React, { useState } from 'react';
-import { GroundingSource, Page } from '../../types';
+// Fix: Import `Feature` enum to correctly reference `Feature.AI_SEARCH`.
+import { GroundingSource, Page, Feature } from '../../types';
 import { generateTextWithGrounding } from '../../services/geminiService';
 import { Icon } from '../icons';
 import Spinner from '../common/Spinner';
@@ -53,7 +52,8 @@ const AISearchView: React.FC = () => {
     return (
         <div className="h-full flex flex-col animate-fade-in">
             <div className="flex items-center gap-3 mb-4">
-                <Icon name={Page.AI_SEARCH} className="w-8 h-8 gradient-text" />
+                {/* Fix: Corrected the icon name to use `Feature.AI_SEARCH` instead of the non-existent `Page.AI_SEARCH`. */}
+                <Icon name={Feature.AI_SEARCH} className="w-8 h-8 gradient-text" />
                 <h1 className="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-slate-100">AI Search</h1>
             </div>
             <p className="text-slate-500 dark:text-slate-400 mb-6 max-w-2xl">
@@ -112,7 +112,8 @@ const AISearchView: React.FC = () => {
                     </div>
                 ) : (
                      <div className="h-full flex flex-col items-center justify-center text-center text-slate-500">
-                        <Icon name={Page.AI_SEARCH} className="w-16 h-16 mx-auto mb-4 opacity-50" />
+                        {/* Fix: Corrected the icon name to use `Feature.AI_SEARCH` instead of the non-existent `Page.AI_SEARCH`. */}
+                        <Icon name={Feature.AI_SEARCH} className="w-16 h-16 mx-auto mb-4 opacity-50" />
                         <h3 className="text-lg font-semibold">Your search results will appear here.</h3>
                     </div>
                 )}

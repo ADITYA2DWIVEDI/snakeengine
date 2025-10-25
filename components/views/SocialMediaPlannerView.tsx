@@ -1,5 +1,4 @@
-/// <reference types="react" />
-import * as React from 'react';
+import React from 'react';
 import { Page, ScheduledPost, SocialPlatform, Feature } from '../../types';
 import { Icon } from '../icons';
 import { generateSocialMediaPost } from '../../services/geminiService';

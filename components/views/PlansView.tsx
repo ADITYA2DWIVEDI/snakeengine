@@ -1,5 +1,4 @@
-/// <reference types="react" />
-import React from 'react';
+import * as React from 'react';
 import { Page } from '../../types';
 import { Icon } from '../icons';
 
@@ -62,11 +61,11 @@ const PlansView: React.FC = () => {
                     Unlock more features and power as you grow. Choose the plan that fits your needs.
                 </p>
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-start">
                 {plans.map((plan) => (
                     <div 
                         key={plan.name}
-                        className={`bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-lg border-2 transition-all duration-300 flex flex-col h-full ${plan.primary ? 'border-purple-500 dark:border-teal-400 transform lg:scale-105' : 'border-slate-200 dark:border-slate-700'}`}
+                        className={`bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-lg border-2 transition-all duration-300 flex flex-col h-full ${plan.primary ? 'border-purple-500 dark:border-teal-400 md:transform lg:scale-105' : 'border-slate-200 dark:border-slate-700'}`}
                     >
                         <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100">{plan.name}</h2>
                         <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">{plan.description}</p>

@@ -13,30 +13,19 @@ const updates = [
         description: "We've upgraded every feature! From smarter image editing and persistent chat history to a dynamic homepage and streamlined workflows, the entire platform is now more powerful and intuitive."
     },
     {
-        // Fix: Replace non-existent Page.CHAT_WITH_AI with Page.BUILD_EVERYTHING.
-        icon: Page.BUILD_EVERYTHING,
-        title: "Organized AI Platforms",
-        description: "The main tool hub is now organized into categories: 'Text & Voice', 'Creative Suite', and 'Builders', making it easier to find the perfect tool for your task."
-    },
-    {
-        icon: Feature.SMART_CHAT,
-        title: "Persistent Chat History",
-        description: "Your Smart Chat conversations are now automatically saved in your browser. You can leave and come back without losing your context."
-    },
-    {
-        icon: Feature.IMAGE_GENERATION,
-        title: "Image Style Enhancer",
-        description: "Easily add artistic styles like 'Photorealistic' or 'Cyberpunk' to your image generation prompts with our new style dropdown."
-    },
-    {
-        icon: Feature.VIDEO_GENERATION,
-        title: "Seamless Video-to-YouTube Workflow",
-        description: "After generating a video, instantly create a YouTube-ready title, description, and tags with the new 'Generate Metadata' button."
+        icon: Feature.LIVE_CHAT,
+        title: "New Live Chat",
+        description: "The old AI voice chat has been replaced with a brand new human-to-human live chat platform. Connect and communicate seamlessly."
     },
     {
         icon: Page.COURSES,
-        title: "Advanced Course Filtering",
-        description: "The Courses page now includes a dedicated category sidebar, allowing you to find the exact learning path you need faster than ever."
+        title: "All New Courses Section",
+        description: "Explore a vast library of courses with a brand new interface, complete with powerful search and filtering to help you learn faster."
+    },
+    {
+        icon: 'lock' as const,
+        title: "Enhanced Security with 2FA",
+        description: "Your account is now more secure. We've added a 2-factor authentication step via email for logins and password recoveries."
     },
 ];
 
