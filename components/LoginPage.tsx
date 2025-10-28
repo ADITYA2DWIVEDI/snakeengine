@@ -23,8 +23,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
     const [showPassword, setShowPassword] = useState(false);
 
     return (
-        <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-pink-400 via-purple-500 to-indigo-500 p-4">
-            <div className="w-full max-w-md bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl p-8 text-white">
+        <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-4">
+            <div className="w-full max-w-md bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl p-8 text-white border border-white/20">
                 <div className="flex flex-col items-center mb-8">
                     <LogoIcon className="h-12 w-12 mb-2" />
                     <h1 className="text-2xl font-bold tracking-wider">SNAKEENGINE.AI</h1>
@@ -34,21 +34,21 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                     <div className="flex border-b border-white/20">
                         <button
                             onClick={() => setActiveTab('signin')}
-                            className={`flex-1 py-2 text-center font-semibold transition-all duration-300 ${activeTab === 'signin' ? 'text-white border-b-2 border-white' : 'text-white/60'}`}
+                            className={`flex-1 py-2 text-center font-semibold transition-all duration-300 relative ${activeTab === 'signin' ? 'text-white' : 'text-white/60'}`}
                         >
                             Sign In
+                            {activeTab === 'signin' && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-white rounded-full"></span>}
                         </button>
                         <button
                             onClick={() => setActiveTab('signup')}
-                            className={`flex-1 py-2 text-center font-semibold transition-all duration-300 ${activeTab === 'signup' ? 'text-white border-b-2 border-white' : 'text-white/60'}`}
+                            className={`flex-1 py-2 text-center font-semibold transition-all duration-300 relative ${activeTab === 'signup' ? 'text-white' : 'text-white/60'}`}
                         >
                             Sign Up
+                            {activeTab === 'signup' && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-white rounded-full"></span>}
                         </button>
                     </div>
                 </div>
-
-                <div className="text-center text-sm text-white/50 mb-6">OR</div>
-
+                
                 <form onSubmit={(e) => { e.preventDefault(); onLogin(); }}>
                     <div className="space-y-6">
                         <div className="relative">
@@ -81,7 +81,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                     </button>
                 </form>
                 
-                <div className="text-center text-sm text-white/50 my-4">OR</div>
+                <div className="text-center text-sm text-white/50 my-6">OR</div>
                 
                 <button 
                     onClick={onLogin} 

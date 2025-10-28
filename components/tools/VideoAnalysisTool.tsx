@@ -26,6 +26,10 @@ const VideoAnalysisTool: React.FC<VideoAnalysisToolProps> = ({ onBack }) => {
 
     const handleFileChange = async (files: FileList | null) => {
         if (files && files[0]) {
+            if (files[0].size > 50 * 1024 * 1024) { // 50MB limit
+                setError("Please select a video file smaller than 50MB.");
+                return;
+            }
             setError(null);
             setResponse(null);
             const videoData = await fileToGenerativePart(files[0]);
@@ -71,6 +75,7 @@ const VideoAnalysisTool: React.FC<VideoAnalysisToolProps> = ({ onBack }) => {
                                 <div className="text-center text-gray-500">
                                     <svg xmlns="http://www.w3.org/2000/svg" className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
                                     <p className="mt-2">Drag & drop or click to upload video</p>
+                                    <p className="text-xs mt-1">(Max 50MB)</p>
                                 </div>
                             )}
                         </label>

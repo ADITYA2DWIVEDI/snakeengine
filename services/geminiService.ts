@@ -1,4 +1,5 @@
-import { GoogleGenAI, Modality, LiveSession, LiveServerMessage, CloseEvent, ErrorEvent, Blob } from "@google/genai";
+import { GoogleGenAI, Modality, LiveSession, LiveServerMessage, CloseEvent, ErrorEvent, Blob, Type } from "@google/genai";
+import { Course } from "../types";
 
 const API_KEY = process.env.API_KEY;
 
@@ -7,21 +8,30 @@ if (!API_KEY) {
 }
 
 const getAiClient = () => {
+    // Re-initialize every time to ensure the latest key from the Veo dialog is used.
     return API_KEY ? new GoogleGenAI({ apiKey: API_KEY }) : null;
 }
 
-const MOCK_RESPONSE = "This is a mock response. To use the real Gemini API, please set your API_KEY environment variable.";
+const handleApiError = (error: unknown, context: string): string => {
+    console.error(`Error in ${context}:`, error);
+    const message = error instanceof Error ? error.message : "An unknown error occurred.";
+
+    if (message.includes("API key not valid")) {
+        return `Your API key is not valid. Please check your credentials. Details: ${message}`;
+    }
+    if (message.includes("quota")) {
+        return `You have exceeded your API quota. Please check your plan and billing details. Details: ${message}`;
+    }
+    return `Sorry, an error occurred in ${context}. Details: ${message}`;
+};
 
 export const generateChatResponse = async (prompt: string): Promise<string> => {
     const ai = getAiClient();
-    if (!ai) {
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        return MOCK_RESPONSE;
-    }
+    if (!ai) return "API client not available. Please configure your API Key.";
 
     try {
         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
+            model: 'gemini-flash-lite-latest', // Use flash-lite for low latency
             contents: prompt,
             config: {
                 systemInstruction: "You are SnakeEngine AI, a helpful and friendly assistant.",
@@ -29,8 +39,7 @@ export const generateChatResponse = async (prompt: string): Promise<string> => {
         });
         return response.text;
     } catch (error) {
-        console.error("Error generating chat response:", error);
-        return "Sorry, I encountered an error. Please try again.";
+        return handleApiError(error, "Chat");
     }
 };
 
@@ -41,10 +50,7 @@ export interface ImageGenerationResult {
 
 export const generateImage = async (prompt: string, aspectRatio: string): Promise<ImageGenerationResult> => {
     const ai = getAiClient();
-    if (!ai) {
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        return { images: [], error: "Image generation is not available. Please configure your API Key." };
-    }
+    if (!ai) return { images: [], error: "API client not available. Please configure your API Key." };
 
     try {
         const response = await ai.models.generateImages({
@@ -59,28 +65,19 @@ export const generateImage = async (prompt: string, aspectRatio: string): Promis
         
         const images = response.generatedImages.map(img => img.image.imageBytes);
         return { images };
-
     } catch (error) {
-        console.error("Error generating image:", error);
-        const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
-        return { images: [], error: `Sorry, I encountered an error while generating the image. Details: ${errorMessage}` };
+        return { images: [], error: handleApiError(error, "Image Generation") };
     }
 };
 
 export const editImage = async (prompt: string, image: { data: string; mimeType: string }): Promise<ImageGenerationResult> => {
     const ai = getAiClient();
-    if (!ai) {
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        return { images: [], error: "Image editing is not available. Please configure your API Key." };
-    }
+    if (!ai) return { images: [], error: "API client not available. Please configure your API Key." };
 
     try {
-        const imagePart = { inlineData: { data: image.data, mimeType: image.mimeType } };
-        const textPart = { text: prompt };
-
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash-image',
-            contents: { parts: [imagePart, textPart] },
+            contents: { parts: [{ inlineData: image }, { text: prompt }] },
             config: {
                 responseModalities: [Modality.IMAGE],
             },
@@ -93,40 +90,28 @@ export const editImage = async (prompt: string, image: { data: string; mimeType:
         }
         return { images: [], error: "The model did not return an image. Please try a different prompt." };
     } catch (error) {
-        console.error("Error editing image:", error);
-        return { images: [], error: "Sorry, I encountered an error while editing the image." };
+        return { images: [], error: handleApiError(error, "Image Editing") };
     }
 };
 
 export const analyzeImage = async (prompt: string, image: { data: string; mimeType: string }): Promise<string> => {
     const ai = getAiClient();
-    if (!ai) {
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        return "Image analysis is not available. Please configure your API Key.";
-    }
+    if (!ai) return "API client not available. Please configure your API Key.";
 
     try {
-        const imagePart = { inlineData: { data: image.data, mimeType: image.mimeType } };
-        const textPart = { text: prompt };
-        
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash',
-            contents: { parts: [imagePart, textPart] },
+            contents: { parts: [{ inlineData: image }, { text: prompt }] },
         });
-
         return response.text;
     } catch (error) {
-        console.error("Error analyzing image:", error);
-        return "Sorry, I encountered an error while analyzing the image.";
+        return handleApiError(error, "Image Analysis");
     }
 };
 
 export const generateThinkingResponse = async (prompt: string): Promise<string> => {
     const ai = getAiClient();
-     if (!ai) {
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        return MOCK_RESPONSE;
-    }
+    if (!ai) return "API client not available. Please configure your API Key.";
 
     try {
         const response = await ai.models.generateContent({
@@ -134,33 +119,25 @@ export const generateThinkingResponse = async (prompt: string): Promise<string> 
             contents: prompt,
             config: {
                 systemInstruction: "You are SnakeEngine AI, operating in 'Thinking Mode'. Provide deep, thoughtful, and well-reasoned responses to complex questions.",
+                thinkingConfig: { thinkingBudget: 32768 }
             },
         });
         return response.text;
     } catch (error) {
-        console.error("Error generating thinking response:", error);
-        return "Sorry, I encountered an error in Thinking Mode. Please try again.";
+        return handleApiError(error, "Thinking Mode");
     }
 };
 
-export const connectLiveChat = (callbacks: {
-    onopen: () => void;
-    onmessage: (message: LiveServerMessage) => Promise<void>;
-    onerror: (e: ErrorEvent) => void;
-    onclose: (e: CloseEvent) => void;
-}): Promise<LiveSession> => {
+export const connectLiveChat = (callbacks: { onopen: () => void; onmessage: (message: LiveServerMessage) => Promise<void>; onerror: (e: ErrorEvent) => void; onclose: (e: CloseEvent) => void; }): Promise<LiveSession> => {
     const ai = getAiClient();
-    if (!ai) {
-        throw new Error("Gemini AI client not initialized. Please set your API Key.");
-    }
+    if (!ai) throw new Error("Gemini AI client not initialized. Please set your API Key.");
     return ai.live.connect({
         model: 'gemini-2.5-flash-native-audio-preview-09-2025',
         callbacks: callbacks,
         config: {
             responseModalities: [Modality.AUDIO],
             speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Zephyr' } } },
-            inputAudioTranscription: {},
-            outputAudioTranscription: {},
+            inputAudioTranscription: {}, outputAudioTranscription: {},
             systemInstruction: 'You are a friendly and helpful AI assistant named SnakeEngine AI.',
         },
     });
@@ -168,63 +145,194 @@ export const connectLiveChat = (callbacks: {
 
 export const transcribeAudio = async (audio: { data: string; mimeType: string }): Promise<string> => {
     const ai = getAiClient();
-    if (!ai) {
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        return "Audio transcription is not available. Please configure your API Key.";
-    }
+    if (!ai) return "API client not available. Please configure your API Key.";
     try {
-        const audioPart = { inlineData: { data: audio.data, mimeType: audio.mimeType } };
-        const textPart = { text: "Transcribe this audio file." };
-
         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-pro', // Using a powerful model for better accuracy
-            contents: { parts: [audioPart, textPart] },
+            model: 'gemini-2.5-flash',
+            contents: { parts: [{ inlineData: audio }, { text: "Transcribe this audio file." }] },
         });
         return response.text;
     } catch (error) {
-        console.error("Error transcribing audio:", error);
-        return "Sorry, I encountered an error while transcribing the audio.";
+        return handleApiError(error, "Audio Transcription");
     }
 };
 
-export const generateVideo = async (prompt: string): Promise<any> => {
+export const generateVideo = async (prompt: string, aspectRatio: string, image?: { data: string, mimeType: string }): Promise<any> => {
     const ai = getAiClient();
-    if (!ai) {
-        throw new Error("Video generation is not available. Please configure your API Key.");
-    }
+    if (!ai) throw new Error("API client not available. Please configure your API Key.");
+
+    const imagePayload = image ? { imageBytes: image.data, mimeType: image.mimeType } : undefined;
+
     return ai.models.generateVideos({
         model: 'veo-3.1-fast-generate-preview',
         prompt,
-        config: { numberOfVideos: 1, resolution: '720p', aspectRatio: '16:9' }
+        image: imagePayload,
+        config: { 
+            numberOfVideos: 1, 
+            resolution: '720p', 
+            aspectRatio: aspectRatio as '16:9' | '9:16'
+        }
     });
 };
 
 export const getVideosOperation = async (operation: any): Promise<any> => {
     const ai = getAiClient();
-    if (!ai) {
-        throw new Error("Video generation is not available. Please configure your API Key.");
-    }
+    if (!ai) throw new Error("API client not available. Please configure your API Key.");
     return ai.operations.getVideosOperation({ operation });
 };
 
 export const analyzeVideo = async (prompt: string, video: { data: string, mimeType: string }): Promise<string> => {
     const ai = getAiClient();
-    if (!ai) {
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        return "Video analysis is not available. Please configure your API Key.";
-    }
+    if (!ai) return "API client not available. Please configure your API Key.";
     try {
-        const videoPart = { inlineData: { data: video.data, mimeType: video.mimeType } };
-        const textPart = { text: prompt };
-
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-pro',
-            contents: { parts: [videoPart, textPart] },
+            contents: { parts: [{ inlineData: video }, { text: prompt }] },
         });
-
         return response.text;
     } catch (error) {
-        console.error("Error analyzing video:", error);
-        return "Sorry, I encountered an error while analyzing the video. The model may only be able to analyze the audio track.";
+        return handleApiError(error, "Video Analysis");
+    }
+};
+
+export const generateGroundedResponse = async (prompt: string) => {
+    const ai = getAiClient();
+    if (!ai) return { text: "API client not available. Please configure your API Key.", sources: [] };
+    try {
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents: prompt,
+            config: { tools: [{ googleSearch: {} }] },
+        });
+        const sources = response.candidates?.[0]?.groundingMetadata?.groundingChunks?.map(c => c.web) || [];
+        return { text: response.text, sources };
+    } catch (error) {
+        return { text: handleApiError(error, "Web Search"), sources: [] };
+    }
+};
+
+export const generateMapsResponse = async (prompt: string, location: { latitude: number, longitude: number }) => {
+    const ai = getAiClient();
+    if (!ai) return { text: "API client not available. Please configure your API Key.", places: [] };
+    try {
+        const response = await ai.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: prompt,
+            config: {
+                tools: [{ googleMaps: {} }],
+                toolConfig: { retrievalConfig: { latLng: location } }
+            },
+        });
+        const places = response.candidates?.[0]?.groundingMetadata?.groundingChunks?.map(c => c.maps) || [];
+        return { text: response.text, places };
+    } catch (error) {
+        return { text: handleApiError(error, "Local Discovery"), places: [] };
+    }
+};
+
+export const generateSpeech = async (prompt: string, voice: string) => {
+    const ai = getAiClient();
+    if (!ai) return { audio: null, error: "API client not available. Please configure your API Key." };
+    try {
+        const response = await ai.models.generateContent({
+            model: "gemini-2.5-flash-preview-tts",
+            contents: [{ parts: [{ text: prompt }] }],
+            config: {
+                responseModalities: [Modality.AUDIO],
+                speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } },
+            },
+        });
+        const base64Audio = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+        if (!base64Audio) throw new Error("No audio data returned from API.");
+        return { audio: base64Audio, error: null };
+    } catch (error) {
+        return { audio: null, error: handleApiError(error, "Text to Speech") };
+    }
+};
+
+export const generateStudyPlan = async (goal: string, courses: Course[]) => {
+    const ai = getAiClient();
+    if (!ai) return { plan: null, error: "API client not available. Please configure your API Key." };
+    
+    const courseListForPrompt = courses.map(c => `- Course ID ${c.id}: "${c.title}" (Tags: ${c.tags.join(', ')})`).join('\n');
+
+    try {
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-pro',
+            contents: `My goal is: "${goal}". Based on the following list of available courses, create a structured, week-by-week study plan to help me achieve this goal. For each week, recommend 1-3 course IDs and provide a brief justification for why they are relevant.
+
+Available Courses:
+${courseListForPrompt}`,
+            config: {
+                responseMimeType: "application/json",
+                responseSchema: {
+                    type: Type.OBJECT,
+                    properties: {
+                        planTitle: { type: Type.STRING },
+                        weeklyPlan: {
+                            type: Type.ARRAY,
+                            items: {
+                                type: Type.OBJECT,
+                                properties: {
+                                    week: { type: Type.INTEGER },
+                                    title: { type: Type.STRING },
+                                    courses: {
+                                        type: Type.ARRAY,
+                                        items: {
+                                            type: Type.OBJECT,
+                                            properties: {
+                                                courseId: { type: Type.INTEGER },
+                                                justification: { type: Type.STRING }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        const jsonResponse = JSON.parse(response.text);
+        return { plan: jsonResponse, error: null };
+
+    } catch (error) {
+        return { plan: null, error: handleApiError(error, "Study Plan Generation") };
+    }
+};
+
+export const reviewCodeSnippet = async (code: string, language: string) => {
+    const ai = getAiClient();
+    if (!ai) return { review: null, error: "API client not available. Please configure your API Key." };
+
+    try {
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-pro',
+            contents: `Act as a senior software engineer. Review the following ${language} code snippet. Provide feedback on potential bugs, performance improvements, and adherence to best practices. Format your response as Markdown.
+
+\`\`\`${language}
+${code}
+\`\`\``,
+        });
+
+        return { review: response.text, error: null };
+    } catch (error) {
+        return { review: null, error: handleApiError(error, "Code Review") };
+    }
+};
+
+export const summarizeDocument = async (text: string) => {
+    const ai = getAiClient();
+    if (!ai) return { summary: null, error: "API client not available. Please configure your API Key." };
+
+    try {
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents: `Please provide a concise summary of the following document:\n\n${text}`,
+        });
+        return { summary: response.text, error: null };
+    } catch (error) {
+        return { summary: null, error: handleApiError(error, "Document Summarizer") };
     }
 };

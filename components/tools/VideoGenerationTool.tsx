@@ -13,10 +13,25 @@ const POLLING_MESSAGES = [
     "This is taking a bit longer than usual, but great art takes time!",
 ];
 
+const fileToGenerativePart = async (file: File) => {
+    const base64EncodedDataPromise = new Promise<string>((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve((reader.result as string).split(',')[1]);
+      reader.readAsDataURL(file);
+    });
+    return {
+      data: await base64EncodedDataPromise,
+      mimeType: file.type,
+      preview: URL.createObjectURL(file)
+    };
+};
+
 interface VideoGenerationToolProps { onBack: () => void; }
 
 const VideoGenerationTool: React.FC<VideoGenerationToolProps> = ({ onBack }) => {
     const [prompt, setPrompt] = useState('');
+    const [aspectRatio, setAspectRatio] = useState('16:9');
+    const [image, setImage] = useState<{ data: string; mimeType: string; preview: string } | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [videoUrl, setVideoUrl] = useState<string | null>(null);
@@ -25,8 +40,10 @@ const VideoGenerationTool: React.FC<VideoGenerationToolProps> = ({ onBack }) => 
 
     useEffect(() => {
         const checkKey = async () => {
-            const hasKey = await (window as any).aistudio.hasSelectedApiKey();
-            setApiKeySelected(hasKey);
+            if (window.aistudio) {
+                const hasKey = await window.aistudio.hasSelectedApiKey();
+                setApiKeySelected(hasKey);
+            }
         };
         checkKey();
     }, []);
@@ -42,6 +59,18 @@ const VideoGenerationTool: React.FC<VideoGenerationToolProps> = ({ onBack }) => 
         }
         return () => clearInterval(interval);
     }, [isLoading]);
+    
+    const handleFileChange = async (files: FileList | null) => {
+        if (files && files[0]) {
+            if(files[0].size > 4 * 1024 * 1024) {
+                setError("Please select an image smaller than 4MB.");
+                return;
+            }
+            setError(null);
+            const imageData = await fileToGenerativePart(files[0]);
+            setImage(imageData);
+        }
+    };
 
     const handleGenerate = async () => {
         if (!prompt.trim() || isLoading) return;
@@ -52,7 +81,7 @@ const VideoGenerationTool: React.FC<VideoGenerationToolProps> = ({ onBack }) => 
         setPollingMessage(POLLING_MESSAGES[0]);
 
         try {
-            let operation = await generateVideo(prompt);
+            let operation = await generateVideo(prompt, aspectRatio, image ?? undefined);
             while (!operation.done) {
                 await new Promise(resolve => setTimeout(resolve, 10000));
                 operation = await getVideosOperation(operation);
@@ -60,18 +89,17 @@ const VideoGenerationTool: React.FC<VideoGenerationToolProps> = ({ onBack }) => 
 
             const downloadLink = operation.response?.generatedVideos?.[0]?.video?.uri;
             if (downloadLink) {
-                // The API key is automatically appended by the browser context this runs in.
                 const response = await fetch(`${downloadLink}&key=${process.env.API_KEY}`);
                 const blob = await response.blob();
                 setVideoUrl(URL.createObjectURL(blob));
             } else {
-                throw new Error("Video generation completed, but no video URI was returned.");
+                throw new Error(operation.error?.message || "Video generation completed, but no video URI was returned.");
             }
         } catch (err) {
             const errorMessage = err instanceof Error ? err.message : "An unknown error occurred.";
-            if(errorMessage.includes("Requested entity was not found.")){
-                setError("Your API Key is invalid. Please select a valid key.");
-                setApiKeySelected(false); // Reset key state
+            if(errorMessage.includes("API key not valid") || errorMessage.includes("entity was not found")){
+                setError("Your API Key is invalid or not authorized for this model. Please select a valid key.");
+                setApiKeySelected(false); 
             } else {
                 setError(`Video generation failed: ${errorMessage}`);
             }
@@ -81,10 +109,11 @@ const VideoGenerationTool: React.FC<VideoGenerationToolProps> = ({ onBack }) => 
     };
     
     const handleSelectKey = async () => {
-        await (window as any).aistudio.openSelectKey();
-        // Assume key selection is successful to improve UX, error handling will catch failures.
-        setApiKeySelected(true);
-        setError(null);
+        if (window.aistudio) {
+            await window.aistudio.openSelectKey();
+            setApiKeySelected(true);
+            setError(null);
+        }
     }
 
     return (
@@ -93,7 +122,7 @@ const VideoGenerationTool: React.FC<VideoGenerationToolProps> = ({ onBack }) => 
             <div className="w-full max-w-4xl mx-auto flex-grow flex flex-col">
                 <div className="text-center mb-8">
                     <h1 className="text-3xl md:text-4xl font-bold text-gray-800">Video Generation</h1>
-                    <p className="text-gray-500 mt-2">Create high-quality videos from a text description.</p>
+                    <p className="text-gray-500 mt-2">Create high-quality videos from a text description and an optional image.</p>
                 </div>
 
                 {!apiKeySelected || error?.includes("API Key") ? (
@@ -107,9 +136,25 @@ const VideoGenerationTool: React.FC<VideoGenerationToolProps> = ({ onBack }) => 
                 ) : (
                     <>
                         <div className="bg-white p-6 rounded-2xl shadow-lg">
-                            <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} placeholder="e.g., A neon hologram of a cat driving at top speed" className="w-full p-3 h-24 bg-gray-100 rounded-lg border border-transparent focus:outline-none focus:ring-2 focus:ring-purple-400 transition" disabled={isLoading}/>
-                            <div className="mt-4 flex justify-end">
-                                <button onClick={handleGenerate} disabled={isLoading || !prompt.trim()} className="px-6 py-3 rounded-lg bg-gradient-to-r from-purple-500 to-cyan-400 text-white font-semibold flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90 transition-opacity">
+                            <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+                                <div className="md:col-span-1">
+                                    <label htmlFor="file-upload" className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                                        {image ? <img src={image.preview} alt="Preview" className="h-full w-full object-contain rounded-lg p-1" /> : 
+                                        <div className="text-center text-gray-500 text-sm p-2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="mx-auto h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                            <p>Upload Image (Optional)</p>
+                                        </div>}
+                                    </label>
+                                     <input id="file-upload" type="file" className="hidden" accept="image/*" onChange={(e) => handleFileChange(e.target.files)} />
+                                </div>
+                                <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} placeholder="e.g., A neon hologram of a cat driving at top speed" className="md:col-span-2 w-full p-3 h-32 bg-gray-100 rounded-lg border border-transparent focus:outline-none focus:ring-2 focus:ring-purple-400 transition" disabled={isLoading}/>
+                            </div>
+                            <div className="mt-4 flex flex-col sm:flex-row items-center gap-4">
+                                <select value={aspectRatio} onChange={e => setAspectRatio(e.target.value)} className="w-full sm:w-auto p-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400">
+                                    <option value="16:9">16:9 (Landscape)</option>
+                                    <option value="9:16">9:16 (Portrait)</option>
+                                </select>
+                                <button onClick={handleGenerate} disabled={isLoading || !prompt.trim()} className="w-full sm:w-auto sm:ml-auto px-6 py-3 rounded-lg bg-gradient-to-r from-purple-500 to-cyan-400 text-white font-semibold flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90 transition-opacity">
                                     {isLoading ? <Spinner /> : 'Generate Video'}
                                 </button>
                             </div>

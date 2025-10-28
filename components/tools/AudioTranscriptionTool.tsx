@@ -24,6 +24,10 @@ const AudioTranscriptionTool: React.FC<AudioTranscriptionToolProps> = ({ onBack 
 
     const handleFileChange = (files: FileList | null) => {
         if (files && files[0]) {
+            if (files[0].size > 15 * 1024 * 1024) { // 15MB limit
+                setError("Please select an audio file smaller than 15MB.");
+                return;
+            }
             setError(null);
             setTranscription(null);
             setAudioFile(files[0]);
@@ -71,7 +75,7 @@ const AudioTranscriptionTool: React.FC<AudioTranscriptionToolProps> = ({ onBack 
                         <div className="text-center text-gray-500">
                             <svg xmlns="http://www.w3.org/2000/svg" className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
                             <p className="mt-2">{audioFile ? audioFile.name : 'Drag & drop or click to upload audio'}</p>
-                            <p className="text-xs mt-1">MP3, WAV, M4A, etc.</p>
+                            <p className="text-xs mt-1">MP3, WAV, M4A, etc. (Max 15MB)</p>
                         </div>
                     </label>
                     <input id="file-upload" type="file" className="hidden" accept="audio/*" onChange={(e) => handleFileChange(e.target.files)} />

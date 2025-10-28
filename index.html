@@ -15,9 +15,36 @@
   }
 }
 </script>
+<style>
+    @keyframes scale-in {
+        from { transform: scale(0.8); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+    }
+    .animate-scale-in { animation: scale-in 0.7s cubic-bezier(0.25, 1, 0.5, 1) both; }
+
+    @keyframes fade-in-up {
+        from { transform: translateY(20px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+    .animate-fade-in-up { animation: fade-in-up 0.8s ease-out both; }
+    
+    @keyframes fade-in {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    .animate-fade-in { animation: fade-in 1s ease-in-out both; }
+
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.4); }
+      50% { box-shadow: 0 0 20px 10px rgba(168, 85, 247, 0); }
+    }
+    .animate-pulse-glow {
+      animation: pulse-glow 2.5s infinite;
+    }
+</style>
 <link rel="stylesheet" href="/index.css">
 </head>
-  <body class="bg-gray-50 dark:bg-gray-900">
+  <body class="bg-gray-100 dark:bg-[#111827]">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
   </body>
