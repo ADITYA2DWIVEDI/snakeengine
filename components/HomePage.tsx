@@ -34,8 +34,8 @@ const HomePage: React.FC = () => {
         const userMessage: Message = { sender: 'user', text: currentInput };
         const thinkingMessage: Message = { sender: 'ai', text: '', isThinking: true };
     
-        // Create a snapshot of the history BEFORE the new message for the API call
-        const historyForApi = [...activeChat.messages];
+        // Create a snapshot of the history WITH the new message for the API call
+        const historyForApi = [...activeChat.messages, userMessage];
 
         setActiveChat(prev => {
             if (!prev) return null;
@@ -46,8 +46,8 @@ const HomePage: React.FC = () => {
         setIsLoading(true);
     
         try {
-            // Pass the conversation history to the API
-            const response = await generateChatResponse(currentInput, historyForApi);
+            // FIX: Pass the full conversation history, including the new user message, to the API.
+            const response = await generateChatResponse(historyForApi);
             
             setActiveChat(prev => {
                 if (!prev) return prev;

@@ -3,11 +3,15 @@ import { InstagramIcon, FacebookIcon, YoutubeIcon, ThreadsIcon } from '../consta
 
 const Footer: React.FC = () => {
     return (
-        <footer className="flex-shrink-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 px-4 py-3">
+        <footer className="flex-shrink-0 bg-white/80 dark:bg-gray-900/60 backdrop-blur-xl border-t border-gray-200 dark:border-gray-800 px-4 py-3">
             <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center text-sm text-gray-500 dark:text-gray-400">
-                <div className="mb-2 sm:mb-0">
+                <div className="flex items-center gap-x-4 mb-2 sm:mb-0">
                     <a href="https://snakeengine.vercel.app" target="_blank" rel="noopener noreferrer" className="font-semibold hover:text-purple-600 dark:hover:text-purple-400 transition-colors">
                         snakeengine.vercel.app
+                    </a>
+                    <span className="text-gray-300 dark:text-gray-700 hidden sm:inline">|</span>
+                    <a href="mailto:snakeengineofficial@gmail.com" className="font-semibold hover:text-purple-600 dark:hover:text-purple-400 transition-colors">
+                        snakeengineofficial@gmail.com
                     </a>
                 </div>
                 <div className="flex items-center space-x-4">

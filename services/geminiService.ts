@@ -25,22 +25,15 @@ const handleApiError = (error: unknown, context: string): string => {
     return `Sorry, an error occurred in ${context}. Details: ${message}`;
 };
 
-export const generateChatResponse = async (prompt: string, history: Message[], systemInstruction?: string): Promise<string> => {
+export const generateChatResponse = async (history: Message[], systemInstruction?: string): Promise<string> => {
     const ai = getAiClient();
     if (!ai) return "API client not available. Please configure your API Key.";
 
     try {
-        // Map the history to the format required by generateContent
         const contents = history.map(item => ({
             role: item.sender === 'ai' ? 'model' as const : 'user' as const,
             parts: [{ text: item.text }],
         }));
-
-        // Add the current user prompt
-        contents.push({
-            role: 'user',
-            parts: [{ text: prompt }],
-        });
         
         const response = await ai.models.generateContent({
             model: 'gemini-flash-lite-latest',
