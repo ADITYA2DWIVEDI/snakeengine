@@ -1,9 +1,5 @@
 {
-  "name": "SNAKEENGINEOFFICIAL",
-  "description": "A next-generation, comprehensive AI platform that reimagines user experience through an inventive, mixed-color interface.",
-  "requestFramePermissions": [
-    "microphone",
-    "geolocation",
-    "camera"
-  ]
+  "name": "SnakeEngine.AI",
+  "description": "An all-in-one AI platform with tools for chat, image generation, video analysis, and more, presented in a modern and user-friendly interface.",
+  "requestFramePermissions": ["microphone"]
 }

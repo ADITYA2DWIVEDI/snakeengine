@@ -1,0 +1,1004 @@
+{
+  "courses": [
+    {
+      "id": 101,
+      "title": "HTML + CSS Basics",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/UrsmFxEIp5k?si=IPnK7jTbAuxHNUBX",
+      "description": "Intro to HTML & CSS — structure and styling.",
+      "duration": "2h 10m",
+      "tags": ["html", "css", "frontend"]
+    },
+    {
+      "id": 102,
+      "title": "JS DOM & Events",
+      "type": "paid",
+      "price": 199,
+      "youtube_url": "https://www.youtube.com/watch?v=YYYYYYYYYYY",
+      "description": "DOM manipulation, events, and practical examples.",
+      "duration": "3h",
+      "tags": ["javascript", "dom"]
+    },
+    {
+      "id": 103,
+      "title": "React Crash Course",
+      "type": "paid",
+      "price": 399,
+      "youtube_url": "https://www.youtube.com/watch?v=ZZZZZZZZZZZ",
+      "description": "Start building SPAs with React and hooks.",
+      "duration": "4h 30m",
+      "tags": ["react", "frontend"]
+    },
+    {
+      "id": 104,
+      "title": "Python for Beginners",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/rfscVS0vtbw",
+      "description": "Learn Python basics, including variables, loops, and functions.",
+      "duration": "4h 20m",
+      "tags": ["python", "programming", "beginner"]
+    },
+    {
+      "id": 105,
+      "title": "JavaScript for Beginners",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/W6NZfCO5SIk",
+      "description": "Introduction to JavaScript, covering syntax and basic programming concepts.",
+      "duration": "3h 30m",
+      "tags": ["javascript", "programming", "beginner"]
+    },
+    {
+      "id": 106,
+      "title": "Introduction to Git and GitHub",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/RGOj5yH7evk",
+      "description": "Learn version control with Git and collaboration with GitHub.",
+      "duration": "1h 50m",
+      "tags": ["git", "github", "version control"]
+    },
+    {
+      "id": 107,
+      "title": "CSS Flexbox Tutorial",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/FTlczfR82mQ",
+      "description": "Master CSS Flexbox for responsive layouts.",
+      "duration": "1h 20m",
+      "tags": ["css", "flexbox", "frontend"]
+    },
+    {
+      "id": 108,
+      "title": "Node.js Crash Course",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/fBNz5xF-Kx4",
+      "description": "Build server-side applications with Node.js.",
+      "duration": "2h 40m",
+      "tags": ["node.js", "backend", "javascript"]
+    },
+    {
+      "id": 109,
+      "title": "SQL for Beginners",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/7S_tz1z_5bA",
+      "description": "Learn SQL queries and database management basics.",
+      "duration": "3h 10m",
+      "tags": ["sql", "database", "data"]
+    },
+    {
+      "id": 110,
+      "title": "Learn TypeScript in 1 Hour",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/BwuLxPH8IDs",
+      "description": "Introduction to TypeScript for JavaScript developers.",
+      "duration": "1h",
+      "tags": ["typescript", "javascript", "programming"]
+    },
+    {
+      "id": 111,
+      "title": "Responsive Web Design",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/srvUrASNj0s",
+      "description": "Build responsive websites using HTML and CSS.",
+      "duration": "2h 30m",
+      "tags": ["html", "css", "responsive design"]
+    },
+    {
+      "id": 112,
+      "title": "Java Programming for Beginners",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/eIrMbAQSU34",
+      "description": "Learn Java basics, including OOP and syntax.",
+      "duration": "4h",
+      "tags": ["java", "programming", "beginner"]
+    },
+    {
+      "id": 113,
+      "title": "APIs Explained",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/WXsD0ZgxjRw",
+      "description": "Understand APIs and how to use them in projects.",
+      "duration": "1h 30m",
+      "tags": ["api", "web development", "programming"]
+    },
+    {
+      "id": 114,
+      "title": "Learn Docker in 1 Hour",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/fqMOX6JJhGo",
+      "description": "Introduction to Docker for containerizing applications.",
+      "duration": "1h 10m",
+      "tags": ["docker", "devops", "containers"]
+    },
+    {
+      "id": 115,
+      "title": "C++ Crash Course",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/8jLOx1hD3_o",
+      "description": "Learn C++ programming fundamentals.",
+      "duration": "3h 50m",
+      "tags": ["c++", "programming", "beginner"]
+    },
+    {
+      "id": 116,
+      "title": "Introduction to Machine Learning",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/ukzFI9rgwfU",
+      "description": "Basics of machine learning concepts and algorithms.",
+      "duration": "2h 20m",
+      "tags": ["machine learning", "data science", "ai"]
+    },
+    {
+      "id": 117,
+      "title": "CSS Grid Tutorial",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/9zBsdzdE4sM",
+      "description": "Learn CSS Grid for powerful layouts.",
+      "duration": "1h 40m",
+      "tags": ["css", "grid", "frontend"]
+    },
+    {
+      "id": 118,
+      "title": "PHP for Beginners",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/OK_JCtrrv-c",
+      "description": "Introduction to PHP for web development.",
+      "duration": "3h 20m",
+      "tags": ["php", "web development", "backend"]
+    },
+    {
+      "id": 119,
+      "title": "Learn PostgreSQL",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/qw--VYLpxG4",
+      "description": "Master PostgreSQL for relational databases.",
+      "duration": "2h 50m",
+      "tags": ["postgresql", "database", "sql"]
+    },
+    {
+      "id": 120,
+      "title": "React Router Tutorial",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/Ul3y1LXxzdU",
+      "description": "Learn navigation in React with React Router.",
+      "duration": "1h 15m",
+      "tags": ["react", "frontend", "routing"]
+    },
+    {
+      "id": 121,
+      "title": "Introduction to AWS",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/Z3SYDTqbB8Y",
+      "description": "Explore Amazon Web Services and cloud computing basics.",
+      "duration": "2h",
+      "tags": ["aws", "cloud", "devops"]
+    },
+    {
+      "id": 122,
+      "title": "Learn Tailwind CSS",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/FT3OD1z2oT4",
+      "description": "Build modern UI with Tailwind CSS utility classes.",
+      "duration": "1h 50m",
+      "tags": ["tailwind", "css", "frontend"]
+    },
+    {
+      "id": 123,
+      "title": "MongoDB Crash Course",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/4yqu8YF29cU",
+      "description": "Learn MongoDB for NoSQL database management.",
+      "duration": "2h 10m",
+      "tags": ["mongodb", "database", "nosql"]
+    },
+    {
+      "id": 124,
+      "title": "Data Structures Easy to Advanced",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/RBSGKlAvoiM",
+      "description": "Full tutorial on data structures from a Google engineer.",
+      "duration": "8h",
+      "tags": ["data structures", "algorithms", "programming"]
+    },
+    {
+      "id": 125,
+      "title": "HTML Crash Course For Absolute Beginners",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/UB1O30fR-EE",
+      "description": "Complete HTML tutorial for beginners.",
+      "duration": "1h 30m",
+      "tags": ["html", "web development", "beginner"]
+    },
+    {
+      "id": 126,
+      "title": "Python Tutorial for Beginners",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/_uQrJ0TkZlc",
+      "description": "Python programming tutorial for absolute beginners.",
+      "duration": "6h",
+      "tags": ["python", "programming", "beginner"]
+    },
+    {
+      "id": 127,
+      "title": "CS50's Introduction to Computer Science",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/S6aECTlOR68",
+      "description": "Harvard's introductory course to computer science.",
+      "duration": "12h",
+      "tags": ["computer science", "programming", "beginner"]
+    },
+    {
+      "id": 128,
+      "title": "The Net Ninja - JavaScript Tutorial",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/Sy6Qv3o8Mlc",
+      "description": "Modern JavaScript tutorial for beginners.",
+      "duration": "2h",
+      "tags": ["javascript", "programming", "beginner"]
+    },
+    {
+      "id": 129,
+      "title": "Traversy Media - CSS Crash Course",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/yfoY53QXEnI",
+      "description": "Complete CSS crash course.",
+      "duration": "1h",
+      "tags": ["css", "web development", "beginner"]
+    },
+    {
+      "id": 130,
+      "title": "freeCodeCamp - Full Stack Web Development",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/nu_pCVPKzTk",
+      "description": "Responsive web design certification course.",
+      "duration": "11h",
+      "tags": ["full stack", "web development", "beginner"]
+    },
+    {
+      "id": 131,
+      "title": "Web Dev Simplified - React Tutorial",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/bMknfKXIFA8",
+      "description": "Learn React in one video.",
+      "duration": "1h",
+      "tags": ["react", "frontend", "javascript"]
+    },
+    {
+      "id": 132,
+      "title": "Academind - Angular Tutorial",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/Fzf47wOOncs",
+      "description": "Angular for beginners.",
+      "duration": "2h",
+      "tags": ["angular", "frontend", "javascript"]
+    },
+    {
+      "id": 133,
+      "title": "thenewboston - Java Tutorial",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/GoXw4DG9fM8",
+      "description": "Java programming tutorial series.",
+      "duration": "3h",
+      "tags": ["java", "programming", "beginner"]
+    },
+    {
+      "id": 134,
+      "title": "Codecourse - Laravel Tutorial",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/9y8kmEuQiC8",
+      "description": "Introduction to Laravel framework.",
+      "duration": "1h 20m",
+      "tags": ["laravel", "php", "backend"]
+    },
+    {
+      "id": 135,
+      "title": "Derek Banas - Ruby in One Video",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/t7vO7m4IHp8",
+      "description": "Learn Ruby programming in one video.",
+      "duration": "1h",
+      "tags": ["ruby", "programming", "beginner"]
+    },
+    {
+      "id": 136,
+      "title": "CS Dojo - Python for Beginners",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/YYXdXT2l-Gg",
+      "description": "Python tutorial for beginners.",
+      "duration": "1h",
+      "tags": ["python", "programming", "beginner"]
+    },
+    {
+      "id": 137,
+      "title": "Simplilearn - Machine Learning Tutorial",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/7eh4d6sabA0",
+      "description": "Machine learning basics tutorial.",
+      "duration": "4h",
+      "tags": ["machine learning", "data science", "ai"]
+    },
+    {
+      "id": 138,
+      "title": "Edureka - AWS Tutorial",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/2z3cD2XJ0dE",
+      "description": "AWS tutorial for beginners.",
+      "duration": "10h",
+      "tags": ["aws", "cloud", "devops"]
+    },
+    {
+      "id": 139,
+      "title": "Treehouse - Introduction to UI Design",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/1zP4t3o1X8k",
+      "description": "UI design fundamentals.",
+      "duration": "30m",
+      "tags": ["ui design", "ux", "design"]
+    },
+    {
+      "id": 140,
+      "title": "DevTips - Responsive Website Tutorial",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/2gJhI9h0f4A",
+      "description": "Build a responsive website from scratch.",
+      "duration": "2h",
+      "tags": ["responsive design", "web development", "css"]
+    },
+    {
+      "id": 141,
+      "title": "LevelUpTuts - First Website Tutorial",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/UB1O30fR-EE",
+      "description": "Make your first website with HTML and CSS.",
+      "duration": "1h",
+      "tags": ["html", "css", "beginner"]
+    },
+    {
+      "id": 142,
+      "title": "The Coding Train - p5.js Tutorial",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/6a1a9pC0X8Q",
+      "description": "Creative coding with p5.js.",
+      "duration": "1h",
+      "tags": ["creative coding", "javascript", "p5.js"]
+    },
+    {
+      "id": 143,
+      "title": "Web Dev Simplified - Flexbox Tutorial",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/alFTJ9o4fDs",
+      "description": "CSS Flexbox tutorial.",
+      "duration": "30m",
+      "tags": ["css", "flexbox", "frontend"]
+    },
+    {
+      "id": 144,
+      "title": "Kevin Powell - CSS Grid Tutorial",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/9zBsdzdE4sM",
+      "description": "Learn CSS Grid layout.",
+      "duration": "1h",
+      "tags": ["css", "grid", "frontend"]
+    },
+    {
+      "id": 145,
+      "title": "Mosh Hamedani - JavaScript Tutorial",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/W6NZfCO5SIk",
+      "description": "JavaScript tutorial for beginners.",
+      "duration": "3h 30m",
+      "tags": ["javascript", "programming", "beginner"]
+    },
+    {
+      "id": 146,
+      "title": "Bro Code - Java Full Course",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/xk4_1vDrzzo",
+      "description": "Complete Java course for beginners.",
+      "duration": "4h",
+      "tags": ["java", "programming", "beginner"]
+    },
+    {
+      "id": 147,
+      "title": "Caleb Curry - C++ Tutorial",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/vLnPwxZdW4Y",
+      "description": "C++ programming tutorial.",
+      "duration": "2h",
+      "tags": ["c++", "programming", "beginner"]
+    },
+    {
+      "id": 148,
+      "title": "Telusko - Spring Boot Tutorial",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/9SGDpanrc8A",
+      "description": "Spring Boot crash course.",
+      "duration": "2h",
+      "tags": ["spring boot", "java", "backend"]
+    },
+    {
+      "id": 149,
+      "title": "Derek Banas - Java Tutorial",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/GoXw4DG9fM8",
+      "description": "Java in one video.",
+      "duration": "1h",
+      "tags": ["java", "programming", "beginner"]
+    },
+    {
+      "id": 150,
+      "title": "Java Brains - Java 8 Tutorial",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/3Z4V6V9mV8Q",
+      "description": "Java 8 features tutorial.",
+      "duration": "1h",
+      "tags": ["java", "programming", "intermediate"]
+    },
+    {
+      "id": 151,
+      "title": "Edureka - Ethical Hacking Full Course",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/dz7Ntp7KQGA",
+      "description": "Complete ethical hacking tutorial.",
+      "duration": "10h",
+      "tags": ["ethical hacking", "cybersecurity", "beginner"]
+    },
+    {
+      "id": 152,
+      "title": "Simplilearn - Data Science Tutorial",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/7eh4d6sabA0",
+      "description": "Data science full course.",
+      "duration": "8h",
+      "tags": ["data science", "machine learning", "beginner"]
+    },
+    {
+      "id": 153,
+      "title": "Krish Naik - Machine Learning Tutorial",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/0ypX7g3GfN0",
+      "description": "Machine learning with Python.",
+      "duration": "4h",
+      "tags": ["machine learning", "python", "data science"]
+    },
+    {
+      "id": 154,
+      "title": "freeCodeCamp - Data Analysis with Python",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/r-uOLxNrNk8",
+      "description": "Data analysis certification course.",
+      "duration": "9h",
+      "tags": ["data analysis", "python", "beginner"]
+    },
+    {
+      "id": 155,
+      "title": "Data School - Pandas Tutorial",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/PNPNtGlY9L4",
+      "description": "Pandas for data analysis.",
+      "duration": "2h",
+      "tags": ["pandas", "python", "data science"]
+    },
+    {
+      "id": 156,
+      "title": "KodeKloud - Docker Tutorial",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/3c-iBn73dDE",
+      "description": "Docker for beginners.",
+      "duration": "1h",
+      "tags": ["docker", "devops", "containers"]
+    },
+    {
+      "id": 157,
+      "title": "TechWorld with Nana - Kubernetes Tutorial",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/X48VuDVv0do",
+      "description": "Kubernetes full course.",
+      "duration": "4h",
+      "tags": ["kubernetes", "devops", "cloud"]
+    },
+    {
+      "id": 158,
+      "title": "Stephane Maarek - AWS Certified DevOps",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/0Y5oQb7oN5E",
+      "description": "AWS DevOps tutorial.",
+      "duration": "2h",
+      "tags": ["aws", "devops", "cloud"]
+    },
+    {
+      "id": 159,
+      "title": "Bret Fisher - Docker Tutorial",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/3c-iBn73dDE",
+      "description": "Docker and containers tutorial.",
+      "duration": "3h",
+      "tags": ["docker", "devops", "beginner"]
+    },
+    {
+      "id": 160,
+      "title": "freeCodeCamp - React Native Course",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/qSR5-a-7f14",
+      "description": "Build mobile apps with React Native.",
+      "duration": "4h",
+      "tags": ["react native", "mobile development", "javascript"]
+    },
+    {
+      "id": 161,
+      "title": "The Net Ninja - Flutter Tutorial",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/x0uinJvhNxI",
+      "description": "Flutter tutorial for beginners.",
+      "duration": "2h",
+      "tags": ["flutter", "mobile development", "dart"]
+    },
+    {
+      "id": 162,
+      "title": "Academind - React Native Course",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/g4vY24d3fJI",
+      "description": "React Native - The Practical Guide.",
+      "duration": "5h",
+      "tags": ["react native", "mobile development", "beginner"]
+    },
+    {
+      "id": 163,
+      "title": "freeCodeCamp - Flutter Course",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/r1yLBYZEdYE",
+      "description": "Flutter course for beginners.",
+      "duration": "12h",
+      "tags": ["flutter", "mobile development", "beginner"]
+    },
+    {
+      "id": 164,
+      "title": "Unity - Game Development Fundamentals",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/gvlfRO-3U_4",
+      "description": "Introduction to Unity game development.",
+      "duration": "2h",
+      "tags": ["unity", "game development", "beginner"]
+    },
+    {
+      "id": 165,
+      "title": "Brackeys - Unity Tutorial",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/kB4U67tiQLA",
+      "description": "Unity beginner tutorial.",
+      "duration": "1h",
+      "tags": ["unity", "game development", "c#"]
+    },
+    {
+      "id": 166,
+      "title": "Unreal Engine - Beginner Tutorial",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/7oOtyYpM3MI",
+      "description": "Unreal Engine 5 for beginners.",
+      "duration": "3h",
+      "tags": ["unreal engine", "game development", "beginner"]
+    },
+    {
+      "id": 167,
+      "title": "freeCodeCamp - Unity Game Development",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/0f2q8hORF5w",
+      "description": "Game development with Unity.",
+      "duration": "7h",
+      "tags": ["unity", "game development", "beginner"]
+    },
+    {
+      "id": 168,
+      "title": "NetworkChuck - Ethical Hacking Course",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/fNzpcB7ODxQ",
+      "description": "Ethical hacking full course.",
+      "duration": "12h",
+      "tags": ["ethical hacking", "cybersecurity", "beginner"]
+    },
+    {
+      "id": 169,
+      "title": "The Cyber Mentor - Hacking Course",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/3FNYvj2U0HM",
+      "description": "Ethical hacking in 15 hours.",
+      "duration": "15h",
+      "tags": ["ethical hacking", "cybersecurity", "intermediate"]
+    },
+    {
+      "id": 170,
+      "title": "Hak5 - Cybersecurity Basics",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/3FNYvj2U0HM",
+      "description": "Introduction to cybersecurity.",
+      "duration": "2h",
+      "tags": ["cybersecurity", "beginner", "hacking"]
+    },
+    {
+      "id": 171,
+      "title": "John Hammond - Hacking Walkthroughs",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/3FNYvj2U0HM",
+      "description": "Hacking machine walkthroughs.",
+      "duration": "1h",
+      "tags": ["ethical hacking", "ctf", "intermediate"]
+    },
+    {
+      "id": 172,
+      "title": "Figma - UI Design Essentials",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/kbZejnPXyLM",
+      "description": "Figma essentials for UI/UX design.",
+      "duration": "1h 30m",
+      "tags": ["figma", "ui design", "ux"]
+    },
+    {
+      "id": 173,
+      "title": "Mizko - Figma Crash Course",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/1SNZRCVNizg",
+      "description": "Figma UI/UX crash course.",
+      "duration": "2h",
+      "tags": ["figma", "ui ux", "beginner"]
+    },
+    {
+      "id": 174,
+      "title": "AJ&Smart - UX Design Principles",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/cvm_ECH94x4",
+      "description": "UX design fundamentals.",
+      "duration": "1h",
+      "tags": ["ux design", "design principles", "beginner"]
+    },
+    {
+      "id": 175,
+      "title": "DesignCourse - UI Design Tutorial",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/wIuVvCuiJhU",
+      "description": "UI design in Figma.",
+      "duration": "30m",
+      "tags": ["ui design", "figma", "beginner"]
+    },
+    {
+      "id": 176,
+      "title": "freeCodeCamp - Blockchain Full Course",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/M576WGiDBdQ",
+      "description": "Solidity and blockchain development.",
+      "duration": "16h",
+      "tags": ["blockchain", "solidity", "smart contracts"]
+    },
+    {
+      "id": 177,
+      "title": "Dapp University - Ethereum Tutorial",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/wUjYK5gwNZs",
+      "description": "Build Ethereum DApps.",
+      "duration": "2h",
+      "tags": ["ethereum", "dapp", "blockchain"]
+    },
+    {
+      "id": 178,
+      "title": "EatTheBlocks - Smart Contracts",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/gyMwXuJrbJQ",
+      "description": "Smart contract development with Solidity.",
+      "duration": "3h",
+      "tags": ["smart contracts", "solidity", "blockchain"]
+    },
+    {
+      "id": 179,
+      "title": "CryptoZombies - Solidity Game",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/gyMwXuJrbJQ",
+      "description": "Learn Solidity by building a game.",
+      "duration": "5h",
+      "tags": ["solidity", "blockchain", "beginner"]
+    },
+    {
+      "id": 180,
+      "title": "freeCodeCamp - Cryptocurrency Course",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/_160oMzblY8",
+      "description": "Blockchain and cryptocurrency fundamentals.",
+      "duration": "6h",
+      "tags": ["cryptocurrency", "blockchain", "beginner"]
+    },
+    {
+      "id": 181,
+      "title": "Machine Learning Crash Course",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/7eh4d6sabA0",
+      "description": "Google's machine learning crash course.",
+      "duration": "15h",
+      "tags": ["machine learning", "ai", "beginner"]
+    },
+    {
+      "id": 182,
+      "title": "Andrew Ng - Machine Learning",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/PPLFgi8Qawg",
+      "description": "Classic machine learning course.",
+      "duration": "20h",
+      "tags": ["machine learning", "ai", "intermediate"]
+    },
+    {
+      "id": 183,
+      "title": "fast.ai - Practical Deep Learning",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/nJ-xjCNrWjQ",
+      "description": "Practical deep learning for coders.",
+      "duration": "7h",
+      "tags": ["deep learning", "ai", "python"]
+    },
+    {
+      "id": 184,
+      "title": "3Blue1Brown - Neural Networks",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/aircAruvnKk",
+      "description": "Neural networks visualized.",
+      "duration": "2h",
+      "tags": ["neural networks", "ai", "math"]
+    },
+    {
+      "id": 185,
+      "title": "Sentdex - Python for Finance",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/2B1a2_F0L9g",
+      "description": "Python for financial analysis.",
+      "duration": "4h",
+      "tags": ["python", "finance", "data science"]
+    },
+    {
+      "id": 186,
+      "title": "KodeKloud - Terraform Tutorial",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/4Z7m7V9z2aA",
+      "description": "Terraform for infrastructure as code.",
+      "duration": "1h",
+      "tags": ["terraform", "devops", "cloud"]
+    },
+    {
+      "id": 187,
+      "title": "in28minutes - DevOps with Docker",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/3c-iBn73dDE",
+      "description": "DevOps tutorial with Docker and Kubernetes.",
+      "duration": "2h",
+      "tags": ["devops", "docker", "kubernetes"]
+    },
+    {
+      "id": 188,
+      "title": "Hitesh Choudhary - Kubernetes for Beginners",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/X48VuDVv0do",
+      "description": "Kubernetes tutorial for beginners.",
+      "duration": "4h",
+      "tags": ["kubernetes", "devops", "beginner"]
+    },
+    {
+      "id": 189,
+      "title": "freeCodeCamp - AWS Cloud Practitioner",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/2z3cD2XJ0dE",
+      "description": "AWS cloud practitioner certification course.",
+      "duration": "10h",
+      "tags": ["aws", "cloud", "certification"]
+    },
+    {
+      "id": 190,
+      "title": "Galaxies.dev - React Native Tutorial",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/qSR5-a-7f14",
+      "description": "React Native tutorial series.",
+      "duration": "3h",
+      "tags": ["react native", "mobile", "javascript"]
+    },
+    {
+      "id": 191,
+      "title": "CS50 - Mobile App Development",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/7oOtyYpM3MI",
+      "description": "Mobile app development with React Native.",
+      "duration": "12h",
+      "tags": ["mobile development", "react native", "beginner"]
+    },
+    {
+      "id": 192,
+      "title": "Flutter - Official Tutorial",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/x0uinJvhNxI",
+      "description": "Flutter codelab for beginners.",
+      "duration": "2h",
+      "tags": ["flutter", "mobile", "dart"]
+    },
+    {
+      "id": 193,
+      "title": "Unity Learn - 2D Game Kit",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/gvlfRO-3U_4",
+      "description": "Build a 2D game in Unity.",
+      "duration": "3h",
+      "tags": ["unity", "2d game", "beginner"]
+    },
+    {
+      "id": 194,
+      "title": "GameDev.tv - Unity RPG Course",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/kB4U67tiQLA",
+      "description": "Create an RPG in Unity.",
+      "duration": "10h",
+      "tags": ["unity", "rpg", "game development"]
+    },
+    {
+      "id": 195,
+      "title": "Unreal Engine - Blueprints Tutorial",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/7oOtyYpM3MI",
+      "description": "Blueprints visual scripting in Unreal.",
+      "duration": "2h",
+      "tags": ["unreal engine", "blueprints", "beginner"]
+    },
+    {
+      "id": 196,
+      "title": "NetworkChuck - Complete Ethical Hacking",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/fNzpcB7ODxQ",
+      "description": "Ethical hacking from scratch.",
+      "duration": "12h",
+      "tags": ["ethical hacking", "cybersecurity", "beginner"]
+    },
+    {
+      "id": 197,
+      "title": "LiveOverflow - Binary Exploitation",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/1S0aBV-Waeo",
+      "description": "Binary exploitation tutorial.",
+      "duration": "1h",
+      "tags": ["binary exploitation", "hacking", "advanced"]
+    },
+    {
+      "id": 198,
+      "title": "Figma - Prototyping Tutorial",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/kbZejnPXyLM",
+      "description": "Prototyping in Figma.",
+      "duration": "30m",
+      "tags": ["figma", "prototyping", "ux"]
+    },
+    {
+      "id": 199,
+      "title": "DesignCourse - Figma UI Design",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/wIuVvCuiJhU",
+      "description": "UI design with Figma.",
+      "duration": "6m",
+      "tags": ["figma", "ui design", "beginner"]
+    },
+    {
+      "id": 200,
+      "title": "freeCodeCamp - Blockchain Specialization",
+      "type": "free",
+      "price": 0,
+      "youtube_url": "https://youtu.be/M576WGiDBdQ",
+      "description": "Blockchain fundamentals and smart contracts.",
+      "duration": "16h",
+      "tags": ["blockchain", "smart contracts", "beginner"]
+    }
+  ]
+}

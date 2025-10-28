@@ -1,104 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SnakeEngine.AI - Comprehensive AI Platform</title>
+    <title>SnakeEngine.AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* Injects fonts from Google Fonts for a cleaner UI */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=Roboto:wght@400;500;700&family=Source+Code+Pro:wght@400;700&display=swap');
-        
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-
-        /* Custom scrollbar for a more modern look */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f5f9;
-        }
-        .dark ::-webkit-scrollbar-track {
-            background: #1e293b;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 10px;
-        }
-        .dark ::-webkit-scrollbar-thumb {
-            background: #475569;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
-        .dark ::-webkit-scrollbar-thumb:hover {
-            background: #64748b;
-        }
-
-        /* Helper class for gradient text */
-        .gradient-text {
-            background: linear-gradient(to right, #8e44ad, #3498db, #1abc9c);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-fill-color: transparent;
-        }
-
-        /* Custom keyframes for animations */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.98); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        .animate-fade-in {
-            animation: fadeIn 0.3s ease-out;
-        }
-        
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        .animate-fade-in-up {
-            animation: fadeInUp 0.4s ease-out forwards;
-        }
-
-        /* Animated background for login screen */
-        .premium-background {
-            background: linear-gradient(-45deg, #8e44ad, #e73c7e, #23a6d5, #1abc9c);
-            background-size: 400% 400%;
-            animation: gradient 15s ease infinite;
-        }
-
-        @keyframes gradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-    </style>
-<script src="https://accounts.google.com/gsi/client" async defer></script>
-<script type="importmap">
+  <script type="importmap">
 {
   "imports": {
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.27.0",
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
     "react/": "https://aistudiocdn.com/react@^19.2.0/",
-    "react": "https://aistudiocdn.com/react@^19.2.0",
-    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.26.0",
-    "emoji-picker-element": "https://cdn.jsdelivr.net/npm/emoji-picker-element@^1.21.3/+esm"
+    "react": "https://aistudiocdn.com/react@^19.2.0"
   }
 }
 </script>
 <link rel="stylesheet" href="/index.css">
 </head>
-<body class="bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-200">
+  <body class="bg-gray-50 dark:bg-gray-900">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
-</body>
+  </body>
 </html>
