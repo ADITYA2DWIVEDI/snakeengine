@@ -1,5 +1,5 @@
 import { GoogleGenAI, Modality, LiveSession, LiveServerMessage, CloseEvent, ErrorEvent, Blob, Type } from "@google/genai";
-import { Course, AIRecommendation } from "../types";
+import { Course, AIRecommendation, Message } from "../types";
 
 const API_KEY = process.env.API_KEY;
 
@@ -25,18 +25,31 @@ const handleApiError = (error: unknown, context: string): string => {
     return `Sorry, an error occurred in ${context}. Details: ${message}`;
 };
 
-export const generateChatResponse = async (prompt: string): Promise<string> => {
+export const generateChatResponse = async (prompt: string, history: Message[], systemInstruction?: string): Promise<string> => {
     const ai = getAiClient();
     if (!ai) return "API client not available. Please configure your API Key.";
 
     try {
+        // Map the history to the format required by generateContent
+        const contents = history.map(item => ({
+            role: item.sender === 'ai' ? 'model' as const : 'user' as const,
+            parts: [{ text: item.text }],
+        }));
+
+        // Add the current user prompt
+        contents.push({
+            role: 'user',
+            parts: [{ text: prompt }],
+        });
+        
         const response = await ai.models.generateContent({
-            model: 'gemini-flash-lite-latest', // Use flash-lite for low latency
-            contents: prompt,
+            model: 'gemini-flash-lite-latest',
+            contents: contents, // The full conversation history
             config: {
-                systemInstruction: "You are SnakeEngine AI, a helpful and friendly assistant.",
+                systemInstruction: systemInstruction || "You are SnakeEngine AI, a helpful and friendly assistant.",
             },
         });
+
         return response.text;
     } catch (error) {
         return handleApiError(error, "Chat");
@@ -273,19 +286,20 @@ ${courseListForPrompt}`,
                             items: {
                                 type: Type.OBJECT,
                                 properties: {
-                                    courseId: { type: Type.INTEGER },
-                                    justification: { type: Type.STRING }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+                                    courseId: { type: Type.NUMBER },
+                                    justification: { type: Type.STRING },
+                                },
+                                required: ["courseId", "justification"],
+                            },
+                        },
+                    },
+                    required: ["recommendations"],
+                },
+            },
         });
-        
-        const jsonResponse = JSON.parse(response.text);
-        return { recommendations: jsonResponse.recommendations, error: null };
 
+        const jsonResponse = JSON.parse(response.text);
+        return { recommendations: jsonResponse.recommendations as AIRecommendation[], error: null };
     } catch (error) {
         return { recommendations: null, error: handleApiError(error, "Course Recommendation") };
     }
@@ -295,12 +309,12 @@ export const generateStudyPlan = async (goal: string, courses: Course[]) => {
     const ai = getAiClient();
     if (!ai) return { plan: null, error: "API client not available. Please configure your API Key." };
 
-    const courseListForPrompt = courses.map(c => `- Course ID ${c.id}: "${c.title}" (Tags: ${c.tags.join(', ')})`).join('\n');
+    const courseListForPrompt = courses.map(c => `Course ID ${c.id}: "${c.title}" (Tags: ${c.tags.join(', ')})`).join('\n');
 
     try {
-        const response = await ai.models.generateContent({
+         const response = await ai.models.generateContent({
             model: 'gemini-2.5-pro',
-            contents: `My learning goal is: "${goal}". Based on the following list of available courses, create a structured, week-by-week study plan to achieve this goal. The plan should have a main title. Each week should have a focus title and include 2-4 relevant course recommendations. For each recommended course, provide its ID and a brief justification for why it's included that week.
+            contents: `My goal is: "${goal}". Create a structured, week-by-week study plan to achieve this goal using the provided course list. The plan should have a title. Each week should have a focus and recommend 2-4 relevant courses by their ID, including a brief justification for each choice.
 
 Available Courses:
 ${courseListForPrompt}`,
@@ -309,45 +323,40 @@ ${courseListForPrompt}`,
                 responseSchema: {
                     type: Type.OBJECT,
                     properties: {
-                        planTitle: { type: Type.STRING, description: "A catchy title for the study plan." },
+                        planTitle: { type: Type.STRING },
                         weeklyPlan: {
                             type: Type.ARRAY,
-                            description: "The list of weekly plans.",
                             items: {
                                 type: Type.OBJECT,
                                 properties: {
-                                    week: { type: Type.INTEGER, description: "The week number." },
-                                    title: { type: Type.STRING, description: "The title or focus for this week's plan." },
+                                    week: { type: Type.NUMBER },
+                                    title: { type: Type.STRING },
                                     courses: {
                                         type: Type.ARRAY,
-                                        description: "A list of courses recommended for this week.",
                                         items: {
                                             type: Type.OBJECT,
                                             properties: {
-                                                courseId: { type: Type.INTEGER, description: "The ID of the recommended course." },
-                                                justification: { type: Type.STRING, description: "A brief reason why this course is recommended for this week." }
+                                                courseId: { type: Type.NUMBER },
+                                                justification: { type: Type.STRING },
                                             },
-                                            required: ['courseId', 'justification']
-                                        }
-                                    }
+                                            required: ["courseId", "justification"],
+                                        },
+                                    },
                                 },
-                                required: ['week', 'title', 'courses']
-                            }
-                        }
+                                required: ["week", "title", "courses"],
+                            },
+                        },
                     },
-                    required: ['planTitle', 'weeklyPlan']
-                }
-            }
+                    required: ["planTitle", "weeklyPlan"],
+                },
+            },
         });
-        
         const jsonResponse = JSON.parse(response.text);
         return { plan: jsonResponse, error: null };
-
     } catch (error) {
         return { plan: null, error: handleApiError(error, "Study Plan Generation") };
     }
 };
-
 
 export const reviewCodeSnippet = async (code: string, language: string) => {
     const ai = getAiClient();
@@ -356,27 +365,25 @@ export const reviewCodeSnippet = async (code: string, language: string) => {
     try {
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-pro',
-            contents: `Act as a senior software engineer. Review the following ${language} code snippet. Provide feedback on potential bugs, performance improvements, and adherence to best practices. Format your response as Markdown.
+            contents: `Please act as a senior software engineer and provide a code review for the following ${language} snippet. Focus on potential bugs, performance improvements, and best practices. Format your response as Markdown.
 
 \`\`\`${language}
 ${code}
-\`\`\``,
+\`\`\``
         });
-
         return { review: response.text, error: null };
     } catch (error) {
         return { review: null, error: handleApiError(error, "Code Review") };
     }
 };
 
-export const summarizeDocument = async (text: string) => {
+export const summarizeDocument = async (content: string) => {
     const ai = getAiClient();
     if (!ai) return { summary: null, error: "API client not available. Please configure your API Key." };
-
     try {
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash',
-            contents: `Please provide a concise summary of the following document:\n\n${text}`,
+            contents: `Please provide a concise summary of the following document:\n\n---\n\n${content}`
         });
         return { summary: response.text, error: null };
     } catch (error) {

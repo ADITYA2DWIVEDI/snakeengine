@@ -20,7 +20,7 @@ export interface Message {
 
 export interface Chat {
   id: string;
-  title: string;
+  title?: string;
   messages: Message[];
 }
 

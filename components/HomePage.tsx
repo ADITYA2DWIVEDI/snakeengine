@@ -34,6 +34,9 @@ const HomePage: React.FC = () => {
         const userMessage: Message = { sender: 'user', text: currentInput };
         const thinkingMessage: Message = { sender: 'ai', text: '', isThinking: true };
     
+        // Create a snapshot of the history BEFORE the new message for the API call
+        const historyForApi = [...activeChat.messages];
+
         setActiveChat(prev => {
             if (!prev) return null;
             return { ...prev, messages: [...prev.messages, userMessage, thinkingMessage] };
@@ -43,12 +46,13 @@ const HomePage: React.FC = () => {
         setIsLoading(true);
     
         try {
-            const response = await generateChatResponse(currentInput);
+            // Pass the conversation history to the API
+            const response = await generateChatResponse(currentInput, historyForApi);
             
             setActiveChat(prev => {
                 if (!prev) return prev;
                 const finalMessages = prev.messages.map(msg => 
-                    msg.isThinking ? { ...msg, text: response, isThinking: false } as Message : msg
+                    msg.isThinking ? { ...msg, text: response, isThinking: false } : msg
                 );
                 return { ...prev, messages: finalMessages };
             });
@@ -56,7 +60,7 @@ const HomePage: React.FC = () => {
             setActiveChat(prev => {
                 if (!prev) return prev;
                 const finalMessages = prev.messages.map(msg => 
-                    msg.isThinking ? { ...msg, text: 'Sorry, I encountered an error.', isThinking: false } as Message : msg
+                    msg.isThinking ? { ...msg, text: 'Sorry, I encountered an error.', isThinking: false } : msg
                 );
                 return { ...prev, messages: finalMessages };
             });
@@ -64,22 +68,6 @@ const HomePage: React.FC = () => {
             setIsLoading(false);
         }
     };
-
-    const starterPrompts = [
-        "Explain quantum computing in simple terms",
-        "Give me creative ideas for a 10-year-old’s birthday party",
-        "Write a short story about a futuristic detective",
-        "What are the best ways to learn a new language?",
-    ];
-
-    const handleStarterPrompt = (prompt: string) => {
-        setInput(prompt);
-        // We can't await here, so we manually trigger the form submission in the next event loop
-        setTimeout(() => {
-            const form = textareaRef.current?.closest('form');
-            form?.requestSubmit();
-        }, 0);
-    }
 
     return (
         <div className="h-full flex flex-col items-center justify-center p-4 md:p-8 bg-transparent">
@@ -92,18 +80,6 @@ const HomePage: React.FC = () => {
                             Welcome to <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-cyan-500">SnakeEngine.AI</span>
                         </h1>
                         <p className="text-gray-500 dark:text-gray-400 mt-2 text-lg">Your all-in-one AI platform. How can I help you today?</p>
-                        
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-12 max-w-2xl mx-auto">
-                            {starterPrompts.map((prompt, i) => (
-                                <button
-                                    key={i}
-                                    onClick={() => handleStarterPrompt(prompt)}
-                                    className="p-4 bg-white/5 dark:bg-gray-800/50 rounded-xl text-left text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-white/10 dark:hover:bg-gray-700/60 transition-colors border border-gray-200 dark:border-gray-700 backdrop-blur-sm"
-                                >
-                                    {prompt}
-                                </button>
-                            ))}
-                        </div>
                     </div>
                 ) : (
                     <div className="flex-1 p-2 sm:p-6 overflow-y-auto">

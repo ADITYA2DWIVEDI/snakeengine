@@ -49,9 +49,12 @@ const Sidebar: React.FC<{
         <nav className="p-4 flex flex-col h-full bg-white/80 dark:bg-gray-900/60 backdrop-blur-xl border-r dark:border-gray-800">
             <div className="flex items-center mb-10 px-2">
                 <LogoIcon className="h-9 w-9" />
-                <h1 className="text-xl font-bold ml-3 text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-cyan-500">
-                    SnakeEngine
-                </h1>
+                <div className="ml-3">
+                    <h1 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-cyan-500">
+                        SnakeEngine
+                    </h1>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 -mt-1">By ADITYA & RASHISH</p>
+                </div>
             </div>
             <div className="flex-grow space-y-2 overflow-y-auto pr-2">
                 {Object.entries(NAVIGATION_ITEMS).map(([section, items]) => (
@@ -113,33 +116,31 @@ const App: React.FC = () => {
     }
 
     return (
-        <div className="h-screen w-full flex bg-gray-100 dark:bg-[#111827] text-gray-800 dark:text-gray-200 overflow-hidden">
-            {isWhatsNewOpen && <WhatsNewModal onClose={() => setIsWhatsNewOpen(false)} />}
-            
-            {isSidebarOpen && <div onClick={() => setIsSidebarOpen(false)} className="fixed inset-0 bg-black/40 z-20 lg:hidden"></div>}
-
-            <aside className={`fixed lg:relative top-0 left-0 h-full w-64 z-30 transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
-                <Sidebar 
-                    currentPage={currentPage} 
+        <div className="h-screen w-full flex bg-gray-100 dark:bg-[#111827] text-gray-800 dark:text-gray-200">
+            <div className="aurora-background">
+                <div className="aurora-shape aurora-shape-1"></div>
+                <div className="aurora-shape aurora-shape-2"></div>
+                <div className="aurora-shape aurora-shape-3"></div>
+            </div>
+            <aside className={`fixed lg:relative z-20 h-full w-64 lg:w-72 flex-shrink-0 transition-transform duration-300 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
+                <Sidebar
+                    currentPage={currentPage}
                     onNavigate={handleNavigate}
                     onSignOut={handleSignOut}
                     onShowWhatsNew={() => setIsWhatsNewOpen(true)}
                 />
             </aside>
-            
             <div className="flex-1 flex flex-col overflow-hidden">
-                <header className="flex-shrink-0 lg:hidden h-16 flex items-center justify-between px-4 bg-white/80 dark:bg-gray-900/60 backdrop-blur-sm border-b border-gray-200 dark:border-gray-800">
+                <header className="lg:hidden relative flex items-center justify-between p-4 bg-white/50 dark:bg-gray-900/50 backdrop-blur-md border-b dark:border-gray-800 flex-shrink-0">
                     <div className="flex items-center">
-                        <LogoIcon className="h-7 w-7" />
-                        <h1 className="text-lg font-bold ml-2 text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-cyan-500">
-                            SnakeEngine
-                        </h1>
+                        <LogoIcon className="h-8 w-8" />
+                        <div className="ml-2">
+                            <span className="font-bold text-lg text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-cyan-500">SnakeEngine</span>
+                            <p className="text-[10px] text-gray-500 dark:text-gray-400 -mt-1 leading-tight">By ADITYA & RASHISH</p>
+                        </div>
                     </div>
-                    <div className="text-xs font-semibold text-gray-500 dark:text-gray-400">
-                        BY ADITYA & RASHISH
-                    </div>
-                     <button onClick={() => setIsSidebarOpen(true)} className="text-gray-600 dark:text-gray-400">
-                        <MenuIcon />
+                    <button onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
+                        <MenuIcon className="h-6 w-6 text-gray-600 dark:text-gray-300" />
                     </button>
                 </header>
                 <main className="flex-1 overflow-y-auto">
@@ -147,6 +148,7 @@ const App: React.FC = () => {
                 </main>
                 <Footer />
             </div>
+            {isWhatsNewOpen && <WhatsNewModal onClose={() => setIsWhatsNewOpen(false)} />}
         </div>
     );
 };
