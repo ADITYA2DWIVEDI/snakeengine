@@ -6,7 +6,7 @@ export interface IconProps {
 }
 
 export const LogoIcon = ({ className = 'h-8 w-8' }: IconProps) => (
-  <svg className={className} viewBox="0 0 48 48" fill="none" xmlns="http://www.w.org/2000/svg">
+  <svg className={className} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M24 4L10 18L24 32L38 18L24 4Z" fill="url(#paint0_linear_logo)" />
     <path d="M10 18L24 32L10 46L10 18Z" fill="url(#paint1_linear_logo)" />
     <path d="M24 32L38 18L38 46L24 32Z" fill="url(#paint2_linear_logo)" />

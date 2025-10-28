@@ -12,9 +12,6 @@ import WhatsNewModal from './components/WhatsNewModal';
 import MyLearningPage from './components/MyLearningPage';
 import PromoPage from './components/PromoPage';
 import Footer from './components/Footer';
-import StudyPlanGeneratorTool from './components/tools/StudyPlanGeneratorTool';
-import CodeReviewerTool from './components/tools/CodeReviewerTool';
-import DocumentSummarizerTool from './components/tools/DocumentSummarizerTool';
 import { useTheme } from './hooks/useTheme';
 
 const Sidebar: React.FC<{
@@ -36,23 +33,27 @@ const Sidebar: React.FC<{
                 else if (item.name.includes("What's New")) onShowWhatsNew();
                 else if (item.page !== null) onNavigate(item.page);
             }}
-            className={`flex items-center px-3 py-2.5 rounded-lg transition-all duration-200 group relative ${isActive ? 'bg-gradient-to-r from-purple-600 to-cyan-500 text-white shadow-lg' : 'text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white'}`}
+            className={`flex items-center px-3 py-2.5 rounded-lg transition-all duration-200 group relative ${isActive ? 'text-white' : 'text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800/60 dark:hover:text-white'}`}
         >
-            <item.icon className={`h-5 w-5 transition-colors ${isActive ? 'text-white' : 'text-gray-400 group-hover:text-gray-500 dark:group-hover:text-white'}`} />
-            <span className="ml-4 font-medium text-sm">{item.name}</span>
+            {isActive && <div className="absolute -left-2 top-1/2 -translate-y-1/2 h-8 w-1.5 bg-cyan-400 rounded-r-full shadow-lg shadow-cyan-400/50"></div>}
+             <div className={`absolute inset-0 rounded-lg transition-all duration-300 ${isActive ? 'bg-gradient-to-r from-purple-600 to-cyan-500 shadow-lg' : 'opacity-0 group-hover:opacity-100 group-hover:bg-gray-100 dark:group-hover:bg-gray-800/60'}`}></div>
+            <div className="relative flex items-center">
+                 <item.icon className={`h-5 w-5 transition-colors ${isActive ? 'text-white' : 'text-gray-400 group-hover:text-gray-500 dark:group-hover:text-white'}`} />
+                <span className="ml-4 font-medium text-sm">{item.name}</span>
+            </div>
             {item.notification && <span className="absolute top-2 right-2 h-2.5 w-2.5 bg-cyan-400 rounded-full ring-2 ring-white dark:ring-gray-900"></span>}
         </a>
     );
 
     return (
-        <nav className="p-4 flex flex-col h-full bg-white dark:bg-gray-900/80 dark:backdrop-blur-sm border-r dark:border-gray-800">
+        <nav className="p-4 flex flex-col h-full bg-white/80 dark:bg-gray-900/60 backdrop-blur-xl border-r dark:border-gray-800">
             <div className="flex items-center mb-10 px-2">
                 <LogoIcon className="h-9 w-9" />
                 <h1 className="text-xl font-bold ml-3 text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-cyan-500">
                     SnakeEngine
                 </h1>
             </div>
-            <div className="flex-grow space-y-2 overflow-y-auto">
+            <div className="flex-grow space-y-2 overflow-y-auto pr-2">
                 {Object.entries(NAVIGATION_ITEMS).map(([section, items]) => (
                     <div key={section}>
                         <h2 className="px-3 mt-6 mb-2 text-xs font-bold text-gray-400 uppercase tracking-wider">{section}</h2>
@@ -95,9 +96,6 @@ const App: React.FC = () => {
             case Page.Settings: return <SettingsPage theme={theme} onToggleTheme={toggleTheme} />;
             case Page.Plans: return <PlansPage />;
             case Page.Help: return <HelpPage />;
-            case Page.StudyPlan: return <StudyPlanGeneratorTool onBack={() => setCurrentPage(Page.SmartStudio)} />;
-            case Page.CodeReviewer: return <CodeReviewerTool onBack={() => setCurrentPage(Page.SmartStudio)} />;
-            case Page.DocumentSummarizer: return <DocumentSummarizerTool onBack={() => setCurrentPage(Page.SmartStudio)} />;
             default: return <HomePage />;
         }
     };
@@ -120,7 +118,7 @@ const App: React.FC = () => {
             
             {isSidebarOpen && <div onClick={() => setIsSidebarOpen(false)} className="fixed inset-0 bg-black/40 z-20 lg:hidden"></div>}
 
-            <aside className={`fixed lg:relative top-0 left-0 h-full bg-white dark:bg-gray-900/80 dark:backdrop-blur-sm border-r border-gray-200 dark:border-gray-800 w-64 z-30 transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
+            <aside className={`fixed lg:relative top-0 left-0 h-full w-64 z-30 transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
                 <Sidebar 
                     currentPage={currentPage} 
                     onNavigate={handleNavigate}
@@ -130,12 +128,15 @@ const App: React.FC = () => {
             </aside>
             
             <div className="flex-1 flex flex-col overflow-hidden">
-                <header className="flex-shrink-0 lg:hidden h-16 flex items-center justify-between px-4 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
+                <header className="flex-shrink-0 lg:hidden h-16 flex items-center justify-between px-4 bg-white/80 dark:bg-gray-900/60 backdrop-blur-sm border-b border-gray-200 dark:border-gray-800">
                     <div className="flex items-center">
                         <LogoIcon className="h-7 w-7" />
                         <h1 className="text-lg font-bold ml-2 text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-cyan-500">
                             SnakeEngine
                         </h1>
+                    </div>
+                    <div className="text-xs font-semibold text-gray-500 dark:text-gray-400">
+                        BY ADITYA & RASHISH
                     </div>
                      <button onClick={() => setIsSidebarOpen(true)} className="text-gray-600 dark:text-gray-400">
                         <MenuIcon />

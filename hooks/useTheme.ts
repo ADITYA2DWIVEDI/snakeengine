@@ -19,7 +19,11 @@ export const useTheme = () => {
         } else {
             root.classList.remove('dark');
         }
-        localStorage.setItem('theme', theme);
+        try {
+            localStorage.setItem('theme', theme);
+        } catch (error) {
+            console.error("Could not save theme to localStorage", error);
+        }
     }, [theme]);
 
     const toggleTheme = useCallback(() => {

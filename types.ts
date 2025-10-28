@@ -34,3 +34,8 @@ export interface Course {
     youtube_url: string;
     duration: string;
 }
+
+export interface AIRecommendation {
+    courseId: number;
+    justification: string;
+}

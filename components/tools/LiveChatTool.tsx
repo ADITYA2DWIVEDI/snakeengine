@@ -92,7 +92,7 @@ const LiveChatTool: React.FC<LiveChatToolProps> = ({ onBack }) => {
                 },
                 onerror: (e: ErrorEvent) => {
                     console.error('Live chat error:', e);
-                    setError('A connection error occurred.');
+                    setError('A connection error occurred. Check your network.');
                     setStatus('error');
                     stopChat();
                 },
@@ -117,8 +117,12 @@ const LiveChatTool: React.FC<LiveChatToolProps> = ({ onBack }) => {
         scriptProcessorRef.current?.disconnect();
         mediaStreamSourceRef.current?.disconnect();
         
-        inputAudioContextRef.current?.close();
-        outputAudioContextRef.current?.close();
+        if (inputAudioContextRef.current && inputAudioContextRef.current.state !== 'closed') {
+            inputAudioContextRef.current.close();
+        }
+        if (outputAudioContextRef.current && outputAudioContextRef.current.state !== 'closed') {
+            outputAudioContextRef.current.close();
+        }
 
         sourcesRef.current.forEach(s => s.stop());
         sourcesRef.current.clear();
@@ -126,7 +130,12 @@ const LiveChatTool: React.FC<LiveChatToolProps> = ({ onBack }) => {
         setStatus('idle');
     };
     
-    useEffect(() => stopChat, []); // Cleanup on unmount
+    useEffect(() => {
+        // Return a cleanup function
+        return () => {
+            stopChat();
+        };
+    }, []); 
 
     return (
         <div className="h-full flex flex-col p-4 md:p-8 bg-gray-50">
@@ -136,10 +145,19 @@ const LiveChatTool: React.FC<LiveChatToolProps> = ({ onBack }) => {
                 <p className="text-gray-500 mt-2">Speak directly with the AI in real-time.</p>
             </div>
             <div className="w-full max-w-4xl mx-auto h-[60vh] bg-white rounded-2xl shadow-lg flex flex-col">
-                <div className="flex-1 p-6 overflow-y-auto">
-                    {transcripts.map((t, i) => (<div key={i}><p><b>You:</b> {t.user}</p><p><b>AI:</b> {t.model}</p><hr className="my-2"/></div>))}
-                    {currentInterim.user && <p><b>You:</b> <i>{currentInterim.user}</i></p>}
-                    {currentInterim.model && <p><b>AI:</b> <i>{currentInterim.model}</i></p>}
+                <div className="flex-1 p-6 overflow-y-auto space-y-4">
+                    {transcripts.map((t, i) => (
+                        <div key={i} className="pb-2 border-b last:border-b-0">
+                            <p className="font-semibold text-gray-700">You: <span className="font-normal text-gray-600">{t.user}</span></p>
+                            <p className="font-semibold text-purple-600">AI: <span className="font-normal text-gray-600">{t.model}</span></p>
+                        </div>
+                    ))}
+                    {(currentInterim.user || currentInterim.model) && (
+                        <div className="text-gray-400 italic">
+                           {currentInterim.user && <p>You: {currentInterim.user}</p>}
+                           {currentInterim.model && <p>AI: {currentInterim.model}</p>}
+                        </div>
+                    )}
                 </div>
                 <div className="p-4 border-t border-gray-200 text-center">
                     {status === 'idle' || status === 'error' ? (

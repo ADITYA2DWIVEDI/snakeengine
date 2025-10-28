@@ -80,7 +80,6 @@ const PlansPage: React.FC = () => {
         <div className="min-h-full p-4 md:p-12 bg-gray-50">
             <div className="text-center mb-12 max-w-2xl mx-auto">
                 <div className="inline-block p-3 bg-purple-100 rounded-full mb-4">
-                     {/* FIX: BookOpenIcon was used without being imported. */}
                      <BookOpenIcon className="h-8 w-8 text-purple-600" />
                 </div>
                 <h1 className="text-4xl md:text-5xl font-bold text-gray-800">

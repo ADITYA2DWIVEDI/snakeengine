@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { courseData } from '../courseData';
-import { Course } from '../types';
+import { Course, AIRecommendation } from '../types';
 import { useCourseTracking } from '../hooks/useCourseTracking';
+import { getCourseRecommendations } from '../services/geminiService';
 
 // --- HELPER ICONS ---
 const ClockIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>;
@@ -9,6 +10,8 @@ const PlayIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w
 const VideoCameraIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>;
 const BookmarkIcon = ({ filled }: { filled: boolean }) => <svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 transition-colors ${filled ? 'text-yellow-500 fill-current' : 'text-gray-400 dark:text-gray-500'}`} viewBox="0 0 20 20" fill="currentColor"><path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" /></svg>;
 const CheckCircleIcon = ({ filled }: { filled: boolean }) => <svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 transition-colors ${filled ? 'text-green-500 fill-current' : 'text-gray-400 dark:text-gray-500'}`} viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>;
+const LightBulbIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m12.728 12.728l-.707-.707M6.343 17.657l-.707.707M12 21v-1" /></svg>;
+const Spinner = () => <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>;
 
 // --- CHILD COMPONENTS ---
 
@@ -19,9 +22,11 @@ const CourseCard: React.FC<{
     isCompleted: boolean;
     onToggleBookmark: (id: number) => void;
     onToggleComplete: (id: number) => void;
-}> = ({ course, onPlay, isBookmarked, isCompleted, onToggleBookmark, onToggleComplete }) => {
+    justification?: string;
+}> = ({ course, onPlay, isBookmarked, isCompleted, onToggleBookmark, onToggleComplete, justification }) => {
     return (
-        <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6 flex flex-col hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group overflow-hidden border border-gray-200 dark:border-gray-700">
+        <div className="relative bg-white dark:bg-gray-800/50 rounded-2xl shadow-md p-6 flex flex-col hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group overflow-hidden border border-gray-200 dark:border-gray-700 backdrop-blur-sm">
+             <div className="absolute -inset-px rounded-2xl border-2 border-transparent transition-all duration-300 group-hover:border-purple-500/50 group-hover:[box-shadow:0_0_8px_theme(colors.purple.500/30%)]"></div>
             
             <div className={`absolute top-0 right-0 px-3 py-1 text-xs font-bold text-white rounded-bl-lg ${course.type === 'free' ? 'bg-green-500' : 'bg-blue-500'}`}>
                 {course.type === 'free' ? 'Free' : `$${course.price}`}
@@ -44,7 +49,13 @@ const CourseCard: React.FC<{
                 </div>
             </div>
             
-            <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
+            {justification && (
+                 <p className="mt-4 text-sm italic text-purple-600 dark:text-purple-400 border-l-2 border-purple-300 dark:border-purple-700 pl-3">
+                    "{justification}"
+                </p>
+            )}
+
+            <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700/50">
                  <div className="flex flex-wrap gap-2 mb-3">
                     {course.tags.slice(0, 3).map(tag => (
                         <span key={tag} className="px-2 py-1 text-xs font-medium text-purple-700 bg-purple-100 dark:text-purple-300 dark:bg-purple-900/50 rounded-full">{tag}</span>
@@ -135,6 +146,12 @@ const CoursesPage: React.FC = () => {
     const [filteredCourses, setFilteredCourses] = useState<Course[]>(courseData.courses);
     const [playingCourse, setPlayingCourse] = useState<Course | null>(null);
     const { bookmarkedIds, completedIds, toggleBookmark, toggleComplete } = useCourseTracking();
+
+    const [recommendationGoal, setRecommendationGoal] = useState('');
+    const [recommendations, setRecommendations] = useState<AIRecommendation[]>([]);
+    const [recommendedCourses, setRecommendedCourses] = useState<Course[]>([]);
+    const [isRecommending, setIsRecommending] = useState(false);
+    const [recommendationError, setRecommendationError] = useState<string | null>(null);
     
     useEffect(() => {
         const handler = setTimeout(() => {
@@ -153,21 +170,98 @@ const CoursesPage: React.FC = () => {
 
         return () => clearTimeout(handler);
     }, [searchTerm, allCourses]);
+
+    useEffect(() => {
+        if (recommendations.length > 0) {
+            const courses = recommendations
+                .map(rec => allCourses.find(c => c.id === rec.courseId))
+                .filter((c): c is Course => c !== undefined);
+            setRecommendedCourses(courses);
+        } else {
+            setRecommendedCourses([]);
+        }
+    }, [recommendations, allCourses]);
+    
+    const handleGetRecommendations = async () => {
+        if (!recommendationGoal.trim()) return;
+        setIsRecommending(true);
+        setRecommendationError(null);
+        setRecommendations([]);
+        const result = await getCourseRecommendations(recommendationGoal, allCourses);
+        if (result.error) {
+            setRecommendationError(result.error);
+        } else if (result.recommendations) {
+            setRecommendations(result.recommendations);
+        }
+        setIsRecommending(false);
+    };
     
     return (
-        <div className="min-h-full flex flex-col items-center p-4 md:p-8 bg-gray-100 dark:bg-gray-900">
+        <div className="min-h-full flex flex-col items-center p-4 md:p-8 bg-transparent">
             {playingCourse && <VideoPlayerModal course={playingCourse} onClose={() => setPlayingCourse(null)} />}
 
-            <div className="w-full max-w-3xl mb-12 text-center">
+            <div className="w-full max-w-4xl mb-12 text-center">
                  <h1 className="text-4xl md:text-5xl font-bold text-gray-800 dark:text-white">
                     Video <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-cyan-500">Courses</span>
                 </h1>
                 <p className="text-gray-500 dark:text-gray-400 mt-2 text-lg">Explore our library of courses to master programming and design.</p>
-                <div className="relative mt-6 max-w-xl mx-auto">
+            </div>
+            
+            {/* AI Recommendation Section */}
+            <div className="w-full max-w-4xl mb-12">
+                <div className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
+                    <div className="flex items-center mb-4">
+                        <LightBulbIcon />
+                        <h2 className="text-xl font-semibold text-gray-800 dark:text-white ml-3">Get AI Recommendations</h2>
+                    </div>
+                    <p className="text-gray-600 dark:text-gray-400 mb-4 text-sm">Describe your learning goal, and our AI will suggest the best courses for you.</p>
+                    <textarea
+                        value={recommendationGoal}
+                        onChange={(e) => setRecommendationGoal(e.target.value)}
+                        placeholder="e.g., I want to build fast, modern websites with React"
+                        className="w-full p-3 h-20 bg-gray-100 dark:bg-gray-700 rounded-lg border border-transparent focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+                        disabled={isRecommending}
+                    />
+                    <div className="mt-4 flex justify-end">
+                        <button onClick={handleGetRecommendations} disabled={isRecommending || !recommendationGoal.trim()} className="px-6 py-2.5 rounded-lg bg-gradient-to-r from-purple-500 to-cyan-400 text-white font-semibold flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90 transition-opacity">
+                            {isRecommending ? <Spinner /> : 'Get Suggestions'}
+                        </button>
+                    </div>
+                </div>
+                {recommendationError && <p className="text-red-500 text-sm mt-2 text-center">{recommendationError}</p>}
+                {isRecommending && <p className="text-gray-500 dark:text-gray-400 text-center mt-4">AI is thinking...</p>}
+            </div>
+
+             {recommendedCourses.length > 0 && (
+                <div className="w-full max-w-7xl mb-12">
+                     <h2 className="text-2xl font-semibold text-gray-700 dark:text-gray-300 mb-4 text-center">Your Personalized Recommendations</h2>
+                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {recommendedCourses.map(course => {
+                            const justification = recommendations.find(r => r.courseId === course.id)?.justification;
+                            return (
+                                <CourseCard 
+                                    key={`rec-${course.id}`} 
+                                    course={course} 
+                                    onPlay={() => setPlayingCourse(course)}
+                                    isBookmarked={bookmarkedIds.includes(course.id)}
+                                    isCompleted={completedIds.includes(course.id)}
+                                    onToggleBookmark={toggleBookmark}
+                                    onToggleComplete={toggleComplete}
+                                    justification={justification}
+                                />
+                            );
+                        })}
+                    </div>
+                    <hr className="my-12 border-gray-200 dark:border-gray-700"/>
+                </div>
+            )}
+
+            <div className="w-full max-w-4xl mb-8">
+                <div className="relative">
                     <input
                         type="search"
-                        placeholder="Search video courses..."
-                        className="w-full p-4 pl-12 text-lg bg-white dark:bg-gray-800 rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-purple-500 border border-transparent"
+                        placeholder="Or search all courses..."
+                        className="w-full p-4 pl-12 text-lg bg-white/50 dark:bg-gray-800/50 rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-purple-500 border border-transparent backdrop-blur-sm"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -192,7 +286,7 @@ const CoursesPage: React.FC = () => {
                     ))}
                 </div>
             ) : (
-                <div className="flex flex-col items-center justify-center text-center text-gray-500 dark:text-gray-400 flex-grow">
+                <div className="flex flex-col items-center justify-center text-center text-gray-500 dark:text-gray-400 flex-grow py-10">
                      <div className="mb-4 text-gray-300 dark:text-gray-600">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-24 w-24" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                      </div>

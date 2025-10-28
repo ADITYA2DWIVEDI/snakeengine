@@ -1,5 +1,5 @@
 import { GoogleGenAI, Modality, LiveSession, LiveServerMessage, CloseEvent, ErrorEvent, Blob, Type } from "@google/genai";
-import { Course } from "../types";
+import { Course, AIRecommendation } from "../types";
 
 const API_KEY = process.env.API_KEY;
 
@@ -250,16 +250,16 @@ export const generateSpeech = async (prompt: string, voice: string) => {
     }
 };
 
-export const generateStudyPlan = async (goal: string, courses: Course[]) => {
+export const getCourseRecommendations = async (goal: string, courses: Course[]) => {
     const ai = getAiClient();
-    if (!ai) return { plan: null, error: "API client not available. Please configure your API Key." };
+    if (!ai) return { recommendations: null, error: "API client not available. Please configure your API Key." };
     
     const courseListForPrompt = courses.map(c => `- Course ID ${c.id}: "${c.title}" (Tags: ${c.tags.join(', ')})`).join('\n');
 
     try {
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-pro',
-            contents: `My goal is: "${goal}". Based on the following list of available courses, create a structured, week-by-week study plan to help me achieve this goal. For each week, recommend 1-3 course IDs and provide a brief justification for why they are relevant.
+            contents: `My goal is: "${goal}". Based on the following list of available courses, which 3-5 courses are the most relevant? For each recommended course, provide its ID and a brief justification for why it's a good fit.
 
 Available Courses:
 ${courseListForPrompt}`,
@@ -268,28 +268,74 @@ ${courseListForPrompt}`,
                 responseSchema: {
                     type: Type.OBJECT,
                     properties: {
-                        planTitle: { type: Type.STRING },
-                        weeklyPlan: {
+                        recommendations: {
                             type: Type.ARRAY,
                             items: {
                                 type: Type.OBJECT,
                                 properties: {
-                                    week: { type: Type.INTEGER },
-                                    title: { type: Type.STRING },
-                                    courses: {
-                                        type: Type.ARRAY,
-                                        items: {
-                                            type: Type.OBJECT,
-                                            properties: {
-                                                courseId: { type: Type.INTEGER },
-                                                justification: { type: Type.STRING }
-                                            }
-                                        }
-                                    }
+                                    courseId: { type: Type.INTEGER },
+                                    justification: { type: Type.STRING }
                                 }
                             }
                         }
                     }
+                }
+            }
+        });
+        
+        const jsonResponse = JSON.parse(response.text);
+        return { recommendations: jsonResponse.recommendations, error: null };
+
+    } catch (error) {
+        return { recommendations: null, error: handleApiError(error, "Course Recommendation") };
+    }
+};
+
+export const generateStudyPlan = async (goal: string, courses: Course[]) => {
+    const ai = getAiClient();
+    if (!ai) return { plan: null, error: "API client not available. Please configure your API Key." };
+
+    const courseListForPrompt = courses.map(c => `- Course ID ${c.id}: "${c.title}" (Tags: ${c.tags.join(', ')})`).join('\n');
+
+    try {
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-pro',
+            contents: `My learning goal is: "${goal}". Based on the following list of available courses, create a structured, week-by-week study plan to achieve this goal. The plan should have a main title. Each week should have a focus title and include 2-4 relevant course recommendations. For each recommended course, provide its ID and a brief justification for why it's included that week.
+
+Available Courses:
+${courseListForPrompt}`,
+            config: {
+                responseMimeType: "application/json",
+                responseSchema: {
+                    type: Type.OBJECT,
+                    properties: {
+                        planTitle: { type: Type.STRING, description: "A catchy title for the study plan." },
+                        weeklyPlan: {
+                            type: Type.ARRAY,
+                            description: "The list of weekly plans.",
+                            items: {
+                                type: Type.OBJECT,
+                                properties: {
+                                    week: { type: Type.INTEGER, description: "The week number." },
+                                    title: { type: Type.STRING, description: "The title or focus for this week's plan." },
+                                    courses: {
+                                        type: Type.ARRAY,
+                                        description: "A list of courses recommended for this week.",
+                                        items: {
+                                            type: Type.OBJECT,
+                                            properties: {
+                                                courseId: { type: Type.INTEGER, description: "The ID of the recommended course." },
+                                                justification: { type: Type.STRING, description: "A brief reason why this course is recommended for this week." }
+                                            },
+                                            required: ['courseId', 'justification']
+                                        }
+                                    }
+                                },
+                                required: ['week', 'title', 'courses']
+                            }
+                        }
+                    },
+                    required: ['planTitle', 'weeklyPlan']
                 }
             }
         });
@@ -301,6 +347,7 @@ ${courseListForPrompt}`,
         return { plan: null, error: handleApiError(error, "Study Plan Generation") };
     }
 };
+
 
 export const reviewCodeSnippet = async (code: string, language: string) => {
     const ai = getAiClient();

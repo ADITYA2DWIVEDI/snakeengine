@@ -74,13 +74,14 @@ const SmartStudioPage: React.FC = () => {
                     <div 
                         key={tool.id}
                         onClick={() => setActiveTool(tool.id)}
-                        className={`bg-white dark:bg-gray-800/50 rounded-2xl shadow-lg p-6 flex flex-col text-center cursor-pointer hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group border border-gray-200 dark:border-gray-700 hover:border-purple-500`}
+                        className={`relative bg-white dark:bg-gray-800/50 rounded-2xl shadow-lg p-6 flex flex-col text-center cursor-pointer hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group border border-gray-200 dark:border-gray-700`}
                     >
-                        <div className={`mx-auto mb-4 text-white p-4 rounded-full bg-gradient-to-br ${tool.color} transition-all duration-300 group-hover:scale-110`}>
+                         <div className="absolute -inset-px rounded-2xl border-2 border-transparent transition-all duration-300 group-hover:border-purple-500 group-hover:[box-shadow:0_0_12px_theme(colors.purple.500/50%)]"></div>
+                        <div className={`relative mx-auto mb-4 text-white p-4 rounded-full bg-gradient-to-br ${tool.color} transition-all duration-300 group-hover:scale-110`}>
                             {tool.icon}
                         </div>
-                        <h3 className="font-semibold text-gray-800 dark:text-white text-lg">{tool.name}</h3>
-                        <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">{tool.description}</p>
+                        <h3 className="relative font-semibold text-gray-800 dark:text-white text-lg">{tool.name}</h3>
+                        <p className="relative text-gray-500 dark:text-gray-400 text-sm mt-1">{tool.description}</p>
                     </div>
                 ))}
             </div>
