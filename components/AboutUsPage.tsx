@@ -148,12 +148,12 @@ const AboutUsPage: React.FC = () => {
                      <p className="text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">SnakeEngine.ai is built by a passionate group of engineers, designers, and AI experts. Our diverse backgrounds help us deliver unique solutions trusted by creators and businesses worldwide.</p>
                     <div className="flex flex-col sm:flex-row justify-center items-center gap-10">
                         <div className="text-center">
-                            <img src="https://i.pravatar.cc/150?u=aditya" alt="Aditya Dwivedi" className="w-28 h-28 rounded-full mx-auto mb-4 border-4 border-white/20 shadow-lg"/>
+                            <img src="https://images.unsplash.com/photo-1678496464322-10d2910795c1?q=80&w=256&h=256&fit=crop" alt="Aditya Dwivedi" className="w-28 h-28 rounded-full mx-auto mb-4 border-4 border-white/20 shadow-lg object-cover"/>
                             <h3 className="font-semibold text-xl text-gray-800 dark:text-white">Aditya Dwivedi</h3>
                             <p className="text-sm text-purple-500 dark:text-purple-400 font-medium">Co-Creator & Lead Developer</p>
                         </div>
                         <div className="text-center">
-                             <img src="https://i.pravatar.cc/150?u=rashish" alt="Rashish Singh" className="w-28 h-28 rounded-full mx-auto mb-4 border-4 border-white/20 shadow-lg"/>
+                             <img src="https://images.unsplash.com/photo-1698083812727-de5c99a473e2?q=80&w=256&h=256&fit=crop" alt="Rashish Singh" className="w-28 h-28 rounded-full mx-auto mb-4 border-4 border-white/20 shadow-lg object-cover"/>
                             <h3 className="font-semibold text-xl text-gray-800 dark:text-white">Rashish Singh</h3>
                             <p className="text-sm text-cyan-500 dark:text-cyan-400 font-medium">Co-Creator & UI/UX Visionary</p>
                         </div>
