@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useAiPersona } from '../hooks/useAiPersona'; // Import the new hook
 
 const SunIcon: React.FC<{className?: string}> = ({ className }) => (
     <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
@@ -11,22 +12,34 @@ const MoonIcon: React.FC<{className?: string}> = ({ className }) => (
 interface SettingsPageProps {
     theme: 'light' | 'dark';
     onToggleTheme: () => void;
+    onDeleteAllData: () => void;
 }
 
-const SettingsPage: React.FC<SettingsPageProps> = ({ theme, onToggleTheme }) => {
-    const [density, setDensity] = useState('Spacious');
-    const [roundness, setRoundness] = useState(24);
-    const [shadow, setShadow] = useState(2.0);
-
+const SettingsPage: React.FC<SettingsPageProps> = ({ theme, onToggleTheme, onDeleteAllData }) => {
+    const { aiPersona, setAiPersona } = useAiPersona();
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    
+    const handleDelete = () => {
+        onDeleteAllData();
+        setShowDeleteConfirm(false);
+    }
+    
     return (
-        <div className="h-full flex items-center justify-center p-4 md:p-8 bg-gray-100 dark:bg-gray-900">
-            <div className="w-full max-w-2xl bg-white dark:bg-gray-800/50 rounded-2xl shadow-lg p-8 border border-gray-200 dark:border-gray-700 backdrop-blur-sm">
-                <div className="flex items-center mb-8">
-                     <div className="p-2 bg-purple-100 dark:bg-purple-900/50 rounded-lg">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-purple-600 dark:text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 16v-2m8-8h-2M4 12H2m15.364 6.364l-1.414-1.414M6.05 6.05l-1.414-1.414m12.728 0l-1.414 1.414M6.05 17.95l-1.414 1.414" /></svg>
-                     </div>
-                     <h1 className="text-2xl font-bold text-gray-800 dark:text-white ml-4">Customization</h1>
+        <div className="h-full flex items-center justify-center p-4 md:p-8 bg-transparent">
+             {showDeleteConfirm && (
+                <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 animate-fade-in" onClick={() => setShowDeleteConfirm(false)}>
+                    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full p-8 border border-gray-200 dark:border-gray-700" onClick={e => e.stopPropagation()}>
+                        <h2 className="text-xl font-bold text-gray-800 dark:text-white">Are you sure?</h2>
+                        <p className="text-gray-600 dark:text-gray-400 mt-2">This will permanently delete all your data, including chat history, theme preferences, and course tracking. This action cannot be undone.</p>
+                        <div className="mt-6 flex justify-end space-x-4">
+                            <button onClick={() => setShowDeleteConfirm(false)} className="px-4 py-2 rounded-lg font-semibold text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600">Cancel</button>
+                            <button onClick={handleDelete} className="px-4 py-2 rounded-lg font-semibold text-white bg-red-600 hover:bg-red-700">Delete My Data</button>
+                        </div>
+                    </div>
                 </div>
+            )}
+            <div className="w-full max-w-2xl bg-white/80 dark:bg-gray-800/60 backdrop-blur-xl rounded-2xl shadow-lg p-8 border border-gray-200 dark:border-gray-700">
+                <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-8">Settings</h1>
 
                 <div className="space-y-8">
                     {/* Theme */}
@@ -41,53 +54,27 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ theme, onToggleTheme }) => 
                         </div>
                     </div>
 
-                    {/* Font Style */}
-                    <div className="flex items-center justify-between">
-                        <label className="text-gray-600 dark:text-gray-300 font-medium">Font Style</label>
-                        <select className="w-48 p-2 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-200">
-                            <option>Inter</option>
-                            <option>Roboto</option>
-                            <option>Lato</option>
-                        </select>
-                    </div>
-
-                    {/* AI Writing Style */}
-                    <div className="flex items-center justify-between">
-                        <label className="text-gray-600 dark:text-gray-300 font-medium">AI Writing Style</label>
-                        <select className="w-48 p-2 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-200">
-                            <option>Creative & Playful</option>
-                            <option>Formal & Professional</option>
-                            <option>Concise & Direct</option>
-                        </select>
-                    </div>
-
-                    {/* Interface Density */}
-                    <div className="flex items-center justify-between">
-                        <label className="text-gray-600 dark:text-gray-300 font-medium">Interface Density</label>
-                        <div className="flex items-center bg-gray-100 dark:bg-gray-700 p-1 rounded-full">
-                            {['Compact', 'Comfortable', 'Spacious'].map(d => (
-                                <button key={d} onClick={() => setDensity(d)} className={`px-4 py-1 rounded-full text-sm font-medium transition-colors ${density === d ? 'bg-white dark:bg-gray-800 shadow text-purple-600 dark:text-purple-400' : 'text-gray-500'}`}>
-                                    {d}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Corner Roundness */}
-                    <div className="flex items-center justify-between">
-                        <label className="text-gray-600 dark:text-gray-300 font-medium">Corner Roundness</label>
-                        <div className="flex items-center space-x-4 w-48">
-                            <input type="range" min="0" max="48" value={roundness} onChange={(e) => setRoundness(Number(e.target.value))} className="w-full h-2 bg-gray-200 dark:bg-gray-600 rounded-lg appearance-none cursor-pointer accent-purple-600" />
-                            <span className="text-sm text-gray-500 dark:text-gray-400 w-10 text-right">{roundness}px</span>
-                        </div>
+                    {/* AI Persona */}
+                    <div>
+                        <label htmlFor="ai-persona" className="text-gray-600 dark:text-gray-300 font-medium mb-2 block">AI Persona (System Instruction)</label>
+                        <textarea
+                            id="ai-persona"
+                            value={aiPersona}
+                            onChange={(e) => setAiPersona(e.target.value)}
+                            placeholder="e.g., You are a witty pirate who talks in pirate slang."
+                            className="w-full p-3 h-24 bg-gray-100 dark:bg-gray-700 rounded-lg border border-transparent focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+                        />
+                         <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">This persona will be used for new chats on the Home page.</p>
                     </div>
                     
-                    {/* Shadow Depth */}
-                    <div className="flex items-center justify-between">
-                        <label className="text-gray-600 dark:text-gray-300 font-medium">Shadow Depth</label>
-                        <div className="flex items-center space-x-4 w-48">
-                            <input type="range" min="0" max="4" step="0.1" value={shadow} onChange={(e) => setShadow(Number(e.target.value))} className="w-full h-2 bg-gray-200 dark:bg-gray-600 rounded-lg appearance-none cursor-pointer accent-purple-600" />
-                            <span className="text-sm text-gray-500 dark:text-gray-400 w-10 text-right">{shadow.toFixed(1)}x</span>
+                    {/* Data & Privacy */}
+                    <div>
+                        <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-200 border-t border-gray-200 dark:border-gray-700 pt-6 mt-6">Data & Privacy</h2>
+                        <p className="text-gray-600 dark:text-gray-400 mt-2 text-sm">You have control over your data. Deleting your data will remove all locally stored information and log you out.</p>
+                        <div className="mt-4">
+                            <button onClick={() => setShowDeleteConfirm(true)} className="px-4 py-2 rounded-lg font-semibold text-white bg-red-600 hover:bg-red-700 transition-colors">
+                                Delete All My Data
+                            </button>
                         </div>
                     </div>
                 </div>

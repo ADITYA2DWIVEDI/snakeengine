@@ -1,12 +1,9 @@
 import React, { useState } from 'react';
 import { reviewCodeSnippet } from '../../services/geminiService';
-import { LogoIcon } from '../../constants';
 
-// --- HELPER ICONS ---
-const BackIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>;
 const Spinner = () => <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>;
 
-const CodeReviewerTool: React.FC<{ onBack: () => void }> = ({ onBack }) => {
+const CodeReviewerTool: React.FC = () => {
     const [code, setCode] = useState('');
     const [language, setLanguage] = useState('javascript');
     const [isLoading, setIsLoading] = useState(false);
@@ -24,8 +21,7 @@ const CodeReviewerTool: React.FC<{ onBack: () => void }> = ({ onBack }) => {
     const languages = ['javascript', 'python', 'java', 'c++', 'html', 'css', 'sql', 'typescript'];
 
     return (
-        <div className="h-full flex flex-col p-4 md:p-8 bg-gray-100 dark:bg-gray-900">
-            <div className="flex-shrink-0 mb-8"><button onClick={onBack} className="flex items-center text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white font-medium"><BackIcon /><span className="ml-2">Back to Smart Studio</span></button></div>
+        <div className="h-full flex flex-col p-4 md:p-8 bg-transparent">
             <div className="w-full max-w-6xl mx-auto flex-grow flex flex-col">
                 <div className="text-center mb-8">
                     <h1 className="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white">AI Code Reviewer</h1>
@@ -34,7 +30,7 @@ const CodeReviewerTool: React.FC<{ onBack: () => void }> = ({ onBack }) => {
 
                 <div className="flex-grow grid grid-cols-1 lg:grid-cols-2 gap-8">
                     {/* Input Side */}
-                    <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 flex flex-col">
+                    <div className="bg-white/80 dark:bg-gray-800/60 backdrop-blur-xl p-6 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 flex flex-col">
                         <div className="flex justify-between items-center mb-4">
                             <h3 className="font-semibold text-lg text-gray-800 dark:text-white">Your Code</h3>
                             <select value={language} onChange={e => setLanguage(e.target.value)} className="p-2 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-gray-50 dark:bg-gray-700">
@@ -48,13 +44,13 @@ const CodeReviewerTool: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                     </div>
 
                     {/* Output Side */}
-                    <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
+                    <div className="bg-white/80 dark:bg-gray-800/60 backdrop-blur-xl p-6 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
                         <h3 className="font-semibold text-lg text-gray-800 dark:text-white mb-4">AI Feedback</h3>
                         <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-4 h-full min-h-[400px] overflow-y-auto">
                            {isLoading && <div className="flex justify-center items-center h-full"><div className="text-center text-gray-500 dark:text-gray-400"><div className="animate-spin rounded-full h-10 w-10 border-b-2 border-purple-500 mx-auto"></div><p className="mt-3">Reviewing code...</p></div></div>}
                            {result.error && <div className="bg-red-100 dark:bg-red-900/20 border border-red-400 dark:border-red-500/30 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg" role="alert"><strong className="font-bold">Error: </strong><span className="block sm:inline">{result.error}</span></div>}
                            {result.review && <div className="prose prose-sm dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: result.review.replace(/```(\w+)?\n/g, '<pre><code class="language-$1">').replace(/```/g, '</code></pre>') }} />}
-                           {!isLoading && !result.review && !result.error && <div className="text-center text-gray-400 flex items-center justify-center h-full"><p>The AI's feedback will appear here.</p></div>}
+                           {!isLoading && !result.review && !result.error && <div className="text-center text-gray-400 dark:text-gray-500 flex items-center justify-center h-full"><p>The AI's feedback will appear here.</p></div>}
                         </div>
                     </div>
                 </div>

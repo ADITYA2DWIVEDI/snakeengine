@@ -3,7 +3,6 @@ import { connectLiveChat } from '../../services/geminiService';
 import { LiveServerMessage, LiveSession, Blob } from '@google/genai';
 
 // --- HELPER ICONS ---
-const BackIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>;
 const MicIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg>;
 const StopIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12v0a9 9 0 01-9 9s-9-4.03-9-9 4.03-9 9-9v0a9 9 0 019 9v0zm-9-3.75v7.5" /><path d="M10.5 12h3" /></svg>;
 
@@ -13,9 +12,7 @@ function decode(base64: string) { const binaryString = atob(base64); const len =
 async function decodeAudioData(data: Uint8Array, ctx: AudioContext, sampleRate: number, numChannels: number): Promise<AudioBuffer> { const dataInt16 = new Int16Array(data.buffer); const frameCount = dataInt16.length / numChannels; const buffer = ctx.createBuffer(numChannels, frameCount, sampleRate); for (let channel = 0; channel < numChannels; channel++) { const channelData = buffer.getChannelData(channel); for (let i = 0; i < frameCount; i++) { channelData[i] = dataInt16[i * numChannels + channel] / 32768.0; } } return buffer; }
 function createBlob(data: Float32Array): Blob { const l = data.length; const int16 = new Int16Array(l); for (let i = 0; i < l; i++) { int16[i] = data[i] * 32768; } return { data: encode(new Uint8Array(int16.buffer)), mimeType: 'audio/pcm;rate=16000' }; }
 
-interface LiveChatToolProps { onBack: () => void; }
-
-const LiveChatTool: React.FC<LiveChatToolProps> = ({ onBack }) => {
+const LiveChatTool: React.FC = () => {
     const [status, setStatus] = useState<'idle' | 'connecting' | 'active' | 'error'>('idle');
     const [error, setError] = useState<string | null>(null);
     const [transcripts, setTranscripts] = useState<{ user: string, model: string }[]>([]);
@@ -131,35 +128,33 @@ const LiveChatTool: React.FC<LiveChatToolProps> = ({ onBack }) => {
     };
     
     useEffect(() => {
-        // Return a cleanup function
         return () => {
             stopChat();
         };
     }, []); 
 
     return (
-        <div className="h-full flex flex-col p-4 md:p-8 bg-gray-50">
-            <div className="flex-shrink-0 mb-4"><button onClick={onBack} className="flex items-center text-gray-500 hover:text-gray-800 font-medium"><BackIcon /><span className="ml-2">Back to Smart Studio</span></button></div>
+        <div className="h-full flex flex-col p-4 md:p-8 bg-transparent">
             <div className="text-center mb-4">
-                <h1 className="text-3xl md:text-4xl font-bold text-gray-800">Live Chat</h1>
-                <p className="text-gray-500 mt-2">Speak directly with the AI in real-time.</p>
+                <h1 className="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white">Live Chat</h1>
+                <p className="text-gray-500 dark:text-gray-400 mt-2">Speak directly with the AI in real-time.</p>
             </div>
-            <div className="w-full max-w-4xl mx-auto h-[60vh] bg-white rounded-2xl shadow-lg flex flex-col">
+            <div className="w-full max-w-4xl mx-auto flex-grow bg-white/80 dark:bg-gray-800/60 backdrop-blur-xl rounded-2xl shadow-lg flex flex-col border border-gray-200 dark:border-gray-700">
                 <div className="flex-1 p-6 overflow-y-auto space-y-4">
                     {transcripts.map((t, i) => (
-                        <div key={i} className="pb-2 border-b last:border-b-0">
-                            <p className="font-semibold text-gray-700">You: <span className="font-normal text-gray-600">{t.user}</span></p>
-                            <p className="font-semibold text-purple-600">AI: <span className="font-normal text-gray-600">{t.model}</span></p>
+                        <div key={i} className="pb-2 border-b border-gray-200 dark:border-gray-700 last:border-b-0">
+                            <p className="font-semibold text-gray-700 dark:text-gray-300">You: <span className="font-normal text-gray-600 dark:text-gray-400">{t.user}</span></p>
+                            <p className="font-semibold text-purple-600 dark:text-purple-400">AI: <span className="font-normal text-gray-600 dark:text-gray-400">{t.model}</span></p>
                         </div>
                     ))}
                     {(currentInterim.user || currentInterim.model) && (
-                        <div className="text-gray-400 italic">
+                        <div className="text-gray-400 dark:text-gray-500 italic">
                            {currentInterim.user && <p>You: {currentInterim.user}</p>}
                            {currentInterim.model && <p>AI: {currentInterim.model}</p>}
                         </div>
                     )}
                 </div>
-                <div className="p-4 border-t border-gray-200 text-center">
+                <div className="p-4 border-t border-gray-200 dark:border-gray-700 text-center">
                     {status === 'idle' || status === 'error' ? (
                         <button onClick={startChat} className="px-6 py-3 rounded-lg bg-gradient-to-r from-green-500 to-emerald-400 text-white font-semibold flex items-center justify-center mx-auto hover:opacity-90 transition-opacity">
                             <MicIcon /> <span className="ml-2">Start Chat</span>
@@ -169,7 +164,7 @@ const LiveChatTool: React.FC<LiveChatToolProps> = ({ onBack }) => {
                             <StopIcon /> <span className="ml-2">Stop Chat</span>
                         </button>
                     )}
-                    <p className="text-sm text-gray-500 mt-2 h-5">
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-2 h-5">
                         {status === 'connecting' && 'Connecting...'}
                         {status === 'active' && 'Connection active. Start speaking.'}
                         {status === 'error' && `Error: ${error}`}

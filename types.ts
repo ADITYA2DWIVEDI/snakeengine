@@ -10,6 +10,14 @@ export enum Page {
   StudyPlan,
   CodeReviewer,
   DocumentSummarizer,
+  Plugins, // New page for the marketplace
+}
+
+export interface Tab {
+  id: string;
+  name: string;
+  page: Page;
+  toolId?: string; // e.g., 'image-generation'
 }
 
 export interface Message {
@@ -22,6 +30,7 @@ export interface Chat {
   id: string;
   title?: string;
   messages: Message[];
+  systemInstruction?: string; // For custom persona
 }
 
 export interface Course {

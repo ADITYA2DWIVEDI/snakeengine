@@ -62,6 +62,17 @@ export const useCourseTracking = () => {
         setBookmarkedIds(prev => prev.filter(id => id !== courseId));
         setCompletedIds(prev => prev.includes(courseId) ? prev : [...prev, courseId]);
     }, []);
+    
+    const clearAllTrackedCourses = () => {
+        try {
+            localStorage.removeItem('bookmarkedCourseIds');
+            localStorage.removeItem('completedCourseIds');
+            setBookmarkedIds([]);
+            setCompletedIds([]);
+        } catch (error) {
+            console.error('Error clearing course tracking data from localStorage', error);
+        }
+    };
 
     return {
         bookmarkedIds,
@@ -70,6 +81,7 @@ export const useCourseTracking = () => {
         completedCourses,
         toggleBookmark,
         toggleComplete,
-        markAsCompleteFromBookmark
+        markAsCompleteFromBookmark,
+        clearAllTrackedCourses,
     };
 };

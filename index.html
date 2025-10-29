@@ -14,6 +14,7 @@
     <script>
       // Custom Tailwind config to apply the new font
       tailwind.config = {
+        darkMode: 'class', // Enable dark mode
         theme: {
           extend: {
             fontFamily: {
@@ -44,8 +45,12 @@
       width: 100%;
       height: 100%;
       z-index: -1;
-      opacity: 0.3;
+      opacity: 0;
       overflow: hidden;
+      transition: opacity 0.5s ease-in-out;
+    }
+    .dark .aurora-background {
+        opacity: 0.3;
     }
     .aurora-shape {
       position: absolute;

@@ -3,9 +3,18 @@ import { Message } from '../types';
 import { generateChatResponse } from '../services/geminiService';
 import { LogoIcon } from '../constants';
 import { useChatHistory } from '../hooks/useChatHistory';
+import { useAiPersona } from '../hooks/useAiPersona'; // New Import
+
+const QuickStartCard: React.FC<{ title: string; prompt: string; onSelect: (prompt: string) => void }> = ({ title, prompt, onSelect }) => (
+    <div onClick={() => onSelect(prompt)} className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm p-4 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 cursor-pointer hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
+        <h3 className="font-semibold text-gray-800 dark:text-white">{title}</h3>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{prompt}</p>
+    </div>
+);
 
 const HomePage: React.FC = () => {
     const { activeChat, createNewChat, setActiveChat } = useChatHistory();
+    const { aiPersona } = useAiPersona(); // New
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -26,15 +35,14 @@ const HomePage: React.FC = () => {
         }
     }, [input]);
 
-    const handleSendMessage = async (e: React.FormEvent) => {
+    const handleSendMessage = async (e: React.FormEvent, prompt?: string) => {
         e.preventDefault();
-        if (!input.trim() || isLoading || !activeChat) return;
+        const currentInput = prompt || input;
+        if (!currentInput.trim() || isLoading || !activeChat) return;
     
-        const currentInput = input;
         const userMessage: Message = { sender: 'user', text: currentInput };
         const thinkingMessage: Message = { sender: 'ai', text: '', isThinking: true };
     
-        // Create a snapshot of the history WITH the new message for the API call
         const historyForApi = [...activeChat.messages, userMessage];
 
         setActiveChat(prev => {
@@ -46,9 +54,7 @@ const HomePage: React.FC = () => {
         setIsLoading(true);
     
         try {
-            // FIX: Pass the full conversation history, including the new user message, to the API.
-            const response = await generateChatResponse(historyForApi);
-            
+            const response = await generateChatResponse(historyForApi, aiPersona); // Pass persona
             setActiveChat(prev => {
                 if (!prev) return prev;
                 const finalMessages = prev.messages.map(msg => 
@@ -69,10 +75,16 @@ const HomePage: React.FC = () => {
         }
     };
 
+    const quickStarts = [
+        { title: 'Draft an Email', prompt: 'Draft a professional email to a client about a project delay.' },
+        { title: 'Write a Blog Post', prompt: 'Write a short blog post about the benefits of AI in education.' },
+        { title: 'Explain a Concept', prompt: 'Explain the concept of neural networks in simple terms.' },
+        { title: 'Plan a Trip', prompt: 'Plan a 3-day itinerary for a trip to Paris.' },
+    ];
+
     return (
         <div className="h-full flex flex-col items-center justify-center p-4 md:p-8 bg-transparent">
-            
-            <div className="w-full max-w-4xl h-[85vh] md:h-[80vh] flex flex-col">
+            <div className="w-full max-w-4xl h-full flex flex-col">
                 
                 {(!activeChat || activeChat.messages.length <= 1) ? (
                     <div className="text-center my-auto px-4 animate-fade-in-up">
@@ -80,6 +92,11 @@ const HomePage: React.FC = () => {
                             Welcome to <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-cyan-500">SnakeEngine.AI</span>
                         </h1>
                         <p className="text-gray-500 dark:text-gray-400 mt-2 text-lg">Your all-in-one AI platform. How can I help you today?</p>
+                        <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {quickStarts.map(qs => (
+                                <QuickStartCard key={qs.title} {...qs} onSelect={(p) => handleSendMessage(new Event('submit') as any, p)} />
+                            ))}
+                        </div>
                     </div>
                 ) : (
                     <div className="flex-1 p-2 sm:p-6 overflow-y-auto">
@@ -112,9 +129,6 @@ const HomePage: React.FC = () => {
                 <div className="p-4 flex-shrink-0">
                     <form onSubmit={handleSendMessage} className="w-full max-w-4xl mx-auto">
                          <div className="relative flex items-center p-2 bg-white/80 dark:bg-gray-800/50 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 backdrop-blur-sm focus-within:ring-2 focus-within:ring-purple-500 transition-shadow">
-                            <button type="button" onClick={createNewChat} className="flex-shrink-0 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors" title="New Chat">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500 dark:text-gray-400" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" /></svg>
-                            </button>
                             <textarea
                                 ref={textareaRef}
                                 value={input}

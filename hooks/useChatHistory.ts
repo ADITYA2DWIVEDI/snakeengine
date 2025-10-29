@@ -45,10 +45,26 @@ export const useChatHistory = () => {
         };
         setActiveChat(newChat);
     }, []);
+    
+    const clearAllChats = () => {
+        try {
+            // A simple implementation: clear all localStorage keys that start with "chat_"
+            Object.keys(localStorage).forEach(key => {
+                if (key.startsWith('chat_') || key === 'activeChatId') {
+                    localStorage.removeItem(key);
+                }
+            });
+            // Immediately create a new chat after clearing
+            setActiveChat(null); // Set to null to trigger creation effect
+        } catch (error) {
+            console.error("Failed to clear chat history from localStorage", error);
+        }
+    };
 
     return {
         activeChat,
         createNewChat,
-        setActiveChat // Expose the raw setter for more complex updates
+        setActiveChat,
+        clearAllChats,
     };
 };

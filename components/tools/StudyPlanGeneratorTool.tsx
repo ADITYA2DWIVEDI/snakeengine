@@ -4,8 +4,6 @@ import { courseData } from '../../courseData';
 import { BookOpenIcon } from '../../constants';
 import { Course } from '../../types';
 
-// --- HELPER ICONS ---
-const BackIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>;
 const Spinner = () => <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>;
 
 interface StudyPlan {
@@ -20,7 +18,7 @@ interface StudyPlan {
     }[];
 }
 
-const StudyPlanGeneratorTool: React.FC<{ onBack: () => void }> = ({ onBack }) => {
+const StudyPlanGeneratorTool: React.FC = () => {
     const [goal, setGoal] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [result, setResult] = useState<{ plan: StudyPlan | null, error: string | null }>({ plan: null, error: null });
@@ -39,15 +37,14 @@ const StudyPlanGeneratorTool: React.FC<{ onBack: () => void }> = ({ onBack }) =>
     }
 
     return (
-        <div className="h-full flex flex-col p-4 md:p-8 bg-gray-100 dark:bg-gray-900">
-            <div className="flex-shrink-0 mb-8"><button onClick={onBack} className="flex items-center text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white font-medium"><BackIcon /><span className="ml-2">Back to Smart Studio</span></button></div>
+        <div className="h-full flex flex-col p-4 md:p-8 bg-transparent">
             <div className="w-full max-w-4xl mx-auto flex-grow flex flex-col">
                 <div className="text-center mb-8">
                     <h1 className="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white">AI Study Plan Generator</h1>
                     <p className="text-gray-500 dark:text-gray-400 mt-2">Describe your learning goal and get a custom study plan.</p>
                 </div>
 
-                <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
+                <div className="bg-white/80 dark:bg-gray-800/60 backdrop-blur-xl p-6 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
                     <textarea value={goal} onChange={(e) => setGoal(e.target.value)} placeholder="e.g., Become a frontend developer in 3 months" className="w-full p-3 h-24 bg-gray-100 dark:bg-gray-700 rounded-lg border border-transparent focus:outline-none focus:ring-2 focus:ring-purple-500 transition" disabled={isLoading}/>
                     <div className="mt-4 flex justify-end">
                         <button onClick={handleGenerate} disabled={isLoading || !goal.trim()} className="px-6 py-3 rounded-lg bg-gradient-to-r from-purple-500 to-cyan-400 text-white font-semibold flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90 transition-opacity">
@@ -60,7 +57,7 @@ const StudyPlanGeneratorTool: React.FC<{ onBack: () => void }> = ({ onBack }) =>
                     {isLoading && <div className="flex justify-center items-center h-full"><div className="text-center text-gray-500 dark:text-gray-400"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto"></div><p className="mt-4">Generating your personalized plan...</p></div></div>}
                     {result.error && <div className="bg-red-100 dark:bg-red-900/20 border border-red-400 dark:border-red-500/30 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg" role="alert"><strong className="font-bold">Error: </strong><span className="block sm:inline">{result.error}</span></div>}
                     {result.plan && (
-                        <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
+                        <div className="bg-white/80 dark:bg-gray-800/60 backdrop-blur-xl p-6 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
                              <h2 className="text-2xl font-bold text-center mb-6 text-gray-800 dark:text-white">{result.plan.planTitle}</h2>
                              <div className="space-y-6">
                                 {result.plan.weeklyPlan.map(week => (

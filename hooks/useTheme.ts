@@ -29,6 +29,17 @@ export const useTheme = () => {
     const toggleTheme = useCallback(() => {
         setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
     }, []);
+    
+    const clearTheme = () => {
+        try {
+            localStorage.removeItem('theme');
+            // Reset to system preference
+            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            setTheme(systemPrefersDark ? 'dark' : 'light');
+        } catch (error) {
+            console.error("Could not clear theme from localStorage", error);
+        }
+    };
 
-    return { theme, toggleTheme };
+    return { theme, toggleTheme, clearTheme };
 };

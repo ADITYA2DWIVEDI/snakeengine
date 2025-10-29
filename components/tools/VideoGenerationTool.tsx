@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { generateVideo, getVideosOperation } from '../../services/geminiService';
 
-// --- HELPER ICONS ---
-const BackIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>;
-const Spinner = () => <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>;
+const Spinner = () => (
+    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+);
 
 const POLLING_MESSAGES = [
     "Warming up the digital director's chair...",
@@ -26,9 +26,7 @@ const fileToGenerativePart = async (file: File) => {
     };
 };
 
-interface VideoGenerationToolProps { onBack: () => void; }
-
-const VideoGenerationTool: React.FC<VideoGenerationToolProps> = ({ onBack }) => {
+const VideoGenerationTool: React.FC = () => {
     const [prompt, setPrompt] = useState('');
     const [aspectRatio, setAspectRatio] = useState('16:9');
     const [image, setImage] = useState<{ data: string; mimeType: string; preview: string } | null>(null);
@@ -117,40 +115,39 @@ const VideoGenerationTool: React.FC<VideoGenerationToolProps> = ({ onBack }) => 
     }
 
     return (
-        <div className="h-full flex flex-col p-4 md:p-8 bg-gray-50">
-            <div className="flex-shrink-0 mb-8"><button onClick={onBack} className="flex items-center text-gray-500 hover:text-gray-800 font-medium"><BackIcon /><span className="ml-2">Back to Smart Studio</span></button></div>
+        <div className="h-full flex flex-col p-4 md:p-8 bg-transparent">
             <div className="w-full max-w-4xl mx-auto flex-grow flex flex-col">
                 <div className="text-center mb-8">
-                    <h1 className="text-3xl md:text-4xl font-bold text-gray-800">Video Generation</h1>
-                    <p className="text-gray-500 mt-2">Create high-quality videos from a text description and an optional image.</p>
+                    <h1 className="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white">Video Generation</h1>
+                    <p className="text-gray-500 dark:text-gray-400 mt-2">Create high-quality videos from a text description and an optional image.</p>
                 </div>
 
                 {!apiKeySelected || error?.includes("API Key") ? (
-                    <div className="bg-white p-6 rounded-2xl shadow-lg text-center">
-                        <h2 className="text-xl font-semibold text-gray-800">API Key Required</h2>
-                        <p className="text-gray-600 mt-2">The Veo video generation model requires you to select your own API key. Billing is associated with your key.</p>
-                        <p className="text-sm text-gray-500 mt-1">For more details, see the <a href="https://ai.google.dev/gemini-api/docs/billing" target="_blank" rel="noopener noreferrer" className="text-purple-600 underline">billing documentation</a>.</p>
+                    <div className="bg-white/80 dark:bg-gray-800/60 backdrop-blur-xl p-6 rounded-2xl shadow-lg text-center border border-gray-200 dark:border-gray-700">
+                        <h2 className="text-xl font-semibold text-gray-800 dark:text-white">API Key Required</h2>
+                        <p className="text-gray-600 dark:text-gray-300 mt-2">The Veo video generation model requires you to select your own API key. Billing is associated with your key.</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">For more details, see the <a href="https://ai.google.dev/gemini-api/docs/billing" target="_blank" rel="noopener noreferrer" className="text-purple-600 dark:text-purple-400 underline">billing documentation</a>.</p>
                         <button onClick={handleSelectKey} className="mt-4 px-6 py-3 rounded-lg bg-purple-600 text-white font-semibold">Select API Key</button>
                         {error && <p className="text-red-500 mt-4">{error}</p>}
                     </div>
                 ) : (
                     <>
-                        <div className="bg-white p-6 rounded-2xl shadow-lg">
+                        <div className="bg-white/80 dark:bg-gray-800/60 backdrop-blur-xl p-6 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
                             <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
                                 <div className="md:col-span-1">
-                                    <label htmlFor="file-upload" className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                                    <label htmlFor="file-upload" className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700">
                                         {image ? <img src={image.preview} alt="Preview" className="h-full w-full object-contain rounded-lg p-1" /> : 
-                                        <div className="text-center text-gray-500 text-sm p-2">
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="mx-auto h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                        <div className="text-center text-gray-500 dark:text-gray-400 text-sm p-2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="mx-auto h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                                             <p>Upload Image (Optional)</p>
                                         </div>}
                                     </label>
                                      <input id="file-upload" type="file" className="hidden" accept="image/*" onChange={(e) => handleFileChange(e.target.files)} />
                                 </div>
-                                <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} placeholder="e.g., A neon hologram of a cat driving at top speed" className="md:col-span-2 w-full p-3 h-32 bg-gray-100 rounded-lg border border-transparent focus:outline-none focus:ring-2 focus:ring-purple-400 transition" disabled={isLoading}/>
+                                <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} placeholder="e.g., A neon hologram of a cat driving at top speed" className="md:col-span-2 w-full p-3 h-32 bg-gray-100 dark:bg-gray-700 rounded-lg border border-transparent focus:outline-none focus:ring-2 focus:ring-purple-500 transition" disabled={isLoading}/>
                             </div>
                             <div className="mt-4 flex flex-col sm:flex-row items-center gap-4">
-                                <select value={aspectRatio} onChange={e => setAspectRatio(e.target.value)} className="w-full sm:w-auto p-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400">
+                                <select value={aspectRatio} onChange={e => setAspectRatio(e.target.value)} className="w-full sm:w-auto p-2 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 bg-gray-50 dark:bg-gray-700">
                                     <option value="16:9">16:9 (Landscape)</option>
                                     <option value="9:16">9:16 (Portrait)</option>
                                 </select>
@@ -161,9 +158,9 @@ const VideoGenerationTool: React.FC<VideoGenerationToolProps> = ({ onBack }) => 
                         </div>
 
                         <div className="mt-8 flex-grow">
-                            {isLoading && <div className="text-center text-gray-500"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto"></div><p className="mt-4">{pollingMessage}</p></div>}
-                            {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg" role="alert"><strong className="font-bold">Error: </strong><span className="block sm:inline">{error}</span></div>}
-                            {videoUrl && <div className="bg-white p-4 rounded-2xl shadow-lg"><video src={videoUrl} controls autoPlay className="rounded-lg w-full" /></div>}
+                            {isLoading && <div className="text-center text-gray-500 dark:text-gray-400"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto"></div><p className="mt-4">{pollingMessage}</p></div>}
+                            {error && <div className="bg-red-100 dark:bg-red-900/20 border border-red-400 dark:border-red-500/30 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg" role="alert"><strong className="font-bold">Error: </strong><span className="block sm:inline">{error}</span></div>}
+                            {videoUrl && <div className="bg-white/80 dark:bg-gray-800/60 backdrop-blur-xl p-4 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700"><video src={videoUrl} controls autoPlay className="rounded-lg w-full" /></div>}
                         </div>
                     </>
                 )}
