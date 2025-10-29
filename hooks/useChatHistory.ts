@@ -49,6 +49,7 @@ export const useChatHistory = () => {
     const createNewChat = useCallback(() => {
         const newChat: Chat = {
             id: `chat_${Date.now()}`,
+            title: 'New Chat',
             messages: [{ sender: 'ai', text: 'Hello! I am SnakeEngine AI. How can I help you today?' }]
         };
         setChats(prev => {
@@ -78,13 +79,12 @@ export const useChatHistory = () => {
                     localStorage.setItem('activeChatId', newActiveId);
                 } else {
                     localStorage.removeItem('activeChatId');
-                    // Create a new chat if the last one was deleted
-                    createNewChat();
+                    // This will be handled by the effect in App.tsx to create a new chat if none exist
                 }
             }
             return newChats;
         });
-    }, [activeChatId, createNewChat]);
+    }, [activeChatId]);
 
     const updateActiveChat = useCallback((updater: (prevChat: Chat) => Chat) => {
         setChats(prevChats => {
@@ -95,7 +95,8 @@ export const useChatHistory = () => {
                     if (!updatedChat.title || updatedChat.title === 'New Chat') {
                         const firstUserMessage = updatedChat.messages.find(m => m.sender === 'user');
                         if (firstUserMessage) {
-                             updatedChat.title = firstUserMessage.text.split(' ').slice(0, 5).join(' ') + '...';
+                             const newTitle = firstUserMessage.text.split(' ').slice(0, 5).join(' ');
+                             updatedChat.title = newTitle.length > 30 ? newTitle.substring(0, 27) + '...' : newTitle;
                         }
                     }
                     return updatedChat;

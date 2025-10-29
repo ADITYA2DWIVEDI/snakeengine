@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Page, Tab } from './types';
+import { Page, Tab, Chat } from './types';
 import { LogoIcon, MenuIcon, NAVIGATION_ITEMS } from './constants';
 import LoginPage from './components/LoginPage';
 import HomePage from './components/HomePage';
@@ -48,7 +48,12 @@ const Sidebar: React.FC<{
     onOpenInTab: (options: { page: Page, name: string }) => void;
     onSignOut: () => void;
     onShowWhatsNew: () => void;
-}> = ({ onOpenInTab, onSignOut, onShowWhatsNew }) => {
+    chats: Chat[];
+    activeChatId: string | null;
+    onNewChat: () => void;
+    onSelectChat: (id: string) => void;
+    onDeleteChat: (id: string) => void;
+}> = ({ onOpenInTab, onSignOut, onShowWhatsNew, chats, activeChatId, onNewChat, onSelectChat, onDeleteChat }) => {
 
     const NavLink: React.FC<{
         item: { name: string, icon: React.FC<{className?:string}>, page: Page | null, notification?: boolean };
@@ -94,6 +99,31 @@ const Sidebar: React.FC<{
                         </div>
                     </div>
                 ))}
+                
+                {/* Chat History Section */}
+                <div>
+                    <div className="px-3 mt-6 mb-2 flex justify-between items-center">
+                        <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider">History</h2>
+                        <button onClick={onNewChat} className="text-xs font-semibold text-purple-500 hover:text-purple-400">+ New Chat</button>
+                    </div>
+                    <div className="space-y-1">
+                        {chats.map(chat => (
+                            <a
+                                key={chat.id}
+                                href="#"
+                                onClick={(e) => { e.preventDefault(); onSelectChat(chat.id); }}
+                                className={`flex items-center justify-between px-3 py-2 rounded-lg transition-colors group ${activeChatId === chat.id ? 'bg-purple-100 dark:bg-purple-900/30' : 'hover:bg-gray-100 dark:hover:bg-gray-800/60'}`}
+                            >
+                                <span className={`text-sm truncate ${activeChatId === chat.id ? 'font-semibold text-purple-700 dark:text-purple-300' : 'text-gray-600 dark:text-gray-400'}`}>
+                                    {chat.title || 'New Chat'}
+                                </span>
+                                <button onClick={(e) => { e.stopPropagation(); onDeleteChat(chat.id); }} className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                </button>
+                            </a>
+                        ))}
+                    </div>
+                </div>
             </div>
         </nav>
     );
@@ -144,7 +174,15 @@ const App: React.FC = () => {
     const [showOnboarding, setShowOnboarding] = useState(false);
     
     const { theme, toggleTheme, clearTheme } = useTheme();
-    const { clearAllChats } = useChatHistory();
+    const { 
+        chats, 
+        activeChat, 
+        createNewChat, 
+        deleteChat, 
+        setActiveChatId, 
+        updateActiveChat,
+        clearAllChats 
+    } = useChatHistory();
     const { clearAllTrackedCourses } = useCourseTracking();
     const { clearAiPersona } = useAiPersona();
     
@@ -154,10 +192,24 @@ const App: React.FC = () => {
     
     const openInTab = useCallback((options: { page: Page; name: string; toolId?: string }) => {
         const { page, name, toolId } = options;
-        // Check for existing tab: for tools, check toolId; for pages, check page
+        
+        // Home always opens in the first tab if it exists, or creates it.
+        if (page === Page.Home) {
+            const homeTab = tabs.find(t => t.page === Page.Home);
+            if (homeTab) {
+                setActiveTabId(homeTab.id);
+            } else {
+                 const newTab: Tab = { id: `tab_home`, name: "Home", page: Page.Home };
+                 setTabs(prev => [newTab, ...prev.filter(t => t.page !== Page.Home)]);
+                 setActiveTabId(newTab.id);
+            }
+            if (window.innerWidth < 1024) setIsSidebarOpen(false);
+            return;
+        }
+
         const existingTab = tabs.find(t => 
             (toolId && t.toolId === toolId) || 
-            (!toolId && t.page === page && page !== Page.Home) // Allow multiple Home/Chat tabs
+            (!toolId && t.page === page)
         );
 
         if (existingTab) {
@@ -176,11 +228,13 @@ const App: React.FC = () => {
     }, [tabs]);
 
     useEffect(() => {
-        // Initialize with Home tab
-        if(isLoggedIn && tabs.length === 0){
-            openInTab({ page: Page.Home, name: "Home" });
+        if (isLoggedIn && tabs.length === 0) {
+             openInTab({ page: Page.Home, name: "Home" });
         }
-    }, [isLoggedIn, openInTab, tabs.length]);
+        if (isLoggedIn && chats.length === 0) {
+            createNewChat();
+        }
+    }, [isLoggedIn, tabs.length, openInTab, chats.length, createNewChat]);
 
     useEffect(() => {
         const hasVisited = localStorage.getItem('hasVisited');
@@ -192,7 +246,6 @@ const App: React.FC = () => {
 
     const handleLogin = () => setIsLoggedIn(true);
     const handleSignOut = () => {
-        // Clear all data on sign out as well
         handleDeleteAllData();
     };
 
@@ -210,23 +263,18 @@ const App: React.FC = () => {
     };
     
      const handleDeleteAllData = () => {
-        // Clear all data from hooks
         clearAllChats();
         clearTheme();
         clearAllTrackedCourses();
         clearAiPersona();
-        
         localStorage.removeItem('hasVisited');
-
-        // Logout
         setIsLoggedIn(false);
-        // Reset workspace
         setTabs([]);
         setActiveTabId('');
     };
 
     const renderPageInTab = (tab: Tab | undefined) => {
-        if (!tab) return <HomePage />;
+        if (!tab) return <HomePage activeChat={activeChat} updateActiveChat={updateActiveChat} />;
 
         const toolId = tab.toolId;
 
@@ -256,9 +304,8 @@ const App: React.FC = () => {
             }
         }
         
-        // Fallback to rendering a general page
         switch (tab.page) {
-            case Page.Home: return <HomePage />;
+            case Page.Home: return <HomePage activeChat={activeChat} updateActiveChat={updateActiveChat} />;
             case Page.SmartStudio: return <SmartStudioPage onOpenInTab={openInTab} />;
             case Page.Courses: return <CoursesPage />;
             case Page.MyLearning: return <MyLearningPage />;
@@ -268,7 +315,7 @@ const App: React.FC = () => {
             case Page.Help: return <HelpPage />;
             case Page.Plugins: return <PluginsPage onOpenInTab={openInTab} />;
             default:
-                return <HomePage />;
+                return <HomePage activeChat={activeChat} updateActiveChat={updateActiveChat} />;
         }
     };
     
@@ -298,6 +345,14 @@ const App: React.FC = () => {
                     onOpenInTab={openInTab}
                     onSignOut={handleSignOut}
                     onShowWhatsNew={() => setIsWhatsNewOpen(true)}
+                    chats={chats}
+                    activeChatId={activeChat?.id || null}
+                    onNewChat={createNewChat}
+                    onSelectChat={(id) => {
+                        setActiveChatId(id);
+                        openInTab({ page: Page.Home, name: "Home" });
+                    }}
+                    onDeleteChat={deleteChat}
                 />
             </aside>
             <div className="flex-1 flex flex-col overflow-hidden">

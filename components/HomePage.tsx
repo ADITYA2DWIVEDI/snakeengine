@@ -1,19 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Message } from '../types';
+import { Message, Chat } from '../types';
 import { generateChatResponse } from '../services/geminiService';
 import { LogoIcon } from '../constants';
-import { useChatHistory } from '../hooks/useChatHistory';
 import { useAiPersona } from '../hooks/useAiPersona';
 
-const QuickStartCard: React.FC<{ title: string; prompt: string; onSelect: (prompt: string) => void }> = ({ title, prompt, onSelect }) => (
-    <div onClick={() => onSelect(prompt)} className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm p-4 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 cursor-pointer hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
-        <h3 className="font-semibold text-gray-800 dark:text-white">{title}</h3>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{prompt}</p>
-    </div>
-);
+interface HomePageProps {
+    activeChat: Chat | null;
+    updateActiveChat: (updater: (prevChat: Chat) => Chat) => void;
+}
 
-const HomePage: React.FC = () => {
-    const { activeChat, updateActiveChat } = useChatHistory();
+const HomePage: React.FC<HomePageProps> = ({ activeChat, updateActiveChat }) => {
     const { aiPersona } = useAiPersona();
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -35,9 +31,9 @@ const HomePage: React.FC = () => {
         }
     }, [input]);
 
-    const handleSendMessage = async (e: React.FormEvent, prompt?: string) => {
+    const handleSendMessage = async (e: React.FormEvent) => {
         e.preventDefault();
-        const currentInput = prompt || input;
+        const currentInput = input;
         if (!currentInput.trim() || isLoading || !activeChat) return;
     
         const userMessage: Message = { sender: 'user', text: currentInput };
@@ -70,13 +66,6 @@ const HomePage: React.FC = () => {
         }
     };
 
-    const quickStarts = [
-        { title: 'Draft an Email', prompt: 'Draft a professional email to a client about a project delay.' },
-        { title: 'Write a Blog Post', prompt: 'Write a short blog post about the benefits of AI in education.' },
-        { title: 'Explain a Concept', prompt: 'Explain the concept of neural networks in simple terms.' },
-        { title: 'Plan a Trip', prompt: 'Plan a 3-day itinerary for a trip to Paris.' },
-    ];
-
     if (!activeChat) {
         return <div className="h-full flex items-center justify-center"><p>Loading chat...</p></div>;
     }
@@ -91,11 +80,6 @@ const HomePage: React.FC = () => {
                             Welcome to <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-cyan-500">SnakeEngine.AI</span>
                         </h1>
                         <p className="text-gray-500 dark:text-gray-400 mt-2 text-lg">Your all-in-one AI platform. How can I help you today?</p>
-                        <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {quickStarts.map(qs => (
-                                <QuickStartCard key={qs.title} {...qs} onSelect={(p) => handleSendMessage(new Event('submit') as any, p)} />
-                            ))}
-                        </div>
                     </div>
                 ) : (
                     <div className="flex-1 p-2 sm:p-6 overflow-y-auto">
