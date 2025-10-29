@@ -197,7 +197,7 @@ const CoursesPage: React.FC = () => {
     };
     
     return (
-        <div className="min-h-full flex flex-col items-center p-4 md:p-8 bg-transparent">
+        <div className="h-full flex flex-col items-center p-4 md:p-8 bg-transparent overflow-y-auto">
             {playingCourse && <VideoPlayerModal course={playingCourse} onClose={() => setPlayingCourse(null)} />}
 
             <div className="w-full max-w-4xl mb-12 text-center">

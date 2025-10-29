@@ -1,44 +1,41 @@
-import React, { useState } from 'react';
-import { askAboutUs } from '../services/geminiService';
-import { IconProps } from '../constants';
-
-const Spinner = () => <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-purple-500"></div>;
+import React from 'react';
+import { IconProps, CubeIcon, PuzzleIcon } from '../constants';
 
 // --- NEW LOCAL ICONS FOR FEATURE GRID ---
 const AiToolsIcon: React.FC<IconProps> = ({ className }) => (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 3L4 9v12h16V9l-8-6z" />
-        <path d="M12 21V9" />
-        <path d="M4 9l8 6 8-6" />
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
     </svg>
 );
 const SyncIcon: React.FC<IconProps> = ({ className }) => (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-        <path d="M16 8h5v5" />
-        <path d="M3 12a9 9 0 0 1 15-6.71" />
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M17 2.1l4 4-4 4" />
+        <path d="M3 12.2v-2a4 4 0 0 1 4-4h12.5" />
+        <path d="M7 21.9l-4-4 4-4" />
+        <path d="M21 11.8v2a4 4 0 0 1-4 4H4.5" />
     </svg>
 );
 const AnalyticsIcon: React.FC<IconProps> = ({ className }) => (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M3 3v18h18" />
-        <path d="M18.7 8a4 4 0 0 1-4.7 4.7" />
-        <path d="M8 12a4 4 0 0 1 4-4" />
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="18" y1="20" x2="18" y2="10" />
+        <line x1="12" y1="20" x2="12" y2="4" />
+        <line x1="6" y1="20" x2="6" y2="14" />
     </svg>
 );
 const VideoIcon: React.FC<IconProps> = ({ className }) => (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="m22 8-6 4 6 4V8z" />
         <rect x="2" y="6" width="14" height="12" rx="2" ry="2" />
     </svg>
 );
 const UnlimitedIcon: React.FC<IconProps> = ({ className }) => (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14l-4-4 1.41-1.41L10 12.17l6.59-6.59L18 7l-8 8z" />
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
+        <path d="m16 8-8 8"/>
     </svg>
 );
 const SecurityIcon: React.FC<IconProps> = ({ className }) => (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
     </svg>
 );
@@ -67,26 +64,6 @@ const FeatureCard: React.FC<{
 
 
 const AboutUsPage: React.FC = () => {
-    const [question, setQuestion] = useState('');
-    const [answer, setAnswer] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState('');
-
-    const handleAskQuestion = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!question.trim() || isLoading) return;
-        
-        setIsLoading(true);
-        setError('');
-        setAnswer('');
-        const response = await askAboutUs(question);
-        if (response.startsWith("Sorry")) {
-            setError(response);
-        } else {
-            setAnswer(response);
-        }
-        setIsLoading(false);
-    }
     
     return (
         <div className="h-full p-4 md:p-8 bg-transparent overflow-y-auto">
@@ -96,61 +73,15 @@ const AboutUsPage: React.FC = () => {
                     <h1 className="text-5xl md:text-6xl font-bold text-gray-800 dark:text-white tracking-tighter">
                         About <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-cyan-400">SnakeEngine.AI</span>
                     </h1>
-                    <p className="text-gray-500 dark:text-gray-400 mt-4 text-lg max-w-2xl mx-auto">Your all-in-one platform for smarter work, powered by advanced artificial intelligence.</p>
+                    <p className="text-gray-500 dark:text-gray-400 mt-4 text-lg max-w-2xl mx-auto">Welcome to SnakeEngine.ai, your all-in-one platform for smarter work, powered by advanced artificial intelligence.</p>
                 </div>
-
-                {/* What We Offer Grid */}
-                <div>
-                     <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-8 text-center">What We Offer</h2>
-                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <FeatureCard 
-                            title="AI Productivity Tools" 
-                            description="Over 200 dynamic tools for every need." 
-                            icon={<AiToolsIcon className="h-6 w-6 text-pink-800 dark:text-pink-300"/>} 
-                            gradient="bg-gradient-to-br from-pink-200 to-rose-200 dark:from-pink-900/50 dark:to-rose-900/50"
-                        />
-                        <FeatureCard 
-                            title="Cross-Device Sync" 
-                            description="Your work follows you everywhere." 
-                            icon={<SyncIcon className="h-6 w-6 text-green-800 dark:text-green-300"/>} 
-                            gradient="bg-gradient-to-br from-green-200 to-teal-200 dark:from-green-900/50 dark:to-teal-900/50"
-                        />
-                         <FeatureCard 
-                            title="Voice & Video AI" 
-                            description="Transcribe, translate, and summarize." 
-                            icon={<VideoIcon className="h-6 w-6 text-cyan-800 dark:text-cyan-300"/>} 
-                            gradient="bg-gradient-to-br from-cyan-200 to-sky-200 dark:from-cyan-900/50 dark:to-sky-900/50"
-                        />
-                        <FeatureCard 
-                            title="Unlimited Features" 
-                            description="Explore limitless possibilities in your workspace." 
-                            icon={<UnlimitedIcon className="h-6 w-6 text-indigo-800 dark:text-indigo-300"/>} 
-                            className="md:col-span-2"
-                            gradient="bg-gradient-to-br from-indigo-200 to-purple-200 dark:from-indigo-900/50 dark:to-purple-900/50"
-                        />
-                        <FeatureCard 
-                            title="Real-Time Analytics" 
-                            description="Visualize data with interactive charts." 
-                            icon={<AnalyticsIcon className="h-6 w-6 text-blue-800 dark:text-blue-300"/>} 
-                            className="md:row-span-2"
-                            gradient="bg-gradient-to-br from-blue-200 to-sky-200 dark:from-blue-900/50 dark:to-sky-900/50"
-                        />
-                        <FeatureCard 
-                            title="Secure & Private" 
-                            description="Advanced security for your peace of mind." 
-                            icon={<SecurityIcon className="h-6 w-6 text-gray-800 dark:text-gray-300"/>} 
-                            className="md:col-span-2"
-                            gradient="bg-gradient-to-br from-gray-200 to-slate-200 dark:from-gray-700/50 dark:to-slate-700/50"
-                        />
-                    </div>
-                </div>
-
-                 {/* Our Story & Vision */}
+                
+                {/* Our Story & Vision */}
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
                      <div className="backdrop-blur-xl p-8 rounded-2xl">
                         <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-4">Our Story</h2>
                         <p className="text-gray-600 dark:text-gray-300">
-                            SnakeEngine.ai was born out of a passion for making powerful, modern AI tools accessible to everyone. We bring together cutting-edge technology and intuitive design to help creators, teams, and businesses solve real problems and work smarter.
+                           SnakeEngine.ai was born out of a passion for making powerful, modern AI tools accessible to everyone. We bring together cutting-edge technology and intuitive design to help creators, teams, and businesses solve real problems and work smarter.
                         </p>
                     </div>
                      <div className="backdrop-blur-xl p-8 rounded-2xl">
@@ -158,6 +89,56 @@ const AboutUsPage: React.FC = () => {
                         <p className="text-gray-600 dark:text-gray-300">
                            To become the world’s leading AI productivity and creativity hub, making innovation simple across every screen, device, and workflow.
                         </p>
+                    </div>
+                </div>
+
+                {/* What We Offer Grid */}
+                <div>
+                     <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-8 text-center">What We Offer</h2>
+                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <FeatureCard 
+                            title="AI Chat & Assistant" 
+                            description="Talk to the smartest AI, get instant help, answers, and automate routine tasks." 
+                            icon={<AiToolsIcon className="h-6 w-6 text-pink-800 dark:text-pink-300"/>} 
+                            gradient="bg-gradient-to-br from-pink-200 to-rose-200 dark:from-pink-900/50 dark:to-rose-900/50"
+                        />
+                         <FeatureCard 
+                            title="Smart Studio" 
+                            description="Edit, create, and enhance images, documents, and presentations with over 200 dynamic AI tools." 
+                            icon={<CubeIcon className="h-6 w-6 text-indigo-800 dark:text-indigo-300"/>} 
+                            gradient="bg-gradient-to-br from-indigo-200 to-purple-200 dark:from-indigo-900/50 dark:to-purple-900/50"
+                        />
+                        <FeatureCard 
+                            title="Pro Analytics" 
+                            description="Visualize data instantly with interactive charts and real-time insights." 
+                            icon={<AnalyticsIcon className="h-6 w-6 text-blue-800 dark:text-blue-300"/>} 
+                            gradient="bg-gradient-to-br from-blue-200 to-sky-200 dark:from-blue-900/50 dark:to-sky-900/50"
+                        />
+                         <FeatureCard 
+                            title="Workflow Automation" 
+                            description="Drag-and-drop builder to automate your daily work and connect all your favorite apps." 
+                            icon={<PuzzleIcon className="h-6 w-6 text-orange-800 dark:text-orange-300"/>} 
+                            gradient="bg-gradient-to-br from-orange-200 to-amber-200 dark:from-orange-900/50 dark:to-amber-900/50"
+                        />
+                        <FeatureCard 
+                            title="Voice & Video AI" 
+                            description="Speak, transcribe, translate, and get automated summaries for meetings and calls." 
+                            icon={<VideoIcon className="h-6 w-6 text-cyan-800 dark:text-cyan-300"/>} 
+                            gradient="bg-gradient-to-br from-cyan-200 to-sky-200 dark:from-cyan-900/50 dark:to-sky-900/50"
+                        />
+                         <FeatureCard 
+                            title="Cross-Device Sync" 
+                            description="Start on your PC, continue on mobile or tablet—your data follows you everywhere." 
+                            icon={<SyncIcon className="h-6 w-6 text-green-800 dark:text-green-300"/>} 
+                            gradient="bg-gradient-to-br from-green-200 to-teal-200 dark:from-green-900/50 dark:to-teal-900/50"
+                        />
+                         <FeatureCard 
+                            title="Secure & Private" 
+                            description="Advanced security ensures your data is safe and private at all times." 
+                            icon={<SecurityIcon className="h-6 w-6 text-gray-800 dark:text-gray-300"/>} 
+                            className="md:col-span-3"
+                            gradient="bg-gradient-to-br from-gray-200 to-slate-200 dark:from-gray-700/50 dark:to-slate-700/50"
+                        />
                     </div>
                 </div>
                 
@@ -178,6 +159,27 @@ const AboutUsPage: React.FC = () => {
                         </div>
                     </div>
                 </div>
+
+                {/* Join the Community */}
+                <div className="bg-white/50 dark:bg-gray-800/40 backdrop-blur-xl border border-white/20 shadow-lg rounded-3xl p-8 text-center">
+                    <h2 className="text-3xl font-bold text-gray-800 dark:text-white">Join the Community</h2>
+                    <p className="text-gray-600 dark:text-gray-300 mt-2">Become part of our fast-growing community!</p>
+                    <ul className="mt-4 text-gray-500 dark:text-gray-400 space-y-1">
+                        <li>User stories, testimonials, and feedback</li>
+                        <li>Early access to new features</li>
+                        <li>Direct support from our team</li>
+                    </ul>
+                </div>
+                
+                {/* Contact & Connect */}
+                <div className="text-center">
+                     <h2 className="text-3xl font-bold text-gray-800 dark:text-white">Contact & Connect</h2>
+                     <p className="mt-4">
+                        <a href="mailto:snakeengineofficial@gmail.com" className="text-purple-500 font-semibold">snakeengineofficial@gmail.com</a>
+                     </p>
+                     <p className="text-gray-500 dark:text-gray-400 mt-1">Social: @SNAKEENGINEOFFICIAL</p>
+                </div>
+
 
                 {/* Final CTA */}
                 <div className="text-center py-8">

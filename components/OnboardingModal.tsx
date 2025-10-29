@@ -9,15 +9,15 @@ const OnboardingModal: React.FC<OnboardingModalProps> = ({ onClose }) => {
     const steps = [
         {
             title: "Welcome to SnakeEngine.AI!",
-            content: "This is your new unlimited AI workspace. Let's take a quick tour of the key features."
+            content: "This is your new all-in-one AI workspace. Let's take a quick tour of the key features."
         },
         {
             title: "The Sidebar",
             content: "Use the sidebar to navigate between main sections like the Smart Studio, your Courses, and Settings. Your chat history will also appear here."
         },
         {
-            title: "Multi-Tab Workspace",
-            content: "Every tool or page you open will appear as a new tab at the top. This allows you to multi-task and switch between different activities seamlessly."
+            title: "Simple Navigation",
+            content: "Clicking any item in the sidebar will take you directly to that page. To access a tool, go to the Smart Studio and click on it."
         },
         {
             title: "The Smart Studio",

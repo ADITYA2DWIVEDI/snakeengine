@@ -71,7 +71,7 @@ const HomePage: React.FC<HomePageProps> = ({ activeChat, updateActiveChat }) => 
     }
 
     return (
-        <div className="h-full flex flex-col items-center justify-center p-4 md:p-8 bg-transparent">
+        <div className="absolute inset-0 flex flex-col items-center justify-center p-0 bg-transparent">
             <div className="w-full max-w-4xl h-full flex flex-col">
                 
                 {activeChat.messages.length <= 1 ? (

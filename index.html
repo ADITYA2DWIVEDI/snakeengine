@@ -35,6 +35,9 @@
 }
 </script>
 <style>
+    html, body, #root {
+      height: 100%;
+    }
     body {
       overflow: hidden; /* Prevent scrolling issues with fixed layouts */
     }
@@ -117,7 +120,7 @@
 <link rel="stylesheet" href="/index.css">
 </head>
   <body class="bg-gray-100 dark:bg-[#0d1117]">
-    <div id="root"></div>
+    <div id="root" class="h-full"></div>
     <script type="module" src="/index.tsx"></script>
   </body>
 </html>

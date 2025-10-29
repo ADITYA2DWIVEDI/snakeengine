@@ -1,6 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Page } from '../types';
 import { GmailIcon, CalendarIcon, SlackIcon, NotionIcon, FigmaIcon, GitHubIcon } from '../constants';
+import GmailTool from './tools/GmailTool';
+import GoogleCalendarTool from './tools/GoogleCalendarTool';
+import SlackTool from './tools/SlackTool';
+import NotionTool from './tools/NotionTool';
+import FigmaTool from './tools/FigmaTool';
+import GitHubTool from './tools/GitHubTool';
+
 
 const PluginCard: React.FC<{ name: string; description: string; icon: React.ReactNode, onClick: () => void }> = ({ name, description, icon, onClick }) => (
     <div 
@@ -18,30 +25,37 @@ const PluginCard: React.FC<{ name: string; description: string; icon: React.Reac
     </div>
 );
 
-interface PluginsPageProps {
-    onOpenInTab: (options: { page: Page; name: string; toolId?: string }) => void;
-}
+const PluginsPage: React.FC = () => {
+    const [activePlugin, setActivePlugin] = useState<string | null>(null);
 
-const PluginsPage: React.FC<PluginsPageProps> = ({ onOpenInTab }) => {
     const plugins = [
-        { id: 'gmail', name: 'Gmail', icon: <GmailIcon className="h-8 w-8" />, description: 'Summarize emails, draft replies, and manage your inbox with AI.', page: Page.GmailTool },
-        { id: 'google-calendar', name: 'Google Calendar', icon: <CalendarIcon className="h-8 w-8" />, description: 'Automatically schedule meetings, set reminders, and manage your time.', page: Page.CalendarTool },
-        { id: 'slack', name: 'Slack', icon: <SlackIcon className="h-8 w-8" />, description: 'Get meeting summaries, draft messages, and automate channel updates.', page: Page.SlackTool },
-        { id: 'notion', name: 'Notion', icon: <NotionIcon className="h-8 w-8" />, description: 'Organize notes, create content, and build knowledge bases with AI assistance.', page: Page.NotionTool },
-        { id: 'figma', name: 'Figma', icon: <FigmaIcon className="h-8 w-8" />, description: 'Generate UI components, get design feedback, and automate design tasks.', page: Page.FigmaTool },
-        { id: 'github', name: 'GitHub', icon: <GitHubIcon className="h-8 w-8 text-gray-800 dark:text-white" />, description: 'Review pull requests, write documentation, and get help with your code.', page: Page.GitHubTool },
+        { id: 'gmail', name: 'Gmail', icon: <GmailIcon className="h-8 w-8" />, description: 'Summarize emails, draft replies, and manage your inbox with AI.' },
+        { id: 'google-calendar', name: 'Google Calendar', icon: <CalendarIcon className="h-8 w-8" />, description: 'Automatically schedule meetings, set reminders, and manage your time.' },
+        { id: 'slack', name: 'Slack', icon: <SlackIcon className="h-8 w-8" />, description: 'Get meeting summaries, draft messages, and automate channel updates.' },
+        { id: 'notion', name: 'Notion', icon: <NotionIcon className="h-8 w-8" />, description: 'Organize notes, create content, and build knowledge bases with AI assistance.' },
+        { id: 'figma', name: 'Figma', icon: <FigmaIcon className="h-8 w-8" />, description: 'Generate UI components, get design feedback, and automate design tasks.' },
+        { id: 'github', name: 'GitHub', icon: <GitHubIcon className="h-8 w-8 text-gray-800 dark:text-white" />, description: 'Review pull requests, write documentation, and get help with your code.' },
     ];
-    
-    const handlePluginClick = (plugin: typeof plugins[0]) => {
-        onOpenInTab({
-            page: plugin.page,
-            name: plugin.name,
-            toolId: plugin.id
-        })
+
+    const renderActivePlugin = () => {
+        const onBack = () => setActivePlugin(null);
+        switch (activePlugin) {
+            case 'gmail': return <GmailTool onBack={onBack} />;
+            case 'google-calendar': return <GoogleCalendarTool onBack={onBack} />;
+            case 'slack': return <SlackTool onBack={onBack} />;
+            case 'notion': return <NotionTool onBack={onBack} />;
+            case 'figma': return <FigmaTool onBack={onBack} />;
+            case 'github': return <GitHubTool onBack={onBack} />;
+            default: return null;
+        }
+    };
+
+    if (activePlugin) {
+        return renderActivePlugin();
     }
 
     return (
-        <div className="h-full p-4 md:p-8 bg-transparent">
+        <div className="h-full p-4 md:p-8 bg-transparent overflow-y-auto">
             <div className="text-center mb-12">
                 <h1 className="text-4xl md:text-5xl font-bold text-gray-800 dark:text-white">
                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-cyan-500">Plugin Marketplace</span>
@@ -50,7 +64,7 @@ const PluginsPage: React.FC<PluginsPageProps> = ({ onOpenInTab }) => {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
                 {plugins.map(plugin => (
-                    <PluginCard key={plugin.name} {...plugin} onClick={() => handlePluginClick(plugin)} />
+                    <PluginCard key={plugin.name} {...plugin} onClick={() => setActivePlugin(plugin.id)} />
                 ))}
             </div>
         </div>

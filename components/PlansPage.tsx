@@ -77,7 +77,7 @@ const PlansPage: React.FC = () => {
     ];
 
     return (
-        <div className="min-h-full p-4 md:p-12 bg-gray-50 dark:bg-transparent">
+        <div className="h-full p-4 md:p-12 bg-transparent overflow-y-auto">
             <div className="text-center mb-12 max-w-2xl mx-auto">
                 <div className="inline-block p-3 bg-purple-100 dark:bg-purple-900/50 rounded-full mb-4">
                      <BookOpenIcon className="h-8 w-8 text-purple-600 dark:text-purple-400" />

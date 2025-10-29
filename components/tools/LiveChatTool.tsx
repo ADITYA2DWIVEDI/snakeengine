@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { connectLiveChat } from '../../services/geminiService';
-import { LiveServerMessage, LiveSession, Blob } from '@google/genai';
+// FIX: Removed LiveSession from import as it is not an exported type from @google/genai.
+import { LiveServerMessage, Blob } from '@google/genai';
 
 // --- HELPER ICONS ---
 const MicIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg>;
@@ -12,13 +13,16 @@ function decode(base64: string) { const binaryString = atob(base64); const len =
 async function decodeAudioData(data: Uint8Array, ctx: AudioContext, sampleRate: number, numChannels: number): Promise<AudioBuffer> { const dataInt16 = new Int16Array(data.buffer); const frameCount = dataInt16.length / numChannels; const buffer = ctx.createBuffer(numChannels, frameCount, sampleRate); for (let channel = 0; channel < numChannels; channel++) { const channelData = buffer.getChannelData(channel); for (let i = 0; i < frameCount; i++) { channelData[i] = dataInt16[i * numChannels + channel] / 32768.0; } } return buffer; }
 function createBlob(data: Float32Array): Blob { const l = data.length; const int16 = new Int16Array(l); for (let i = 0; i < l; i++) { int16[i] = data[i] * 32768; } return { data: encode(new Uint8Array(int16.buffer)), mimeType: 'audio/pcm;rate=16000' }; }
 
-const LiveChatTool: React.FC = () => {
+interface ToolProps { onBack: () => void; }
+
+const LiveChatTool: React.FC<ToolProps> = ({ onBack }) => {
     const [status, setStatus] = useState<'idle' | 'connecting' | 'active' | 'error'>('idle');
     const [error, setError] = useState<string | null>(null);
     const [transcripts, setTranscripts] = useState<{ user: string, model: string }[]>([]);
     const [currentInterim, setCurrentInterim] = useState({ user: '', model: '' });
 
-    const sessionPromiseRef = useRef<Promise<LiveSession> | null>(null);
+    // FIX: Changed type from Promise<LiveSession> to Promise<any> as LiveSession is not a valid type.
+    const sessionPromiseRef = useRef<Promise<any> | null>(null);
     const mediaStreamRef = useRef<MediaStream | null>(null);
     const inputAudioContextRef = useRef<AudioContext | null>(null);
     const outputAudioContextRef = useRef<AudioContext | null>(null);
@@ -134,7 +138,11 @@ const LiveChatTool: React.FC = () => {
     }, []); 
 
     return (
-        <div className="h-full flex flex-col p-4 md:p-8 bg-transparent">
+        <div className="h-full flex flex-col p-4 md:p-8 bg-transparent overflow-y-auto">
+             <button onClick={onBack} className="self-start mb-4 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                Back to Smart Studio
+            </button>
             <div className="text-center mb-4">
                 <h1 className="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white">Live Chat</h1>
                 <p className="text-gray-500 dark:text-gray-400 mt-2">Speak directly with the AI in real-time.</p>

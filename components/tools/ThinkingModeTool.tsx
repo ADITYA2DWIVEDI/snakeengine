@@ -3,7 +3,9 @@ import { Message } from '../../types';
 import { generateThinkingResponse } from '../../services/geminiService';
 import { LogoIcon } from '../../constants';
 
-const ThinkingModeTool: React.FC = () => {
+interface ToolProps { onBack: () => void; }
+
+const ThinkingModeTool: React.FC<ToolProps> = ({ onBack }) => {
     const [messages, setMessages] = useState<Message[]>([
         { sender: 'ai', text: "You've entered Thinking Mode. I'll use a more advanced model to provide deeper insights. What complex topic is on your mind?" }
     ]);
@@ -38,7 +40,11 @@ const ThinkingModeTool: React.FC = () => {
     };
 
     return (
-        <div className="h-full flex flex-col p-4 md:p-8 bg-transparent">
+        <div className="h-full flex flex-col p-4 md:p-8 bg-transparent overflow-y-auto">
+            <button onClick={onBack} className="self-start mb-4 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                Back to Smart Studio
+            </button>
             <div className="text-center mb-4">
                 <h1 className="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white">Thinking Mode</h1>
                 <p className="text-gray-500 dark:text-gray-400 mt-2">For deep, complex, and nuanced conversations.</p>

@@ -5,7 +5,8 @@ import { HelpIcon } from '../constants';
 const AccordionItem: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => {
     const [isOpen, setIsOpen] = useState(false);
     return (
-        <div className="border-b border-gray-200 dark:border-gray-700">
+        // FIX: Removed border from component to allow parent to control it with divide utility
+        <div>
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="w-full flex justify-between items-center text-left py-4 px-2"
@@ -43,7 +44,7 @@ const HelpPage: React.FC = () => {
     ];
 
     return (
-        <div className="min-h-full p-4 md:p-8 bg-gray-50 dark:bg-transparent">
+        <div className="h-full p-4 md:p-8 bg-transparent overflow-y-auto">
             <div className="flex items-center mb-10">
                 <HelpIcon className="h-8 w-8 text-gray-700 dark:text-gray-300" />
                 <h1 className="text-3xl font-bold text-gray-800 dark:text-white ml-3">Help & Support</h1>
@@ -53,19 +54,14 @@ const HelpPage: React.FC = () => {
                 <div className="md:col-span-2">
                     <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-4">Frequently Asked Questions</h2>
                     <div className="bg-white/80 dark:bg-gray-800/60 backdrop-blur-xl rounded-2xl shadow-lg p-4 border border-gray-200 dark:border-gray-700">
-                        <AccordionItem title={faqs[0].q}>
-                            <p>{faqs[0].a}</p>
-                        </AccordionItem>
-                        {faqs.slice(1).map((faq, i) => (
-                             <div key={i} className="border-b border-gray-200 dark:border-gray-700 last:border-b-0">
-                                <button className="w-full flex justify-between items-center text-left py-4 px-2">
-                                    <span className="font-medium text-gray-800 dark:text-gray-200">{faq.q}</span>
-                                    <svg className="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                    </svg>
-                                </button>
-                            </div>
-                        ))}
+                        {/* FIX: Use AccordionItem for all FAQs and manage borders with divide utility for consistency */}
+                        <div className="divide-y divide-gray-200 dark:divide-gray-700">
+                            {faqs.map((faq, i) => (
+                                <AccordionItem key={i} title={faq.q}>
+                                    <p>{faq.a}</p>
+                                </AccordionItem>
+                            ))}
+                        </div>
                     </div>
                 </div>
 

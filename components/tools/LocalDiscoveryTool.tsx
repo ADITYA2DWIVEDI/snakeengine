@@ -4,7 +4,9 @@ import { LogoIcon } from '../../constants';
 
 const Spinner = () => <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>;
 
-const LocalDiscoveryTool: React.FC = () => {
+interface ToolProps { onBack: () => void; }
+
+const LocalDiscoveryTool: React.FC<ToolProps> = ({ onBack }) => {
     const [prompt, setPrompt] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [location, setLocation] = useState<{ latitude: number, longitude: number } | null>(null);
@@ -39,8 +41,12 @@ const LocalDiscoveryTool: React.FC = () => {
     };
 
     return (
-        <div className="h-full flex flex-col p-4 md:p-8 bg-transparent">
+        <div className="h-full flex flex-col p-4 md:p-8 bg-transparent overflow-y-auto">
             <div className="w-full max-w-4xl mx-auto flex-grow flex flex-col">
+                <button onClick={onBack} className="self-start mb-4 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                    Back to Smart Studio
+                </button>
                 <div className="text-center mb-8">
                     <h1 className="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white">Local Discovery</h1>
                     <p className="text-gray-500 dark:text-gray-400 mt-2">Find places and get location-aware info grounded in Google Maps.</p>

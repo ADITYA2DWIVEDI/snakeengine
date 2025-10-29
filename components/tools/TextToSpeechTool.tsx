@@ -7,7 +7,9 @@ const Spinner = () => <div className="animate-spin rounded-full h-5 w-5 border-b
 function decode(base64: string) { const binaryString = atob(base64); const len = binaryString.length; const bytes = new Uint8Array(len); for (let i = 0; i < len; i++) { bytes[i] = binaryString.charCodeAt(i); } return bytes; }
 async function decodeAudioData(data: Uint8Array, ctx: AudioContext, sampleRate: number, numChannels: number): Promise<AudioBuffer> { const dataInt16 = new Int16Array(data.buffer); const frameCount = dataInt16.length / numChannels; const buffer = ctx.createBuffer(numChannels, frameCount, sampleRate); for (let channel = 0; channel < numChannels; channel++) { const channelData = buffer.getChannelData(channel); for (let i = 0; i < frameCount; i++) { channelData[i] = dataInt16[i * numChannels + channel] / 32768.0; } } return buffer; }
 
-const TextToSpeechTool: React.FC = () => {
+interface ToolProps { onBack: () => void; }
+
+const TextToSpeechTool: React.FC<ToolProps> = ({ onBack }) => {
     const [prompt, setPrompt] = useState('Hello! I am SnakeEngine AI, an advanced language model.');
     const [voice, setVoice] = useState('Kore');
     const [isLoading, setIsLoading] = useState(false);
@@ -55,8 +57,12 @@ const TextToSpeechTool: React.FC = () => {
     const voices = ['Kore', 'Puck', 'Charon', 'Fenrir', 'Zephyr'];
 
     return (
-        <div className="h-full flex flex-col p-4 md:p-8 bg-transparent">
+        <div className="h-full flex flex-col p-4 md:p-8 bg-transparent overflow-y-auto">
             <div className="w-full max-w-4xl mx-auto flex-grow flex flex-col">
+                <button onClick={onBack} className="self-start mb-4 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                    Back to Smart Studio
+                </button>
                 <div className="text-center mb-8">
                     <h1 className="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white">Text to Speech</h1>
                     <p className="text-gray-500 dark:text-gray-400 mt-2">Convert text into lifelike speech.</p>

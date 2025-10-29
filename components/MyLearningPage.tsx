@@ -46,7 +46,7 @@ const MyLearningPage: React.FC = () => {
     } = useCourseTracking();
 
     return (
-        <div className="min-h-full p-4 md:p-8 bg-gray-100 dark:bg-gray-900">
+        <div className="h-full p-4 md:p-8 bg-transparent overflow-y-auto">
             <div className="text-center mb-12">
                 <h1 className="text-4xl md:text-5xl font-bold text-gray-800 dark:text-white">
                     My <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-cyan-500">Learning</span>

@@ -21,13 +21,6 @@ export enum Page {
   GitHubTool,
 }
 
-export interface Tab {
-  id: string;
-  name: string;
-  page: Page;
-  toolId?: string; 
-}
-
 export interface Message {
   sender: 'user' | 'ai';
   text: string;

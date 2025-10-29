@@ -1,4 +1,5 @@
-import { GoogleGenAI, Modality, LiveSession, LiveServerMessage, CloseEvent, ErrorEvent, Blob, Type, FunctionDeclaration, GenerateContentResponse } from "@google/genai";
+// FIX: Removed LiveSession, CloseEvent, ErrorEvent from import as they are not exported from @google/genai.
+import { GoogleGenAI, Modality, LiveServerMessage, Blob, Type, FunctionDeclaration, GenerateContentResponse } from "@google/genai";
 import { Course, AIRecommendation, Message } from "../types";
 
 const API_KEY = process.env.API_KEY;
@@ -134,7 +135,9 @@ export const generateThinkingResponse = async (prompt: string): Promise<string> 
     }
 };
 
-export const connectLiveChat = (callbacks: { onopen: () => void; onmessage: (message: LiveServerMessage) => Promise<void>; onerror: (e: ErrorEvent) => void; onclose: (e: CloseEvent) => void; }): Promise<LiveSession> => {
+// FIX: Changed return type from Promise<LiveSession> to Promise<any> as LiveSession is not an exported type.
+// ErrorEvent and CloseEvent are global types and don't need to be imported from @google/genai.
+export const connectLiveChat = (callbacks: { onopen: () => void; onmessage: (message: LiveServerMessage) => Promise<void>; onerror: (e: ErrorEvent) => void; onclose: (e: CloseEvent) => void; }): Promise<any> => {
     const ai = getAiClient();
     if (!ai) throw new Error("Gemini AI client not initialized. Please set your API Key.");
     return ai.live.connect({
