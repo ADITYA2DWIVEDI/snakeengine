@@ -7,8 +7,8 @@ export const useTheme = () => {
             if (storedTheme === 'dark' || storedTheme === 'light') {
                 return storedTheme;
             }
-            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
         }
+        // Always default to light mode for new users
         return 'light';
     });
 
@@ -33,9 +33,8 @@ export const useTheme = () => {
     const clearTheme = () => {
         try {
             localStorage.removeItem('theme');
-            // Reset to system preference
-            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            setTheme(systemPrefersDark ? 'dark' : 'light');
+            // Reset to light mode default
+            setTheme('light');
         } catch (error) {
             console.error("Could not clear theme from localStorage", error);
         }

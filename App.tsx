@@ -42,6 +42,7 @@ import SlackTool from './components/tools/SlackTool';
 import NotionTool from './components/tools/NotionTool';
 import FigmaTool from './components/tools/FigmaTool';
 import GitHubTool from './components/tools/GitHubTool';
+import AboutUsPage from './components/AboutUsPage';
 
 
 const Sidebar: React.FC<{
@@ -88,20 +89,16 @@ const Sidebar: React.FC<{
                     <p className="text-xs font-semibold text-gray-500 dark:text-gray-400">BY ADITYA DWIVEDI & RASHISH SINGH</p>
                 </div>
             </div>
+
             <div className="flex-grow space-y-2 overflow-y-auto pr-2">
-                {Object.entries(NAVIGATION_ITEMS).map(([section, items]) => (
-                    <div key={section}>
-                        <h2 className="px-3 mt-6 mb-2 text-xs font-bold text-gray-400 uppercase tracking-wider">{section}</h2>
-                        <div className="space-y-1">
-                            {items.map(item => (
-                                <NavLink key={item.name} item={item} />
-                            ))}
-                        </div>
+                <div key="MAIN_AND_HISTORY">
+                    <h2 className="px-3 mt-6 mb-2 text-xs font-bold text-gray-400 uppercase tracking-wider">MAIN</h2>
+                    <div className="space-y-1">
+                        {NAVIGATION_ITEMS.MAIN.map(item => (
+                            <NavLink key={item.name} item={item} />
+                        ))}
                     </div>
-                ))}
-                
-                {/* Chat History Section */}
-                <div>
+
                     <div className="px-3 mt-6 mb-2 flex justify-between items-center">
                         <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider">History</h2>
                         <button onClick={onNewChat} className="text-xs font-semibold text-purple-500 hover:text-purple-400">+ New Chat</button>
@@ -124,6 +121,17 @@ const Sidebar: React.FC<{
                         ))}
                     </div>
                 </div>
+
+                {Object.entries(NAVIGATION_ITEMS).filter(([section]) => section !== 'MAIN').map(([section, items]) => (
+                    <div key={section}>
+                        <h2 className="px-3 mt-6 mb-2 text-xs font-bold text-gray-400 uppercase tracking-wider">{section}</h2>
+                        <div className="space-y-1">
+                            {items.map(item => (
+                                <NavLink key={item.name} item={item} />
+                            ))}
+                        </div>
+                    </div>
+                ))}
             </div>
         </nav>
     );
@@ -314,6 +322,7 @@ const App: React.FC = () => {
             case Page.Plans: return <PlansPage />;
             case Page.Help: return <HelpPage />;
             case Page.Plugins: return <PluginsPage onOpenInTab={openInTab} />;
+            case Page.AboutUs: return <AboutUsPage />;
             default:
                 return <HomePage activeChat={activeChat} updateActiveChat={updateActiveChat} />;
         }
@@ -356,7 +365,7 @@ const App: React.FC = () => {
                 />
             </aside>
             <div className="flex-1 flex flex-col overflow-hidden">
-                <header className="lg:hidden relative flex items-center justify-between p-4 bg-white/50 dark:bg-gray-900/50 backdrop-blur-md border-b dark:border-gray-800 flex-shrink-0">
+                <header className="lg:hidden relative z-10 flex items-center justify-between p-4 bg-white/50 dark:bg-gray-900/50 backdrop-blur-md border-b dark:border-gray-800 flex-shrink-0">
                     <div className="flex items-center">
                         <LogoIcon className="h-8 w-8" />
                          <div className="ml-2 flex flex-col items-start">
