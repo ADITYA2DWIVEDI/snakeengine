@@ -7,6 +7,7 @@ export enum Page {
   Settings,
   Plans,
   Help,
+  AboutUs,
   StudyPlan,
   CodeReviewer,
   DocumentSummarizer,

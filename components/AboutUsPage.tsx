@@ -1,27 +1,67 @@
 import React, { useState } from 'react';
-import { CubeIcon, PuzzleIcon } from '../constants';
 import { askAboutUs } from '../services/geminiService';
+import { IconProps } from '../constants';
 
 const Spinner = () => <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-purple-500"></div>;
 
-// --- LOCAL ICONS ---
-const ChatBubbleIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>;
-const ChartBarIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>;
-const MicIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg>;
-const DeviceSyncIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 18h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>;
-const ShieldCheckIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 20.944L12 23l9-2.056A12.02 12.02 0 0021 7.944a11.955 11.955 0 01-5.382-3.04z" /></svg>;
+// --- NEW LOCAL ICONS FOR FEATURE GRID ---
+const AiToolsIcon: React.FC<IconProps> = ({ className }) => (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 3L4 9v12h16V9l-8-6z" />
+        <path d="M12 21V9" />
+        <path d="M4 9l8 6 8-6" />
+    </svg>
+);
+const SyncIcon: React.FC<IconProps> = ({ className }) => (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+        <path d="M16 8h5v5" />
+        <path d="M3 12a9 9 0 0 1 15-6.71" />
+    </svg>
+);
+const AnalyticsIcon: React.FC<IconProps> = ({ className }) => (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 3v18h18" />
+        <path d="M18.7 8a4 4 0 0 1-4.7 4.7" />
+        <path d="M8 12a4 4 0 0 1 4-4" />
+    </svg>
+);
+const VideoIcon: React.FC<IconProps> = ({ className }) => (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="m22 8-6 4 6 4V8z" />
+        <rect x="2" y="6" width="14" height="12" rx="2" ry="2" />
+    </svg>
+);
+const UnlimitedIcon: React.FC<IconProps> = ({ className }) => (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14l-4-4 1.41-1.41L10 12.17l6.59-6.59L18 7l-8 8z" />
+    </svg>
+);
+const SecurityIcon: React.FC<IconProps> = ({ className }) => (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+    </svg>
+);
 
-const FeatureHighlightCard: React.FC<{ icon: React.ReactNode; title: string; description: string }> = ({ icon, title, description }) => (
-    <div className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm p-6 rounded-xl shadow-md border border-gray-200 dark:border-gray-700">
-        <div className="flex items-center space-x-4">
-            <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-purple-100 dark:bg-purple-900/50 flex items-center justify-center text-purple-500">
+
+const FeatureCard: React.FC<{
+    title: string;
+    description: string;
+    icon: React.ReactNode;
+    className?: string;
+    gradient: string;
+    children?: React.ReactNode;
+}> = ({ title, description, icon, className = '', gradient, children }) => (
+    <div className={`relative rounded-3xl p-6 md:p-8 flex flex-col justify-between overflow-hidden bg-white/50 dark:bg-gray-800/40 backdrop-blur-2xl border border-white/20 shadow-lg ${className}`}>
+        <div className={`absolute inset-0 opacity-20 dark:opacity-30 ${gradient}`}></div>
+        <div className="relative z-10">
+            <div className="mb-4 w-12 h-12 flex items-center justify-center bg-white/20 rounded-xl">
                 {icon}
             </div>
-            <div>
-                <h3 className="font-semibold text-gray-800 dark:text-white">{title}</h3>
-                <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">{description}</p>
-            </div>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white">{title}</h3>
+            {description && <p className="text-gray-600 dark:text-gray-300 mt-2 text-sm">{description}</p>}
         </div>
+        {children && <div className="relative z-10 mt-4">{children}</div>}
     </div>
 );
 
@@ -48,112 +88,101 @@ const AboutUsPage: React.FC = () => {
         setIsLoading(false);
     }
     
-    const features = [
-      { icon: <ChatBubbleIcon />, title: 'AI Chat & Assistant', description: 'Talk to the smartest AI, get instant help, answers, and automate routine tasks.' },
-      { icon: <CubeIcon className="h-8 w-8" />, title: 'Smart Studio', description: 'Edit, create, and enhance images, documents, and presentations with over 200 dynamic AI tools.' },
-      { icon: <ChartBarIcon />, title: 'Pro Analytics', description: 'Visualize data instantly with interactive charts and real-time insights.'},
-      { icon: <PuzzleIcon className="h-8 w-8" />, title: 'Workflow Automation', description: 'Drag-and-drop builder to automate your daily work and connect all your favorite apps.' },
-      { icon: <MicIcon />, title: 'Voice & Video AI', description: 'Speak, transcribe, translate, and get automated summaries for meetings and calls.' },
-      { icon: <DeviceSyncIcon />, title: 'Cross-Device Sync', description: 'Start on your PC, continue on mobile or tablet—your data follows you everywhere.' },
-      { icon: <ShieldCheckIcon />, title: 'Secure & Private', description: 'Advanced security ensures your data is safe and private at all times.' },
-    ];
-    
     return (
         <div className="h-full p-4 md:p-8 bg-transparent overflow-y-auto">
-            <div className="max-w-4xl mx-auto space-y-12">
+            <div className="max-w-5xl mx-auto space-y-16">
                 {/* Header */}
                 <div className="text-center">
-                    <h1 className="text-4xl md:text-5xl font-bold text-gray-800 dark:text-white">
-                        About <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-cyan-500">SnakeEngine.AI</span>
+                    <h1 className="text-5xl md:text-6xl font-bold text-gray-800 dark:text-white tracking-tighter">
+                        About <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-cyan-400">SnakeEngine.AI</span>
                     </h1>
-                    <p className="text-gray-500 dark:text-gray-400 mt-2 text-lg">Your all-in-one platform for smarter work, powered by advanced artificial intelligence.</p>
+                    <p className="text-gray-500 dark:text-gray-400 mt-4 text-lg max-w-2xl mx-auto">Your all-in-one platform for smarter work, powered by advanced artificial intelligence.</p>
                 </div>
 
-                {/* Our Story & Vision */}
-                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                     <div className="bg-white/80 dark:bg-gray-800/60 backdrop-blur-xl p-6 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
-                        <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">Our Story</h2>
+                {/* What We Offer Grid */}
+                <div>
+                     <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-8 text-center">What We Offer</h2>
+                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <FeatureCard 
+                            title="AI Productivity Tools" 
+                            description="Over 200 dynamic tools for every need." 
+                            icon={<AiToolsIcon className="h-6 w-6 text-pink-800 dark:text-pink-300"/>} 
+                            gradient="bg-gradient-to-br from-pink-200 to-rose-200 dark:from-pink-900/50 dark:to-rose-900/50"
+                        />
+                        <FeatureCard 
+                            title="Cross-Device Sync" 
+                            description="Your work follows you everywhere." 
+                            icon={<SyncIcon className="h-6 w-6 text-green-800 dark:text-green-300"/>} 
+                            gradient="bg-gradient-to-br from-green-200 to-teal-200 dark:from-green-900/50 dark:to-teal-900/50"
+                        />
+                         <FeatureCard 
+                            title="Voice & Video AI" 
+                            description="Transcribe, translate, and summarize." 
+                            icon={<VideoIcon className="h-6 w-6 text-cyan-800 dark:text-cyan-300"/>} 
+                            gradient="bg-gradient-to-br from-cyan-200 to-sky-200 dark:from-cyan-900/50 dark:to-sky-900/50"
+                        />
+                        <FeatureCard 
+                            title="Unlimited Features" 
+                            description="Explore limitless possibilities in your workspace." 
+                            icon={<UnlimitedIcon className="h-6 w-6 text-indigo-800 dark:text-indigo-300"/>} 
+                            className="md:col-span-2"
+                            gradient="bg-gradient-to-br from-indigo-200 to-purple-200 dark:from-indigo-900/50 dark:to-purple-900/50"
+                        />
+                        <FeatureCard 
+                            title="Real-Time Analytics" 
+                            description="Visualize data with interactive charts." 
+                            icon={<AnalyticsIcon className="h-6 w-6 text-blue-800 dark:text-blue-300"/>} 
+                            className="md:row-span-2"
+                            gradient="bg-gradient-to-br from-blue-200 to-sky-200 dark:from-blue-900/50 dark:to-sky-900/50"
+                        />
+                        <FeatureCard 
+                            title="Secure & Private" 
+                            description="Advanced security for your peace of mind." 
+                            icon={<SecurityIcon className="h-6 w-6 text-gray-800 dark:text-gray-300"/>} 
+                            className="md:col-span-2"
+                            gradient="bg-gradient-to-br from-gray-200 to-slate-200 dark:from-gray-700/50 dark:to-slate-700/50"
+                        />
+                    </div>
+                </div>
+
+                 {/* Our Story & Vision */}
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                     <div className="backdrop-blur-xl p-8 rounded-2xl">
+                        <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-4">Our Story</h2>
                         <p className="text-gray-600 dark:text-gray-300">
                             SnakeEngine.ai was born out of a passion for making powerful, modern AI tools accessible to everyone. We bring together cutting-edge technology and intuitive design to help creators, teams, and businesses solve real problems and work smarter.
                         </p>
                     </div>
-                     <div className="bg-white/80 dark:bg-gray-800/60 backdrop-blur-xl p-6 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
-                        <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">Our Vision</h2>
+                     <div className="backdrop-blur-xl p-8 rounded-2xl">
+                        <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-4">Our Vision</h2>
                         <p className="text-gray-600 dark:text-gray-300">
                            To become the world’s leading AI productivity and creativity hub, making innovation simple across every screen, device, and workflow.
                         </p>
                     </div>
                 </div>
                 
-                {/* What We Offer */}
-                <div className="bg-white/80 dark:bg-gray-800/60 backdrop-blur-xl p-6 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
-                    <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6 text-center">What We Offer</h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        {features.map(feature => <FeatureHighlightCard key={feature.title} {...feature} />)}
-                    </div>
-                </div>
-                
                  {/* Meet the Team */}
-                <div className="bg-white/80 dark:bg-gray-800/60 backdrop-blur-xl p-6 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
-                    <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">Meet the Team</h2>
-                     <p className="text-gray-600 dark:text-gray-300 mb-6 text-center">SnakeEngine.ai is built by a passionate group of engineers, designers, and AI experts. Our diverse backgrounds help us deliver unique solutions trusted by creators and businesses worldwide.</p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="text-center">
+                    <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-8">Meet the Team</h2>
+                     <p className="text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">SnakeEngine.ai is built by a passionate group of engineers, designers, and AI experts. Our diverse backgrounds help us deliver unique solutions trusted by creators and businesses worldwide.</p>
+                    <div className="flex flex-col sm:flex-row justify-center items-center gap-10">
                         <div className="text-center">
-                            <img src="https://i.pravatar.cc/150?u=aditya" alt="Aditya Dwivedi" className="w-24 h-24 rounded-full mx-auto mb-3 border-2 border-purple-400"/>
-                            <h3 className="font-semibold text-lg text-gray-800 dark:text-white">Aditya Dwivedi</h3>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">Co-Creator & Lead Developer</p>
+                            <img src="https://i.pravatar.cc/150?u=aditya" alt="Aditya Dwivedi" className="w-28 h-28 rounded-full mx-auto mb-4 border-4 border-white/20 shadow-lg"/>
+                            <h3 className="font-semibold text-xl text-gray-800 dark:text-white">Aditya Dwivedi</h3>
+                            <p className="text-sm text-purple-500 dark:text-purple-400 font-medium">Co-Creator & Lead Developer</p>
                         </div>
                         <div className="text-center">
-                             <img src="https://i.pravatar.cc/150?u=rashish" alt="Rashish Singh" className="w-24 h-24 rounded-full mx-auto mb-3 border-2 border-cyan-400"/>
-                            <h3 className="font-semibold text-lg text-gray-800 dark:text-white">Rashish Singh</h3>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">Co-Creator & UI/UX Visionary</p>
+                             <img src="https://i.pravatar.cc/150?u=rashish" alt="Rashish Singh" className="w-28 h-28 rounded-full mx-auto mb-4 border-4 border-white/20 shadow-lg"/>
+                            <h3 className="font-semibold text-xl text-gray-800 dark:text-white">Rashish Singh</h3>
+                            <p className="text-sm text-cyan-500 dark:text-cyan-400 font-medium">Co-Creator & UI/UX Visionary</p>
                         </div>
                     </div>
-                </div>
-
-                {/* Join the Community */}
-                <div className="bg-white/80 dark:bg-gray-800/60 backdrop-blur-xl p-6 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 text-center">
-                    <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">Join the Community</h2>
-                    <p className="text-gray-600 dark:text-gray-300 mb-4">Become part of our fast-growing community!</p>
-                    <ul className="space-y-2 text-gray-600 dark:text-gray-300 inline-block text-left">
-                        <li className="flex items-center"><span className="text-green-500 mr-2">&#10003;</span> User stories, testimonials, and feedback</li>
-                        <li className="flex items-center"><span className="text-green-500 mr-2">&#10003;</span> Early access to new features</li>
-                        <li className="flex items-center"><span className="text-green-500 mr-2">&#10003;</span> Direct support from our team</li>
-                    </ul>
-                </div>
-
-                {/* Ask Us Anything */}
-                <div className="bg-white/80 dark:bg-gray-800/60 backdrop-blur-xl p-6 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
-                     <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">Ask About Us</h2>
-                     <p className="text-gray-600 dark:text-gray-400 mb-4 text-sm">Have a question about our project? Ask our AI spokesperson!</p>
-                     <form onSubmit={handleAskQuestion}>
-                        <div className="relative">
-                            <input 
-                                type="text"
-                                value={question}
-                                onChange={e => setQuestion(e.target.value)}
-                                placeholder="e.g., What is your vision for the future?"
-                                className="w-full p-3 pr-24 bg-gray-100 dark:bg-gray-700 rounded-lg border border-transparent focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
-                                disabled={isLoading}
-                            />
-                            <button type="submit" disabled={isLoading || !question.trim()} className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-1.5 rounded-md bg-purple-500 text-white font-semibold text-sm hover:bg-purple-600 disabled:opacity-50">
-                                {isLoading ? <Spinner /> : "Ask"}
-                            </button>
-                        </div>
-                     </form>
-                     {(answer || error || isLoading) && (
-                        <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg min-h-[60px]">
-                            {isLoading && <div className="flex justify-center items-center"><Spinner/></div>}
-                            {error && <p className="text-sm text-red-500">{error}</p>}
-                            {answer && <p className="text-sm text-gray-700 dark:text-gray-300">{answer}</p>}
-                        </div>
-                     )}
                 </div>
 
                 {/* Final CTA */}
                 <div className="text-center py-8">
-                     <h2 className="text-3xl font-bold text-gray-800 dark:text-white">Let’s Build the Future Together</h2>
-                    <p className="text-gray-500 dark:text-gray-400 mt-2">SnakeEngine.ai invites you to join, explore, and shape the next era of intelligent productivity. <br /> Try it free, share your feedback, and grow with us!</p>
+                     <h2 className="text-4xl font-bold text-gray-800 dark:text-white">Let’s Build the Future Together</h2>
+                    <p className="text-gray-500 dark:text-gray-400 mt-4 max-w-xl mx-auto">SnakeEngine.ai invites you to join, explore, and shape the next era of intelligent productivity. Try it free, share your feedback, and grow with us!</p>
                 </div>
             </div>
         </div>

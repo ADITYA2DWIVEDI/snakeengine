@@ -99,6 +99,15 @@ export const HelpIcon = ({ className = 'h-6 w-6' }: IconProps) => (
     </svg>
 );
 
+export const UsersIcon = ({ className = 'h-6 w-6' }: IconProps) => (
+    <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+        <circle cx="9" cy="7" r="4"></circle>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+    </svg>
+);
+
 export const GiftIcon = ({ className = 'h-6 w-6' }: IconProps) => (
     <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <polyline points="20 12 20 22 4 22 4 12"></polyline>
@@ -259,6 +268,7 @@ export const NAVIGATION_ITEMS = {
     ],
     RESOURCES: [
         { name: 'Help & Support', icon: HelpIcon, page: Page.Help },
+        { name: 'About Us', icon: UsersIcon, page: Page.AboutUs },
     ],
     ADMIN: [
         { name: `What's New`, icon: GiftIcon, page: null, notification: true },
