@@ -10,8 +10,8 @@ export enum Page {
   StudyPlan,
   CodeReviewer,
   DocumentSummarizer,
-  Plugins, // New page for the marketplace
-  // REMOVED: PluginAssistant
+  Plugins,
+  // New dedicated tool pages
   GmailTool,
   CalendarTool,
   SlackTool,
@@ -24,27 +24,20 @@ export interface Tab {
   id: string;
   name: string;
   page: Page;
-  toolId?: string; // e.g., 'image-generation' or 'gmail'
+  toolId?: string; 
 }
 
 export interface Message {
   sender: 'user' | 'ai';
   text: string;
   isThinking?: boolean;
-  // For plugin assistant
-  isConfirmation?: boolean;
-  toolCall?: {
-    name: string;
-    args: any;
-    id: string;
-  }
 }
 
 export interface Chat {
   id: string;
   title?: string;
   messages: Message[];
-  systemInstruction?: string; // For custom persona
+  systemInstruction?: string; 
 }
 
 export interface Course {

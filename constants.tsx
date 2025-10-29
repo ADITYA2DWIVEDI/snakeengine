@@ -197,58 +197,46 @@ export const ThreadsIcon = ({ className = 'h-6 w-6' }: IconProps) => (
     </svg>
 );
 
-export const GmailIcon = ({ className = 'h-6 w-6' }: IconProps) => (
-  <svg className={className} viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M54 12H10C7.79086 12 6 13.7909 6 16V48C6 50.2091 7.79086 52 10 52H54C56.2091 52 58 50.2091 58 48V16C58 13.7909 56.2091 12 54 12Z" fill="#F2F2F2"/>
-    <path d="M54 12H10C7.79086 12 6 13.7909 6 16V18.15L32 36L58 18.15V16C58 13.7909 56.2091 12 54 12Z" fill="#EA4335"/>
-    <path d="M6 48V25.79L23.23 38.4C28.94 42.75 35.06 42.75 40.77 38.4L58 25.79V48C58 50.2091 56.2091 52 54 52H10C7.79086 52 6 50.2091 6 48Z" fill="#4285F4"/>
-    <path d="M6 18.15V16C6 13.7909 7.79086 12 10 12H10.59L32 29.5L53.41 12H54C56.2091 12 58 13.7909 58 16V18.15L32 36L6 18.15Z" fill="#34A853"/>
-    <path d="M54 12H10C7.79086 12 6 13.7909 6 16V16.64L32 34.25L58 16.64V16C58 13.7909 56.2091 12 54 12Z" fill="#FBBC05"/>
+export const GmailIcon = ({ className = 'h-8 w-8' }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" fill="#fff"/>
+    <path d="M20 6L12 13 4 6v2l8 5 8-5V6z" fill="#D44638"/>
+    <path d="M4 18l8-5 8 5H4z" fill="#D44638"/>
   </svg>
 );
 
-export const CalendarIcon = ({ className = 'h-6 w-6' }: IconProps) => (
-  <svg className={className} viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M52 10H12C9.79086 10 8 11.7909 8 14V54C8 56.2091 9.79086 58 12 58H52C54.2091 58 56 56.2091 56 54V14C56 11.7909 54.2091 10 52 10Z" fill="#4285F4"/>
-    <path d="M44 6V14" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M20 6V14" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M8 22H56" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
-    <rect x="18" y="32" width="8" height="8" rx="2" fill="white"/>
-    <rect x="38" y="32" width="8" height="8" rx="2" fill="white"/>
-    <rect x="18" y="44" width="8" height="8" rx="2" fill="white"/>
+export const CalendarIcon = ({ className = 'h-8 w-8' }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM9 14H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2z" fill="#4285F4"/>
   </svg>
 );
 
-export const SlackIcon = ({ className = 'h-6 w-6' }: IconProps) => (
-  <svg className={className} viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M16 40C16 44.4183 19.5817 48 24 48H32V32H24C19.5817 32 16 35.5817 16 40Z" fill="#36C5F0"/>
-    <path d="M24 16C19.5817 16 16 19.5817 16 24V32H32V24C32 19.5817 28.4183 16 24 16Z" fill="#2EB67D"/>
-    <path d="M24 48C28.4183 48 32 44.4183 32 40V32H40C44.4183 32 48 35.5817 48 40C48 44.4183 44.4183 48 40 48H24Z" fill="#ECB22E"/>
-    <path d="M48 24C48 19.5817 44.4183 16 40 16H32V32H40C44.4183 32 48 28.4183 48 24Z" fill="#E01E5A"/>
+export const SlackIcon = ({ className = 'h-8 w-8' }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M8.2,11.4A2.4,2.4,0,0,0,10.6,9H12V4.8A2.4,2.4,0,0,0,9.6,2.4H8.2A2.4,2.4,0,0,0,5.8,4.8v4A2.4,2.4,0,0,0,8.2,11.4Z" fill="#36C5F0"/>
+    <path d="M12.6,12.6A2.4,2.4,0,0,0,15,15H19.2a2.4,2.4,0,0,0,2.4-2.4V11.2A2.4,2.4,0,0,0,19.2,8.8H15A2.4,2.4,0,0,0,12.6,12.6Z" fill="#2EB67D"/>
+    <path d="M12.6,8.2A2.4,2.4,0,0,0,15,5.8V4.4A2.4,2.4,0,0,0,12.6,2H8.8a2.4,2.4,0,0,0-2.4,2.4V6.8A2.4,2.4,0,0,0,8.8,9.2h4A2.4,2.4,0,0,0,12.6,8.2Z" fill="#ECB22E"/>
+    <path d="M11.4,15.8A2.4,2.4,0,0,0,9,18.2V21.6A2.4,2.4,0,0,0,11.4,24H15.2A2.4,2.4,0,0,0,17.6,21.6V17.2A2.4,2.4,0,0,0,15.2,14.8H11.2A2.4,2.4,0,0,0,11.4,15.8Z" fill="#E01E5A"/>
   </svg>
 );
 
-export const NotionIcon = ({ className = 'h-6 w-6' }: IconProps) => (
-  <svg className={className} viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M42 8H14C11.7909 8 10 9.79086 10 12V52C10 54.2091 11.7909 56 14 56H50C52.2091 56 54 54.2091 54 52V20L42 8Z" fill="white"/>
-    <path d="M42 8V20H54" fill="#E0E0E0"/>
-    <path d="M22 28H42V32H22V28Z" fill="#424242"/>
-    <path d="M22 38H42V42H22V38Z" fill="#424242"/>
-    <path d="M22 48H34V52H22V48Z" fill="#424242"/>
+export const NotionIcon = ({ className = 'h-8 w-8' }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M16 3H5C3.89 3 3 3.89 3 5v14c0 1.11.89 2 2 2h14c1.11 0 2-.89 2-2V8l-5-5zM8 17h8v2H8v-2zm8-4H8v2h8v-2zm-3-4H8v2h5V9z" fill="#000"/>
   </svg>
 );
 
-export const FigmaIcon = ({ className = 'h-6 w-6' }: IconProps) => (
-  <svg className={className} viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M32 8C23.1634 8 16 15.1634 16 24C16 32.8366 23.1634 40 32 40C40.8366 40 48 32.8366 48 24C48 15.1634 40.8366 8 32 8Z" fill="#A259FF"/>
-    <path d="M16 24C16 15.1634 23.1634 8 32 8V24H16Z" fill="#F24E1E"/>
-    <path d="M16 40C16 31.1634 23.1634 24 32 24V40H16Z" fill="#FF7262"/>
-    <path d="M32 56C23.1634 56 16 48.8366 16 40H32V56Z" fill="#1ABCFE"/>
-    <path d="M48 40C48 48.8366 40.8366 56 32 56V40H48Z" fill="#0ACF83"/>
+export const FigmaIcon = ({ className = 'h-8 w-8' }: IconProps) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12,2A10,10,0,0,0,2,12,10,10,0,0,0,12,22,10,10,0,0,0,22,12,10,10,0,0,0,12,2Zm0,4.5A5.5,5.5,0,0,1,17.5,12H12Z" fill="#F24E1E"/>
+    <path d="M12,6.5A5.5,5.5,0,0,0,6.5,12H12Z" fill="#FF7262"/>
+    <path d="M6.5,12A5.5,5.5,0,0,0,12,17.5V12Z" fill="#A259FF"/>
+    <path d="M12,17.5A5.5,5.5,0,0,0,17.5,12H12Z" fill="#1ABCFE"/>
+    <path d="M12,17.5A5.5,5.5,0,0,1,6.5,12H12Z" fill="#0ACF83"/>
   </svg>
 );
 
-export const GitHubIcon = ({ className = 'h-6 w-6' }: IconProps) => (
+export const GitHubIcon = ({ className = 'h-8 w-8' }: IconProps) => (
   <svg className={className} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
     <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.108-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.565 21.795 24 17.3 24 12c0-6.627-5.373-12-12-12z" />
   </svg>
