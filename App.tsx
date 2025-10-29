@@ -11,8 +11,8 @@ import HelpPage from './components/HelpPage';
 import WhatsNewModal from './components/WhatsNewModal';
 import MyLearningPage from './components/MyLearningPage';
 import PromoPage from './components/PromoPage';
-import PluginsPage from './components/PluginsPage'; // New
-import OnboardingModal from './components/OnboardingModal'; // New
+import PluginsPage from './components/PluginsPage';
+import OnboardingModal from './components/OnboardingModal';
 import Footer from './components/Footer';
 import { useTheme } from './hooks/useTheme';
 import { useChatHistory } from './hooks/useChatHistory';
@@ -35,12 +35,20 @@ import StudyPlanGeneratorTool from './components/tools/StudyPlanGeneratorTool';
 import CodeReviewerTool from './components/tools/CodeReviewerTool';
 import DocumentSummarizerTool from './components/tools/DocumentSummarizerTool';
 
+// Import new plugin tools
+import GmailTool from './components/tools/GmailTool';
+import GoogleCalendarTool from './components/tools/GoogleCalendarTool';
+import SlackTool from './components/tools/SlackTool';
+import NotionTool from './components/tools/NotionTool';
+import FigmaTool from './components/tools/FigmaTool';
+import GitHubTool from './components/tools/GitHubTool';
+
 
 const Sidebar: React.FC<{
-    onNavigate: (page: Page) => void;
+    onOpenInTab: (options: { page: Page, name: string }) => void;
     onSignOut: () => void;
     onShowWhatsNew: () => void;
-}> = ({ onNavigate, onSignOut, onShowWhatsNew }) => {
+}> = ({ onOpenInTab, onSignOut, onShowWhatsNew }) => {
 
     const NavLink: React.FC<{
         item: { name: string, icon: React.FC<{className?:string}>, page: Page | null, notification?: boolean };
@@ -51,7 +59,7 @@ const Sidebar: React.FC<{
                 e.preventDefault();
                 if (item.name === 'Sign Out') onSignOut();
                 else if (item.name.includes("What's New")) onShowWhatsNew();
-                else if (item.page !== null) onNavigate(item.page);
+                else if (item.page !== null) onOpenInTab({ page: item.page, name: item.name });
             }}
             className={`flex items-center px-3 py-2.5 rounded-lg transition-all duration-200 group relative text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800/60 dark:hover:text-white`}
         >
@@ -72,7 +80,7 @@ const Sidebar: React.FC<{
                     <h1 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-cyan-500">
                         SnakeEngine
                     </h1>
-                    <p className="text-[10px] font-semibold text-gray-500 dark:text-gray-400 tracking-wider">BY ADITYA DWIVEDI & RASHISH SINGH</p>
+                    <p className="text-xs font-semibold text-gray-500 dark:text-gray-400">BY ADITYA DWIVEDI & RASHISH SINGH</p>
                 </div>
             </div>
             <div className="flex-grow space-y-2 overflow-y-auto pr-2">
@@ -144,33 +152,12 @@ const App: React.FC = () => {
     const [tabs, setTabs] = useState<Tab[]>([]);
     const [activeTabId, setActiveTabId] = useState<string>('');
     
-    useEffect(() => {
-        // Initialize with Home tab
-        if(isLoggedIn && tabs.length === 0){
-            openInTab({ page: Page.Home, name: "Home" });
-        }
-    }, [isLoggedIn]);
-
-    useEffect(() => {
-        const hasVisited = localStorage.getItem('hasVisited');
-        if (!hasVisited && isLoggedIn) {
-            setShowOnboarding(true);
-            localStorage.setItem('hasVisited', 'true');
-        }
-    }, [isLoggedIn]);
-
-    const handleLogin = () => setIsLoggedIn(true);
-    const handleSignOut = () => {
-        // Clear all data on sign out as well
-        handleDeleteAllData();
-    };
-
     const openInTab = useCallback((options: { page: Page; name: string; toolId?: string }) => {
         const { page, name, toolId } = options;
         // Check for existing tab: for tools, check toolId; for pages, check page
         const existingTab = tabs.find(t => 
             (toolId && t.toolId === toolId) || 
-            (!toolId && t.page === page)
+            (!toolId && t.page === page && page !== Page.Home) // Allow multiple Home/Chat tabs
         );
 
         if (existingTab) {
@@ -187,7 +174,28 @@ const App: React.FC = () => {
         }
         if (window.innerWidth < 1024) setIsSidebarOpen(false);
     }, [tabs]);
-    
+
+    useEffect(() => {
+        // Initialize with Home tab
+        if(isLoggedIn && tabs.length === 0){
+            openInTab({ page: Page.Home, name: "Home" });
+        }
+    }, [isLoggedIn, openInTab, tabs.length]);
+
+    useEffect(() => {
+        const hasVisited = localStorage.getItem('hasVisited');
+        if (!hasVisited && isLoggedIn) {
+            setShowOnboarding(true);
+            localStorage.setItem('hasVisited', 'true');
+        }
+    }, [isLoggedIn]);
+
+    const handleLogin = () => setIsLoggedIn(true);
+    const handleSignOut = () => {
+        // Clear all data on sign out as well
+        handleDeleteAllData();
+    };
+
     const closeTab = (tabId: string) => {
         setTabs(prev => {
             const index = prev.findIndex(t => t.id === tabId);
@@ -220,9 +228,10 @@ const App: React.FC = () => {
     const renderPageInTab = (tab: Tab | undefined) => {
         if (!tab) return <HomePage />;
 
-        // Prioritize rendering a tool if a toolId is present
-        if (tab.toolId) {
-            switch(tab.toolId) {
+        const toolId = tab.toolId;
+
+        if (toolId) {
+            switch(toolId) {
                 case 'live-chat': return <LiveChatTool />;
                 case 'audio-transcription': return <AudioTranscriptionTool />;
                 case 'image-generation': return <ImageGenerationTool />;
@@ -237,6 +246,13 @@ const App: React.FC = () => {
                 case 'code-reviewer': return <CodeReviewerTool />;
                 case 'document-summarizer': return <DocumentSummarizerTool />;
                 case 'thinking-mode': return <ThinkingModeTool />;
+                case 'gmail': return <GmailTool />;
+                case 'google-calendar': return <GoogleCalendarTool />;
+                case 'slack': return <SlackTool />;
+                case 'notion': return <NotionTool />;
+                case 'figma': return <FigmaTool />;
+                case 'github': return <GitHubTool />;
+                default: return <SmartStudioPage onOpenInTab={openInTab} />;
             }
         }
         
@@ -250,7 +266,7 @@ const App: React.FC = () => {
             case Page.Settings: return <SettingsPage theme={theme} onToggleTheme={toggleTheme} onDeleteAllData={handleDeleteAllData} />;
             case Page.Plans: return <PlansPage />;
             case Page.Help: return <HelpPage />;
-            case Page.Plugins: return <PluginsPage />;
+            case Page.Plugins: return <PluginsPage onOpenInTab={openInTab} />;
             default:
                 return <HomePage />;
         }
@@ -279,12 +295,7 @@ const App: React.FC = () => {
             </div>
             <aside className={`fixed lg:relative z-20 h-full w-64 lg:w-72 flex-shrink-0 transition-transform duration-300 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
                 <Sidebar
-                    onNavigate={(page) => {
-                        const pageName = NAVIGATION_ITEMS.MAIN.find(i => i.page === page)?.name || 
-                                         NAVIGATION_ITEMS.ACCOUNT.find(i => i.page === page)?.name || 
-                                         NAVIGATION_ITEMS.RESOURCES.find(i => i.page === page)?.name || 'Page';
-                        openInTab({ page, name: pageName });
-                    }}
+                    onOpenInTab={openInTab}
                     onSignOut={handleSignOut}
                     onShowWhatsNew={() => setIsWhatsNewOpen(true)}
                 />
@@ -293,9 +304,9 @@ const App: React.FC = () => {
                 <header className="lg:hidden relative flex items-center justify-between p-4 bg-white/50 dark:bg-gray-900/50 backdrop-blur-md border-b dark:border-gray-800 flex-shrink-0">
                     <div className="flex items-center">
                         <LogoIcon className="h-8 w-8" />
-                        <div className="ml-2">
+                         <div className="ml-2 flex flex-col items-start">
                             <span className="font-bold text-lg text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-cyan-500">SnakeEngine</span>
-                             <p className="text-xs font-semibold text-gray-500 dark:text-gray-400">BY ADITYA DWIVEDI & RASHISH SINGH</p>
+                             <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 -mt-1">BY ADITYA DWIVEDI & RASHISH SINGH</p>
                         </div>
                     </div>
                     <button onClick={() => setIsSidebarOpen(!isSidebarOpen)}>

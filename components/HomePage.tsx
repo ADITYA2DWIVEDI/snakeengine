@@ -3,7 +3,7 @@ import { Message } from '../types';
 import { generateChatResponse } from '../services/geminiService';
 import { LogoIcon } from '../constants';
 import { useChatHistory } from '../hooks/useChatHistory';
-import { useAiPersona } from '../hooks/useAiPersona'; // New Import
+import { useAiPersona } from '../hooks/useAiPersona';
 
 const QuickStartCard: React.FC<{ title: string; prompt: string; onSelect: (prompt: string) => void }> = ({ title, prompt, onSelect }) => (
     <div onClick={() => onSelect(prompt)} className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm p-4 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 cursor-pointer hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
@@ -13,8 +13,8 @@ const QuickStartCard: React.FC<{ title: string; prompt: string; onSelect: (promp
 );
 
 const HomePage: React.FC = () => {
-    const { activeChat, createNewChat, setActiveChat } = useChatHistory();
-    const { aiPersona } = useAiPersona(); // New
+    const { activeChat, updateActiveChat } = useChatHistory();
+    const { aiPersona } = useAiPersona();
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -45,26 +45,21 @@ const HomePage: React.FC = () => {
     
         const historyForApi = [...activeChat.messages, userMessage];
 
-        setActiveChat(prev => {
-            if (!prev) return null;
-            return { ...prev, messages: [...prev.messages, userMessage, thinkingMessage] };
-        });
+        updateActiveChat(prev => ({ ...prev, messages: [...prev.messages, userMessage, thinkingMessage] }));
     
         setInput('');
         setIsLoading(true);
     
         try {
-            const response = await generateChatResponse(historyForApi, aiPersona); // Pass persona
-            setActiveChat(prev => {
-                if (!prev) return prev;
+            const response = await generateChatResponse(historyForApi, aiPersona);
+            updateActiveChat(prev => {
                 const finalMessages = prev.messages.map(msg => 
                     msg.isThinking ? { ...msg, text: response, isThinking: false } : msg
                 );
                 return { ...prev, messages: finalMessages };
             });
         } catch (error) {
-            setActiveChat(prev => {
-                if (!prev) return prev;
+            updateActiveChat(prev => {
                 const finalMessages = prev.messages.map(msg => 
                     msg.isThinking ? { ...msg, text: 'Sorry, I encountered an error.', isThinking: false } : msg
                 );
@@ -82,11 +77,15 @@ const HomePage: React.FC = () => {
         { title: 'Plan a Trip', prompt: 'Plan a 3-day itinerary for a trip to Paris.' },
     ];
 
+    if (!activeChat) {
+        return <div className="h-full flex items-center justify-center"><p>Loading chat...</p></div>;
+    }
+
     return (
         <div className="h-full flex flex-col items-center justify-center p-4 md:p-8 bg-transparent">
             <div className="w-full max-w-4xl h-full flex flex-col">
                 
-                {(!activeChat || activeChat.messages.length <= 1) ? (
+                {activeChat.messages.length <= 1 ? (
                     <div className="text-center my-auto px-4 animate-fade-in-up">
                         <h1 className="text-4xl md:text-5xl font-bold text-gray-800 dark:text-white">
                             Welcome to <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-cyan-500">SnakeEngine.AI</span>

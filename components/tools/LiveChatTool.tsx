@@ -115,10 +115,10 @@ const LiveChatTool: React.FC = () => {
         mediaStreamSourceRef.current?.disconnect();
         
         if (inputAudioContextRef.current && inputAudioContextRef.current.state !== 'closed') {
-            inputAudioContextRef.current.close();
+            inputAudioContextRef.current.close().catch(e => console.error("Error closing input context:", e));
         }
         if (outputAudioContextRef.current && outputAudioContextRef.current.state !== 'closed') {
-            outputAudioContextRef.current.close();
+            outputAudioContextRef.current.close().catch(e => console.error("Error closing output context:", e));
         }
 
         sourcesRef.current.forEach(s => s.stop());
@@ -147,7 +147,7 @@ const LiveChatTool: React.FC = () => {
                             <p className="font-semibold text-purple-600 dark:text-purple-400">AI: <span className="font-normal text-gray-600 dark:text-gray-400">{t.model}</span></p>
                         </div>
                     ))}
-                    {(currentInterim.user || currentInterim.model) && (
+                     {(currentInterim.user || currentInterim.model) && (
                         <div className="text-gray-400 dark:text-gray-500 italic">
                            {currentInterim.user && <p>You: {currentInterim.user}</p>}
                            {currentInterim.model && <p>AI: {currentInterim.model}</p>}

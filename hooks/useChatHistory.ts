@@ -2,69 +2,132 @@ import { useState, useEffect, useCallback } from 'react';
 import { Chat, Message } from '../types';
 
 export const useChatHistory = () => {
-    const [activeChat, setActiveChat] = useState<Chat | null>(() => {
-        // Lazy initializer for synchronous loading
+    const [chats, setChats] = useState<Chat[]>([]);
+    const [activeChatId, setActiveChatId] = useState<string | null>(null);
+
+    // Load chats from localStorage on initial mount
+    useEffect(() => {
         try {
-            const activeId = localStorage.getItem('activeChatId');
-            if (activeId) {
-                const storedChat = localStorage.getItem(activeId);
-                if (storedChat) {
-                    return JSON.parse(storedChat);
-                }
+            const storedChatIds = JSON.parse(localStorage.getItem('chatIds') || '[]');
+            const loadedChats = storedChatIds.map((id: string) => {
+                const chatData = localStorage.getItem(id);
+                return chatData ? JSON.parse(chatData) : null;
+            }).filter((c: Chat | null): c is Chat => c !== null);
+            
+            setChats(loadedChats);
+
+            const storedActiveId = localStorage.getItem('activeChatId');
+            if (storedActiveId && storedChatIds.includes(storedActiveId)) {
+                setActiveChatId(storedActiveId);
+            } else if (loadedChats.length > 0) {
+                setActiveChatId(loadedChats[0].id);
+            } else {
+                // If no chats exist, create a new one
+                createNewChat();
             }
         } catch (error) {
-            console.error("Failed to load chat from localStorage on init", error);
-        }
-        return null; // Return null if nothing is found
-    });
-    
-    // Effect to create a new chat if none exists on mount
-    useEffect(() => {
-        if (!activeChat) {
+            console.error("Failed to load chats from localStorage", error);
             createNewChat();
         }
     }, []);
 
-    // Effect to save the active chat whenever it changes
-    useEffect(() => {
-        if (activeChat && activeChat.id) {
-            try {
-                localStorage.setItem(activeChat.id, JSON.stringify(activeChat));
-                localStorage.setItem('activeChatId', activeChat.id);
-            } catch (error) {
-                console.error("Failed to save chat to localStorage", error);
+    const saveChats = (updatedChats: Chat[], activeId: string | null) => {
+        try {
+            const chatIds = updatedChats.map(c => c.id);
+            localStorage.setItem('chatIds', JSON.stringify(chatIds));
+            updatedChats.forEach(chat => {
+                localStorage.setItem(chat.id, JSON.stringify(chat));
+            });
+            if (activeId) {
+                localStorage.setItem('activeChatId', activeId);
             }
+        } catch (error) {
+            console.error("Failed to save chats to localStorage", error);
         }
-    }, [activeChat]);
+    };
 
     const createNewChat = useCallback(() => {
         const newChat: Chat = {
             id: `chat_${Date.now()}`,
-            title: 'New Chat',
             messages: [{ sender: 'ai', text: 'Hello! I am SnakeEngine AI. How can I help you today?' }]
         };
-        setActiveChat(newChat);
+        setChats(prev => {
+            const newChats = [newChat, ...prev];
+            saveChats(newChats, newChat.id);
+            return newChats;
+        });
+        setActiveChatId(newChat.id);
+        return newChat;
     }, []);
     
+    const deleteChat = useCallback((chatId: string) => {
+        setChats(prev => {
+            const newChats = prev.filter(c => c.id !== chatId);
+            try {
+                localStorage.removeItem(chatId);
+                const chatIds = newChats.map(c => c.id);
+                localStorage.setItem('chatIds', JSON.stringify(chatIds));
+            } catch (error) {
+                console.error("Failed to delete chat from localStorage", error);
+            }
+            
+            if (activeChatId === chatId) {
+                const newActiveId = newChats[0]?.id || null;
+                setActiveChatId(newActiveId);
+                 if (newActiveId) {
+                    localStorage.setItem('activeChatId', newActiveId);
+                } else {
+                    localStorage.removeItem('activeChatId');
+                    // Create a new chat if the last one was deleted
+                    createNewChat();
+                }
+            }
+            return newChats;
+        });
+    }, [activeChatId, createNewChat]);
+
+    const updateActiveChat = useCallback((updater: (prevChat: Chat) => Chat) => {
+        setChats(prevChats => {
+            const newChats = prevChats.map(chat => {
+                if (chat.id === activeChatId) {
+                    const updatedChat = updater(chat);
+                    // Auto-generate title from first user message if it doesn't have one
+                    if (!updatedChat.title || updatedChat.title === 'New Chat') {
+                        const firstUserMessage = updatedChat.messages.find(m => m.sender === 'user');
+                        if (firstUserMessage) {
+                             updatedChat.title = firstUserMessage.text.split(' ').slice(0, 5).join(' ') + '...';
+                        }
+                    }
+                    return updatedChat;
+                }
+                return chat;
+            });
+            saveChats(newChats, activeChatId);
+            return newChats;
+        });
+    }, [activeChatId]);
+
     const clearAllChats = () => {
         try {
-            // A simple implementation: clear all localStorage keys that start with "chat_"
-            Object.keys(localStorage).forEach(key => {
-                if (key.startsWith('chat_') || key === 'activeChatId') {
-                    localStorage.removeItem(key);
-                }
-            });
-            // Immediately create a new chat after clearing
-            setActiveChat(null); // Set to null to trigger creation effect
+            chats.forEach(chat => localStorage.removeItem(chat.id));
+            localStorage.removeItem('chatIds');
+            localStorage.removeItem('activeChatId');
+            setChats([]);
+            setActiveChatId(null);
         } catch (error) {
             console.error("Failed to clear chat history from localStorage", error);
         }
     };
+    
+    const activeChat = chats.find(c => c.id === activeChatId) || null;
 
     return {
+        chats,
         activeChat,
         createNewChat,
-        setActiveChat,
+        deleteChat,
+        setActiveChatId,
+        updateActiveChat,
         clearAllChats,
     };
 };

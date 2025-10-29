@@ -1,4 +1,4 @@
-import { GoogleGenAI, Modality, LiveSession, LiveServerMessage, CloseEvent, ErrorEvent, Blob, Type } from "@google/genai";
+import { GoogleGenAI, Modality, LiveSession, LiveServerMessage, CloseEvent, ErrorEvent, Blob, Type, FunctionDeclaration, GenerateContentResponse } from "@google/genai";
 import { Course, AIRecommendation, Message } from "../types";
 
 const API_KEY = process.env.API_KEY;
@@ -381,5 +381,155 @@ export const summarizeDocument = async (content: string) => {
         return { summary: response.text, error: null };
     } catch (error) {
         return { summary: null, error: handleApiError(error, "Document Summarizer") };
+    }
+};
+
+// --- DEDICATED PLUGIN FUNCTIONS ---
+
+export const draftEmail = async (to: string, subject: string, prompt: string) => {
+    const ai = getAiClient();
+    if (!ai) return { email: null, error: "API client not available. Please configure your API Key." };
+
+    try {
+        const fullPrompt = `As a helpful assistant, draft a professional and clear email based on the user's request.
+To: ${to}
+Subject: ${subject}
+Core message/prompt: "${prompt}"
+
+Return a JSON object with "subject" and "body" fields. The body should be well-formatted text.`;
+
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-pro',
+            contents: fullPrompt,
+            config: {
+                responseMimeType: "application/json",
+                responseSchema: {
+                    type: Type.OBJECT,
+                    properties: {
+                        subject: { type: Type.STRING },
+                        body: { type: Type.STRING },
+                    },
+                    required: ["subject", "body"],
+                },
+            },
+        });
+
+        const jsonResponse = JSON.parse(response.text);
+        return { email: jsonResponse, error: null };
+    } catch (error) {
+        return { email: null, error: handleApiError(error, "Gmail Tool") };
+    }
+};
+
+export const createCalendarEventDetails = async (prompt: string) => {
+    const ai = getAiClient();
+    if (!ai) return { event: null, error: "API client not available. Please configure your API Key." };
+
+    try {
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-pro',
+            contents: `Based on the following prompt, generate details for a calendar event. Create a concise, descriptive title, a detailed description for the event body, and a list of potential attendees based on the context (just their names).
+Prompt: "${prompt}"
+
+Return a JSON object with "title", "description", and "attendees" (an array of strings) fields.`,
+            config: {
+                responseMimeType: "application/json",
+                responseSchema: {
+                    type: Type.OBJECT,
+                    properties: {
+                        title: { type: Type.STRING },
+                        description: { type: Type.STRING },
+                        attendees: {
+                            type: Type.ARRAY,
+                            items: { type: Type.STRING },
+                        },
+                    },
+                    required: ["title", "description", "attendees"],
+                },
+            },
+        });
+
+        const jsonResponse = JSON.parse(response.text);
+        return { event: jsonResponse, error: null };
+    } catch (error) {
+        return { event: null, error: handleApiError(error, "Google Calendar Tool") };
+    }
+};
+
+export const draftSlackMessage = async (prompt: string) => {
+    const ai = getAiClient();
+    if (!ai) return { message: null, error: "API client not available. Please configure your API Key." };
+
+    try {
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-pro',
+            contents: `Act as a communications expert. Draft a concise and professional Slack message based on the following prompt. Use Slack's Markdown formatting (like *bold*, _italics_, and code blocks) where appropriate to improve readability.
+Prompt: "${prompt}"`,
+        });
+        return { message: response.text, error: null };
+    } catch (error) {
+        return { message: null, error: handleApiError(error, "Slack Tool") };
+    }
+};
+
+export const generateNotionContent = async (prompt: string) => {
+    const ai = getAiClient();
+    if (!ai) return { content: null, error: "API client not available. Please configure your API Key." };
+
+    try {
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-pro',
+            contents: `Generate structured content suitable for a Notion page based on this prompt. Use Markdown for formatting (headings, lists, bullet points, tables, etc.) to create a well-organized document.
+Prompt: "${prompt}"`,
+        });
+        return { content: response.text, error: null };
+    } catch (error) {
+        return { content: null, error: handleApiError(error, "Notion Tool") };
+    }
+};
+
+export const generateFigmaIdeas = async (prompt: string) => {
+    const ai = getAiClient();
+    if (!ai) return { ideas: null, error: "API client not available. Please configure your API Key." };
+
+    try {
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-pro',
+            contents: `Act as a senior UI/UX designer. Brainstorm and describe detailed design ideas and suggestions for a Figma component or screen based on the following prompt. Provide details on layout, typography, color palette, key elements, and potential user interactions. Format your response as well-structured Markdown.
+Prompt: "${prompt}"`,
+        });
+        return { ideas: response.text, error: null };
+    } catch (error) {
+        return { ideas: null, error: handleApiError(error, "Figma Tool") };
+    }
+};
+
+export const generateGitHubText = async (diff: string, textType: 'Commit Message' | 'PR Description') => {
+    const ai = getAiClient();
+    if (!ai) return { text: null, error: "API client not available. Please configure your API Key." };
+
+    let promptText = '';
+    if (textType === 'Commit Message') {
+        promptText = `Generate a concise and conventional commit message (e.g., "feat: Add user authentication") based on the following git diff.
+Diff:
+\`\`\`diff
+${diff}
+\`\`\``
+    } else {
+        promptText = `Generate a detailed pull request description based on the following git diff. Include a title, a summary of changes, and potential testing steps. Use Markdown for formatting.
+Diff:
+\`\`\`diff
+${diff}
+\`\`\``
+    }
+
+    try {
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-pro',
+            contents: promptText,
+        });
+        return { text: response.text, error: null };
+    } catch (error) {
+        return { text: null, error: handleApiError(error, "GitHub Tool") };
     }
 };

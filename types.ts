@@ -11,19 +11,33 @@ export enum Page {
   CodeReviewer,
   DocumentSummarizer,
   Plugins, // New page for the marketplace
+  // REMOVED: PluginAssistant
+  GmailTool,
+  CalendarTool,
+  SlackTool,
+  NotionTool,
+  FigmaTool,
+  GitHubTool,
 }
 
 export interface Tab {
   id: string;
   name: string;
   page: Page;
-  toolId?: string; // e.g., 'image-generation'
+  toolId?: string; // e.g., 'image-generation' or 'gmail'
 }
 
 export interface Message {
   sender: 'user' | 'ai';
   text: string;
   isThinking?: boolean;
+  // For plugin assistant
+  isConfirmation?: boolean;
+  toolCall?: {
+    name: string;
+    args: any;
+    id: string;
+  }
 }
 
 export interface Chat {
